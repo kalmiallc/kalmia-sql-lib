@@ -1,4 +1,4 @@
-
+/* eslint-disable no-shadow */
 
 export enum LoggerType {
   STANDARD = 'STD',

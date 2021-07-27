@@ -14,7 +14,6 @@ module.exports = {
   'plugins': [
     '@typescript-eslint',
     'eslint-plugin-import',
-    'eslint-plugin-jsdoc',
     'eslint-plugin-prefer-arrow',
     'no-async-foreach',
     "sonarjs",
@@ -170,10 +169,6 @@ module.exports = {
     'id-blacklist': 'off',
     'id-match': 'off',
     'import/no-deprecated': 'warn',
-    'jsdoc/check-alignment': 'error',
-    'jsdoc/check-indentation': 'error',
-    'jsdoc/newline-after-description': 'error',
-    'jsdoc/no-types': 'off',
     'max-classes-per-file': [
       'error',
       1

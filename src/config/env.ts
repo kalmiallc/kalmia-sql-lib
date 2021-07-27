@@ -24,11 +24,8 @@ export interface IEnv {
   MYSQL_USER_TEST: string;
   MYSQL_PASSWORD_TEST: string;
   MYSQL_POOL_SIZE_TEST: number;
-  ITEMS_PER_PAGE: number;
 
   LOGGER_TYPE: string;
-
-  APP_SECRET: string;
 }
 
 /**
@@ -105,15 +102,5 @@ export const env: IEnv = {
    */
   MYSQL_POOL_SIZE_TEST: parseInt(process.env['MYSQL_POOL_TEST']) || 5,
 
-  /*
-   * Default items per page.
-   */
-  ITEMS_PER_PAGE: parseInt(process.env['ITEMS_PER_PAGE']) || 5,
-
   LOGGER_TYPE: process.env['LOGGER_TYPE'] || LoggerType.STANDARD,
-
-  /*
-   * App secret for JWT.
-   */
-  APP_SECRET: process.env['APP_SECRET'] || 'notasecret'
 };

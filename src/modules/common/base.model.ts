@@ -15,30 +15,6 @@ export { prop };
  * Base model.
  */
 export abstract class BaseModel extends Model<Context> {
-  /**
-   * Document's collection name.
-   */
-  public abstract tableName: string;
-
-  /**
-   * id
-   */
-  @prop({
-    parser: { resolver: integerParser() },
-    populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.PROFILE, SerializeFor.INSERT_DB]
-  })
-  public id: number;
-
-  /**
-   * status
-   */
-  @prop({
-    parser: { resolver: integerParser() },
-    populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.PROFILE, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB]
-  })
-  public status: number;
 
   /**
    * Time of creation
@@ -71,6 +47,31 @@ export abstract class BaseModel extends Model<Context> {
   public __deletedAt: Date;
 
   /**
+   * id
+   */
+  @prop({
+    parser: { resolver: integerParser() },
+    populatable: [PopulateFor.DB],
+    serializable: [SerializeFor.PROFILE, SerializeFor.INSERT_DB]
+  })
+  public id: number;
+
+  /**
+   * status
+   */
+  @prop({
+    parser: { resolver: integerParser() },
+    populatable: [PopulateFor.DB],
+    serializable: [SerializeFor.PROFILE, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB]
+  })
+  public status: number;
+
+  /**
+   * Document's collection name.
+   */
+  public abstract tableName: string;
+
+  /**
    * Class constructor.
    *
    * @param data Input data.
@@ -84,7 +85,7 @@ export abstract class BaseModel extends Model<Context> {
    * Tells if the model represents a document stored in the database.
    */
   public isPersistent(): boolean {
-    return !!this.id;
+    return !!this.id && !this.__deletedAt;
   }
 
   public async db() {
@@ -110,12 +111,12 @@ export abstract class BaseModel extends Model<Context> {
       const createQuery = `
       INSERT INTO \`${this.tableName}\`
       ( ${Object.keys(serializedModel)
-         .map((x) => `\`${x}\``)
-        .join(', ')} )
+    .map((x) => `\`${x}\``)
+    .join(', ')} )
       VALUES (
         ${Object.keys(serializedModel)
-          .map((key) => `@${key}`)
-          .join(', ')}
+    .map((key) => `@${key}`)
+    .join(', ')}
       )`;
 
       await mySqlHelper.paramExecute(createQuery, serializedModel, options.conn);
@@ -165,8 +166,8 @@ export abstract class BaseModel extends Model<Context> {
       UPDATE \`${this.tableName}\`
       SET
         ${Object.keys(serializedModel)
-          .map((x) => `\`${x}\` = @${x}`)
-          .join(',\n')}
+    .map((x) => `\`${x}\` = @${x}`)
+    .join(',\n')}
       WHERE id = @id
       `;
 

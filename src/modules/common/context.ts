@@ -1,8 +1,10 @@
 
 /**
- * Request context with additional request information.
  */
 export class Context {
+  /**
+   * Context class constructor.
+   */
   public constructor() {
   }
 }

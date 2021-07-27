@@ -152,7 +152,6 @@ export class MySqlUtil {
         query = query.replace(re, values[key] ? SqlString.escape(values[key]) : 'NULL');
       }
     }
-    // console.log(query);
     AppLogger.debug('mysql-util.ts', 'paramQuery', 'DB ', query);
 
     const result = await conn.query(query);

@@ -12,7 +12,6 @@
 
 import * as mysqlSync from 'mysql2';
 import * as mysql from 'mysql2/promise';
-import { Pool } from 'mysql2/promise';
 import { env } from '../../config/env';
 import { ApplicationEnv, ConnectionStrategy, DbConnectionType, IConnectionDetails } from '../../config/types';
 import { AppLogger } from '../logger/app-logger';
@@ -58,7 +57,7 @@ export class MySqlConnManager {
       this._connectionDetails[databaseIdentifier] = this.populateDetails(config);
       this._connections[databaseIdentifier] = await this.getMySqlConnection(config);
     }
-    return this._connections[databaseIdentifier] as Pool;
+    return this._connections[databaseIdentifier] as mysql.Pool;
   }
 
   /**
@@ -68,7 +67,7 @@ export class MySqlConnManager {
   public setConnection(conn: mysql.Pool | mysql.Connection): mysql.Pool | mysql.Connection {
     this._connectionDetails[DbConnectionType.PRIMARY] = {database: DbConnectionType.PRIMARY};
     this._connections[DbConnectionType.PRIMARY] = conn;
-    return this._connections[DbConnectionType.PRIMARY] as Pool;
+    return this._connections[DbConnectionType.PRIMARY] as mysql.Pool;
   }
 
   /**
@@ -149,7 +148,6 @@ export class MySqlConnManager {
     };
   }
 
-  // #region SQL
   private async getMySqlConnection(config: mysql.ConnectionOptions = {}): Promise<mysql.Pool | mysql.Connection> {
     return await this.getMySqlLocalPoolConnection(config);
     // TODO: Handle AWS RDS, no poll....
@@ -227,6 +225,5 @@ export class MySqlConnManager {
     return pool;
   }
 
-  // #endregion
 
 }
