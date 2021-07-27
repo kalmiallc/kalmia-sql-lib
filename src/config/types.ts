@@ -13,15 +13,6 @@ export enum LogType {
   ERROR = 'ERR'
 }
 
-
-
-/**
- * List of supported database types
- */
- export enum DbType {
-  MYSQL = 'mysql',
-}
-
 /**
  * Connection strategy
  */
@@ -65,7 +56,6 @@ export enum DbConnectionType {
 }
 
 export interface IConnectionDetails {
-  type: DbType;
   strategy?: ConnectionStrategy;
   host?: string;
   port?: number;

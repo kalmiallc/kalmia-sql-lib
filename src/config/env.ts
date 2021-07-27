@@ -1,16 +1,14 @@
 /* eslint-disable radix */
 import * as dotenv from 'dotenv';
-import { ApplicationEnv, ConnectionStrategy, DbType, LoggerType } from './types';
+import { ApplicationEnv, ConnectionStrategy, LoggerType } from './types';
 
 /**
  * Environment object interface.
  */
-export interface Env {
+export interface IEnv {
   APP_ENV: string;
 
   LOG_TARGET: string;
-
-  PRIMARY_DB: string;
 
   MYSQL_CONN_STRATEGY: string;
   MYSQL_HOST: string;
@@ -38,18 +36,13 @@ export interface Env {
  */
 dotenv.config();
 
-export const env: Env = {
+export const env: IEnv = {
   APP_ENV: process.env['APP_ENV'] || ApplicationEnv.DEV,
 
   /**
    * Log writing destination.
    */
   LOG_TARGET: process.env['LOG_TARGET'] || 'console',
-
-  /**
-   * Selects primary database.
-   */
-  PRIMARY_DB: process.env['PRIMARY_DB'] || DbType.MYSQL,
 
   /**
    * Mysql URL.

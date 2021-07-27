@@ -18,7 +18,7 @@ export abstract class BaseModel extends Model<Context> {
   /**
    * Document's collection name.
    */
-  public abstract schemaName: string;
+  public abstract tableName: string;
 
   /**
    * id
@@ -108,7 +108,7 @@ export abstract class BaseModel extends Model<Context> {
     }
     try {
       const createQuery = `
-      INSERT INTO \`${this.schemaName}\`
+      INSERT INTO \`${this.tableName}\`
       ( ${Object.keys(serializedModel)
          .map((x) => `\`${x}\``)
         .join(', ')} )
@@ -162,7 +162,7 @@ export abstract class BaseModel extends Model<Context> {
 
     try {
       const createQuery = `
-      UPDATE \`${this.schemaName}\`
+      UPDATE \`${this.tableName}\`
       SET
         ${Object.keys(serializedModel)
           .map((x) => `\`${x}\` = @${x}`)
@@ -191,7 +191,7 @@ export abstract class BaseModel extends Model<Context> {
   public async populateById(id: any): Promise<any> {
     const data = await new MySqlUtil((await MySqlConnManager.getInstance().getConnection()) as Pool).paramQuery(
       `
-      SELECT * FROM ${this.schemaName}
+      SELECT * FROM ${this.tableName}
       WHERE id = @id
     `,
       { id }
@@ -221,7 +221,7 @@ export abstract class BaseModel extends Model<Context> {
 
     try {
       const createQuery = `
-      UPDATE \`${this.schemaName}\`
+      UPDATE \`${this.tableName}\`
       SET status = @status,
         __deletedAt = @deletedDate
       WHERE id = @id

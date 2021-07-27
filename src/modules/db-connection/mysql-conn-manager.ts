@@ -14,7 +14,7 @@ import * as mysqlSync from 'mysql2';
 import * as mysql from 'mysql2/promise';
 import { Pool } from 'mysql2/promise';
 import { env } from '../../config/env';
-import { ApplicationEnv, ConnectionStrategy, DbConnectionType, DbType, IConnectionDetails } from '../../config/types';
+import { ApplicationEnv, ConnectionStrategy, DbConnectionType, IConnectionDetails } from '../../config/types';
 import { AppLogger } from '../logger/app-logger';
 
 
@@ -66,7 +66,7 @@ export class MySqlConnManager {
    *
    */
   public setConnection(conn: mysql.Pool | mysql.Connection): mysql.Pool | mysql.Connection {
-    this._connectionDetails[DbConnectionType.PRIMARY] = {database: DbConnectionType.PRIMARY, type: DbType.MYSQL};
+    this._connectionDetails[DbConnectionType.PRIMARY] = {database: DbConnectionType.PRIMARY};
     this._connections[DbConnectionType.PRIMARY] = conn;
     return this._connections[DbConnectionType.PRIMARY] as Pool;
   }
@@ -91,12 +91,12 @@ export class MySqlConnManager {
    */
   public async end(databaseIdentifier: string = DbConnectionType.PRIMARY): Promise<any> {
     if (this._connectionsSync[databaseIdentifier]) {
-      AppLogger.info('mysql-conn-manager.ts', 'end', 'Ending primary connection mysql sync pool', AppLogger.stringifyObjectForLog(this._connectionDetails[databaseIdentifier]));
+      AppLogger.info('mysql-conn-manager.ts', 'end', 'Ending connection mysql sync pool', AppLogger.stringifyObjectForLog(this._connectionDetails[databaseIdentifier]));
       this._connectionsSync[databaseIdentifier].end();
       delete this._connectionsSync[databaseIdentifier];
     }
     if (this._connections[databaseIdentifier]) {
-      AppLogger.info('mysql-conn-manager.ts', 'end', 'Ending primary connection mysql pool', AppLogger.stringifyObjectForLog(this._connectionDetails[databaseIdentifier]));
+      AppLogger.info('mysql-conn-manager.ts', 'end', 'Ending connection mysql pool', AppLogger.stringifyObjectForLog(this._connectionDetails[databaseIdentifier]));
       await (this._connections[databaseIdentifier] as mysql.Pool).end();
       delete this._connections[databaseIdentifier];
       delete this._connectionDetails[databaseIdentifier];
@@ -130,7 +130,6 @@ export class MySqlConnManager {
   private populateDetails(config: mysql.ConnectionOptions = {}): IConnectionDetails {
     if (process.env.APP_ENV === ApplicationEnv.TEST) {
       return {
-        type: DbType.MYSQL,
         database: config.database || env.MYSQL_DB_TEST,
         host: config.host || env.MYSQL_HOST_TEST,
         port: config.port || env.MYSQL_PORT_TEST,
@@ -141,7 +140,6 @@ export class MySqlConnManager {
     }
 
     return {
-      type: DbType.MYSQL,
       database: config.database || env.MYSQL_DB,
       host: config.host || env.MYSQL_HOST,
       port: config.port || env.MYSQL_PORT,
