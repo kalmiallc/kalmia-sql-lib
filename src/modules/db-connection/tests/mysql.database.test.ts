@@ -113,7 +113,7 @@ async function setupDatabase() {
     CREATE TABLE IF NOT EXISTS \`sql_lib_user\` (
       \`id\` INT NOT NULL,
       \`email\` VARCHAR(255) NULL,
-      \`__username\` VARCHAR(255) NULL,
+      \`_username\` VARCHAR(255) NULL,
       PRIMARY KEY (\`id\`),
       UNIQUE INDEX \`email_UNIQUE\` (\`email\` ASC) VISIBLE);
   `,

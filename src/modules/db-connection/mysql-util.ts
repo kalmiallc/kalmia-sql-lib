@@ -23,16 +23,13 @@ export class MySqlUtil {
    * @param [options={multiSet: boolean}] additional options
    */
   public async callSingle(procedure: string, data: unknown, options: { multiSet?: boolean } = {}): Promise<any> {
-    // console.time('Call Single');
     const conn = await this.start();
     try {
       const result = await this.call(procedure, data, conn, options);
       await this.commit(conn);
-      // console.timeEnd( 'Call Single');
       return result;
     } catch (err) {
       await this.rollback(conn);
-      // console.timeEnd( 'Call Single');
       throw err;
     }
   }
@@ -59,9 +56,7 @@ export class MySqlUtil {
     AppLogger.debug('mysql-util.ts', 'call', 'DB ', query);
     AppLogger.debug('mysql-util.ts', 'call', 'DB ', this.mapValues(data, true).join(';'));
 
-    // console.time('SQL procedure CALL');
     const result = await connection.query(query, this.mapValues(data));
-    // console.timeEnd( 'SQL procedure CALL');
 
     if (isSingleTrans) {
       connection.release();
@@ -137,7 +132,6 @@ export class MySqlUtil {
   }
 
   public async paramQuery(query: string, values?: unknown): Promise<any[]> {
-    // console.time('Param Query');
     const conn = await (this._dbConnection as mysql.Pool).getConnection();
     if (!conn) {
       throw Error('MySql Db Connection not provided');
@@ -156,7 +150,6 @@ export class MySqlUtil {
 
     const result = await conn.query(query);
     conn.release();
-    // console.timeEnd( 'Param Query');
     return result[0] as any[];
   }
 
@@ -169,10 +162,6 @@ export class MySqlUtil {
    * @param connection PoolConnection reference - needed if query is part of transaction
    */
   public async paramExecute(query: string, values?: unknown, connection?: PoolConnection): Promise<any[]> {
-    // const queryId = Math.round(Math.random() * 10000);
-    // console.time('Param Execute');
-    // array with values for prepared statement
-    // console.time(`Prepare SQL [${queryId}]`);
     const sqlParamValues = [];
     let isSingleTrans = false;
     if (!connection) {
@@ -213,11 +202,9 @@ export class MySqlUtil {
         query = query.replace(re, '?');
       }
     }
-    // console.timeEnd(`Prepare SQL [${queryId}]`);
 
     AppLogger.debug('mysql-util.ts', 'paramExecute', 'DB ', query);
     AppLogger.debug('mysql-util.ts', 'paramExecute', 'DB ', this.mapValues(sqlParamValues, true).join(';'));
-    // console.timeEnd(`Logs [${queryId}]`);
 
     let result;
     // const time = process.hrtime();
@@ -236,7 +223,6 @@ export class MySqlUtil {
     }
     // const diff = process.hrtime(time);
 
-    // console.timeEnd( 'Param Execute');
     return result[0] as any[];
   }
 }

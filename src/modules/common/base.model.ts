@@ -24,7 +24,7 @@ export abstract class BaseModel extends Model<Context> {
     populatable: [PopulateFor.DB],
     serializable: [SerializeFor.PROFILE]
   })
-  public __createdAt: Date;
+  public _createdAt: Date;
 
   /**
    * Time of last update
@@ -34,7 +34,7 @@ export abstract class BaseModel extends Model<Context> {
     populatable: [PopulateFor.DB],
     serializable: [SerializeFor.PROFILE]
   })
-  public __updatedAt: Date;
+  public _updatedAt: Date;
 
   /**
    * Time of marking as deleted
@@ -44,7 +44,7 @@ export abstract class BaseModel extends Model<Context> {
     populatable: [PopulateFor.DB],
     serializable: [SerializeFor.PROFILE]
   })
-  public __deletedAt: Date;
+  public _deletedAt: Date;
 
   /**
    * id
@@ -52,7 +52,7 @@ export abstract class BaseModel extends Model<Context> {
   @prop({
     parser: { resolver: integerParser() },
     populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.PROFILE, SerializeFor.INSERT_DB]
+    serializable: [SerializeFor.PROFILE]
   })
   public id: number;
 
@@ -62,7 +62,8 @@ export abstract class BaseModel extends Model<Context> {
   @prop({
     parser: { resolver: integerParser() },
     populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.PROFILE, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB]
+    serializable: [SerializeFor.PROFILE, SerializeFor.UPDATE_DB],
+    defaultValue: () => DbModelStatus.INACTIVE
   })
   public status: number;
 
@@ -85,7 +86,7 @@ export abstract class BaseModel extends Model<Context> {
    * Tells if the model represents a document stored in the database.
    */
   public isPersistent(): boolean {
-    return !!this.id && !this.__deletedAt;
+    return !!this.id && !this._deletedAt;
   }
 
   public async db() {
@@ -210,7 +211,7 @@ export abstract class BaseModel extends Model<Context> {
    */
   public async delete(options: { conn?: PoolConnection } = {}): Promise<this> {
     let isSingleTrans = false;
-    let mySqlHelper;
+    let mySqlHelper: MySqlUtil;
     if (!options.conn) {
       isSingleTrans = true;
       const pool = (await MySqlConnManager.getInstance().getConnection()) as PoolConnection;
@@ -224,15 +225,15 @@ export abstract class BaseModel extends Model<Context> {
       const createQuery = `
       UPDATE \`${this.tableName}\`
       SET status = @status,
-        __deletedAt = @deletedDate
+        _deletedAt = @_deletedAt
       WHERE id = @id
       `;
 
 
       await mySqlHelper.paramExecute(createQuery, {
         id: this.id,
-        status: DbModelStatus.DELETED,
-        __deletedAt: new Date(),
+        status: (this.status = DbModelStatus.DELETED),
+        _deletedAt: (this._deletedAt = new Date()),
       }, options.conn);
 
       if (isSingleTrans) {
