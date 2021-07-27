@@ -28,7 +28,7 @@
     "connection",
     "manager"
   ],
-  "author": "Jaka Bernard (Kalmia)",
+  "author": "Kalmia d.o.o. <info@kalmia.si>",
   "license": "UNLICENSED",
   "homepage": "https://bitbucket.org/kalmiadevs/kalmia-sql-lib#readme",
   "dependencies": {
