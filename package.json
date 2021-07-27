@@ -7,6 +7,9 @@
   "scripts": {
     "build": "rimraf dist && tsc --build tsconfig.json",
     "prepare": "npm run build",
+    "index": "ts-node src/index.ts",
+    "lint": "eslint -c .eslintrc.js --ext .ts ./src",
+    "lintFix": "eslint --fix -c .eslintrc.js --ext .ts ./src",
     "test": "jest"
   },
   "files": [
@@ -15,7 +18,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://jaka-bernard@bitbucket.org/kalmiadevs/kalmia-sql-lib.git"
+    "url": "git+https://bitbucket.org/kalmiadevs/kalmia-sql-lib.git"
   },
   "keywords": [
     "sql",
@@ -33,12 +36,15 @@
     "@rawmodel/core": "^3.3.4",
     "@rawmodel/parsers": "^3.3.4",
     "@rawmodel/validators": "^3.3.4",
+    "@types/jest": "^26.0.24",
     "@types/node": "^16.4.3",
     "colors": "^1.4.0",
     "dotenv": "^10.0.0",
+    "eslint": "^7.31.0",
     "jest": "^27.0.6",
     "mysql2": "^2.2.5",
     "rimraf": "^3.0.2",
+    "ts-node": "^10.1.0",
     "typescript": "^4.3.5"
   }
 }
