@@ -53,12 +53,12 @@ export class MySqlConnManager {
    * Provides primary database connection.
    *
    */
-  public async getConnection(database: string = DbConnectionType.PRIMARY, config: mysql.ConnectionOptions = {}): Promise<mysql.Pool | mysql.Connection> {
-    if (!this._connections[database]) {
-      this._connectionDetails[database] = this.populateDetails(config);
-      this._connections[database] = await this.getMySqlConnection(config);
+  public async getConnection(databaseIdentifier: string = DbConnectionType.PRIMARY, config: mysql.ConnectionOptions = {}): Promise<mysql.Pool | mysql.Connection> {
+    if (!this._connections[databaseIdentifier]) {
+      this._connectionDetails[databaseIdentifier] = this.populateDetails(config);
+      this._connections[databaseIdentifier] = await this.getMySqlConnection(config);
     }
-    return this._connections[database] as Pool;
+    return this._connections[databaseIdentifier] as Pool;
   }
 
   /**
@@ -75,31 +75,31 @@ export class MySqlConnManager {
    * Primary connection in sync version. This can coexist with the async connection.
    *
    */
-  public getConnectionSync(database: string = DbConnectionType.PRIMARY): mysqlSync.Pool {
-    if (!this._connectionsSync[database]) {
-      this._connectionsSync[database] = this.getMySqlConnectionSync();
+  public getConnectionSync(databaseIdentifier: string = DbConnectionType.PRIMARY): mysqlSync.Pool {
+    if (!this._connectionsSync[databaseIdentifier]) {
+      this._connectionsSync[databaseIdentifier] = this.getMySqlConnectionSync();
     }
-    return this._connectionsSync[database] as mysqlSync.Pool;
+    return this._connectionsSync[databaseIdentifier] as mysqlSync.Pool;
   }
 
-  public getConnectionDetails(database: string = DbConnectionType.PRIMARY) {
-    return this._connectionDetails[database];
+  public getConnectionDetails(databaseIdentifier: string = DbConnectionType.PRIMARY) {
+    return this._connectionDetails[databaseIdentifier];
   }
 
   /**
    * Ends primary connection (pool -- closes all connections gracefully)
    */
-  public async end(database: string = DbConnectionType.PRIMARY): Promise<any> {
-    if (this._connectionsSync[database]) {
-      AppLogger.info('mysql-conn-manager.ts', 'end', 'Ending primary connection mysql sync pool', AppLogger.stringifyObjectForLog(this._connectionDetails[database]));
-      this._connectionsSync[database].end();
-      delete this._connectionsSync[database];
+  public async end(databaseIdentifier: string = DbConnectionType.PRIMARY): Promise<any> {
+    if (this._connectionsSync[databaseIdentifier]) {
+      AppLogger.info('mysql-conn-manager.ts', 'end', 'Ending primary connection mysql sync pool', AppLogger.stringifyObjectForLog(this._connectionDetails[databaseIdentifier]));
+      this._connectionsSync[databaseIdentifier].end();
+      delete this._connectionsSync[databaseIdentifier];
     }
-    if (this._connections[database]) {
-      AppLogger.info('mysql-conn-manager.ts', 'end', 'Ending primary connection mysql pool', AppLogger.stringifyObjectForLog(this._connectionDetails[database]));
-      await (this._connections[database] as mysql.Pool).end();
-      delete this._connections[database];
-      delete this._connectionDetails[database];
+    if (this._connections[databaseIdentifier]) {
+      AppLogger.info('mysql-conn-manager.ts', 'end', 'Ending primary connection mysql pool', AppLogger.stringifyObjectForLog(this._connectionDetails[databaseIdentifier]));
+      await (this._connections[databaseIdentifier] as mysql.Pool).end();
+      delete this._connections[databaseIdentifier];
+      delete this._connectionDetails[databaseIdentifier];
     }
   }
 
@@ -107,23 +107,23 @@ export class MySqlConnManager {
    * Ensures open connection to DB
    *
    */
-  public async ensureAliveSql(database: string = DbConnectionType.PRIMARY, conn?: mysql.PoolConnection): Promise<void> {
-    if (!this._connections[database]) {
-      await (this._connections[database] as mysql.Connection).connect();
+  public async ensureAliveSql(databaseIdentifier: string = DbConnectionType.PRIMARY, conn?: mysql.PoolConnection): Promise<void> {
+    if (!this._connections[databaseIdentifier]) {
+      await (this._connections[databaseIdentifier] as mysql.Connection).connect();
       return;
     }
     try {
       if (!conn) {
-        conn = await (this._connections[database] as mysql.Pool).getConnection();
+        conn = await (this._connections[databaseIdentifier] as mysql.Pool).getConnection();
       }
 
       if (!conn || (conn as any).connection.stream.readyState !== 'open') {
-        this._connections[database] = undefined;
-        await (this._connections[database] as mysql.Connection).connect();
+        this._connections[databaseIdentifier] = undefined;
+        await (this._connections[databaseIdentifier] as mysql.Connection).connect();
       }
     } catch (err) {
-      this._connections[database] = undefined;
-      await (this._connections[database] as mysql.Connection).connect();
+      this._connections[databaseIdentifier] = undefined;
+      await (this._connections[databaseIdentifier] as mysql.Connection).connect();
     }
   }
 
