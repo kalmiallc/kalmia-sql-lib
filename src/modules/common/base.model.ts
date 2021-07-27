@@ -190,7 +190,7 @@ export abstract class BaseModel extends Model<Context> {
     return this;
   }
 
-  public async populateById(id: any): Promise<any> {
+  public async populateById(id: any): Promise<this> {
     const data = await new MySqlUtil((await MySqlConnManager.getInstance().getConnection()) as Pool).paramQuery(
       `
       SELECT * FROM ${this.tableName}
