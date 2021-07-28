@@ -1,7 +1,7 @@
 import { MySqlConnManager } from './modules/db-connection/mysql-conn-manager';
 import { MySqlUtil } from './modules/db-connection/mysql-util';
 import { BaseModel } from './modules/common/base.model';
-import { Migrations } from './modules/db-connection/migrations.interface';
+import { Migrations, MigrationOptions } from './modules/migrations/migrations';
 import {
   LoggerType,
   LogType,
@@ -37,6 +37,7 @@ export {
   MySqlUtil,
   BaseModel,
   Migrations,
+  MigrationOptions,
 
   WhereQueryComparator,
   SqlQueryObject,
