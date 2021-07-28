@@ -13,7 +13,7 @@ import {
   IConnectionDetails,
   DbModelStatus
 } from './config/types';
-import { AppLogger } from './modules/logger/app-logger';
+import { AppLogger, IAppLogger } from './modules/logger/app-logger';
 import { StandardLogger } from './modules/logger/logger';
 import { Context } from './modules/common/context';
 
@@ -58,6 +58,7 @@ export {
   DbModelStatus,
 
   AppLogger,
+  IAppLogger,
   StandardLogger,
   Context,
 
