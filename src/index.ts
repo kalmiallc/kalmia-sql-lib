@@ -32,6 +32,8 @@ import {
 
 import { IEnv, env } from './config/env';
 
+import { MySqlStage } from './modules/test-helpers/mysql-stage';
+
 export {
   MySqlConnManager,
   MySqlUtil,
@@ -68,5 +70,7 @@ export {
   enumInclusionValidator,
 
   IEnv,
-  env
+  env,
+
+  MySqlStage,
 };

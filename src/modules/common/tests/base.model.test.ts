@@ -1,26 +1,25 @@
-import type * as mysql from 'mysql2/promise';
 import { MySqlConnManager } from '../../db-connection/mysql-conn-manager';
 import { MySqlUtil } from './../../db-connection/mysql-util';
 import { BaseModel } from '../base.model';
 import { prop } from '@rawmodel/core';
 import { stringParser } from '@rawmodel/parsers';
 import { DbModelStatus, PopulateFor, SerializeFor } from '../../../config/types';
+import { MySqlStage } from '../../test-helpers/mysql-stage';
 
 const testTableName = 'sql_lib_user';
 
 describe('Base model', () => {
-  let conn: mysql.Pool | mysql.Connection
-  let sqlUtil: MySqlUtil;
+  let mySqlStage: MySqlStage;
 
   beforeAll(async () => {
-    conn = await MySqlConnManager.getInstance().getConnection();
-    sqlUtil =  new MySqlUtil(conn);
+    
+    mySqlStage = await MySqlStage.getInstance();
     await setupDatabase();
   });
 
   afterAll(async () => {
     await dropDatabase();
-    await MySqlConnManager.getInstance().end();
+    await mySqlStage.connManager.end();
   });
 
   it('Prop population - constructor', () => {
