@@ -1,6 +1,6 @@
 import { Model, ModelConfig, prop } from '@rawmodel/core';
 import { dateParser, integerParser } from '@rawmodel/parsers';
-import { Pool, PoolConnection } from 'mysql2/promise';
+import { Connection, Pool, PoolConnection } from 'mysql2/promise';
 import { DbModelStatus, PopulateFor, SerializeFor } from '../../config/types';
 import { MySqlConnManager } from '../db-connection/mysql-conn-manager';
 import { MySqlUtil } from '../db-connection/mysql-util';
@@ -47,7 +47,7 @@ export abstract class BaseModel extends Model<Context> {
   public _deletedAt: Date;
 
   /**
-   * id
+   * Base model's id property definition
    */
   @prop({
     parser: { resolver: integerParser() },
@@ -57,7 +57,7 @@ export abstract class BaseModel extends Model<Context> {
   public id: number;
 
   /**
-   * status
+   * Base model's status property definition
    */
   @prop({
     parser: { resolver: integerParser() },
@@ -68,7 +68,7 @@ export abstract class BaseModel extends Model<Context> {
   public status: number;
 
   /**
-   * Document's collection name.
+   * Model's table name.
    */
   public abstract tableName: string;
 
@@ -89,7 +89,10 @@ export abstract class BaseModel extends Model<Context> {
     return !!this.id && !this._deletedAt;
   }
 
-  public async db() {
+  /**
+   * Returns an instance of a database connection.
+   */
+  public async db(): Promise<Pool | Connection> {
     return await MySqlConnManager.getInstance().getConnection();
   }
 
@@ -152,7 +155,7 @@ export abstract class BaseModel extends Model<Context> {
     // delete serializedModel.updateTime;
 
     let isSingleTrans = false;
-    let mySqlHelper;
+    let mySqlHelper: MySqlUtil;
     if (!options.conn) {
       isSingleTrans = true;
       const pool = (await MySqlConnManager.getInstance().getConnection()) as PoolConnection;
@@ -190,6 +193,11 @@ export abstract class BaseModel extends Model<Context> {
     return this;
   }
 
+  /**
+   * Populates model fields by id.
+   *
+   * @param id User's id.
+   */
   public async populateById(id: any): Promise<this> {
     const data = await new MySqlUtil((await MySqlConnManager.getInstance().getConnection()) as Pool).paramQuery(
       `

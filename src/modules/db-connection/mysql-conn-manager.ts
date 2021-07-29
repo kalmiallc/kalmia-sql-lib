@@ -25,6 +25,11 @@ export class MySqlConnManager {
 
   private constructor() {}
 
+  /**
+   * Gets MySqlConnectionManager instance
+   * @param conn (optional) connection to set as primary
+   * @returns MySqlConnectionManager instance
+   */
   public static getInstance(conn?: mysql.Pool | mysql.Connection) {
     if (!MySqlConnManager.instance) {
       MySqlConnManager.instance = new MySqlConnManager();
@@ -49,8 +54,8 @@ export class MySqlConnManager {
   }
 
   /**
-   * Provides primary database connection.
-   *
+   * Provides database connection assigned to identifier, defaulting to primary.
+   * @param databaseIdentifier (optional) identifier of database connection in question
    */
   public async getConnection(databaseIdentifier: string = DbConnectionType.PRIMARY, config: mysql.ConnectionOptions = {}): Promise<mysql.Pool | mysql.Connection> {
     if (!this._connections[databaseIdentifier]) {
@@ -61,7 +66,7 @@ export class MySqlConnManager {
   }
 
   /**
-   * Provides primary database connection.
+   * Sets database connection to primary identifier. User should ensure primary connection is closed beforehand.
    *
    */
   public setConnection(conn: mysql.Pool | mysql.Connection): mysql.Pool | mysql.Connection {
@@ -72,7 +77,7 @@ export class MySqlConnManager {
 
   /**
    * Primary connection in sync version. This can coexist with the async connection.
-   *
+   * @param databaseIdentifier (optional) identifier of database connection in question
    */
   public getConnectionSync(databaseIdentifier: string = DbConnectionType.PRIMARY): mysqlSync.Pool {
     if (!this._connectionsSync[databaseIdentifier]) {
@@ -81,12 +86,18 @@ export class MySqlConnManager {
     return this._connectionsSync[databaseIdentifier] as mysqlSync.Pool;
   }
 
+  /**
+   * Gets connection details for provided identifier
+   * @param databaseIdentifier (optional) identifier of database connection in question
+   * @returns 
+   */
   public getConnectionDetails(databaseIdentifier: string = DbConnectionType.PRIMARY) {
     return this._connectionDetails[databaseIdentifier];
   }
 
   /**
    * Ends primary connection (pool -- closes all connections gracefully)
+   * @param databaseIdentifier (optional) identifier of database connection in question
    */
   public async end(databaseIdentifier: string = DbConnectionType.PRIMARY): Promise<any> {
     if (this._connectionsSync[databaseIdentifier]) {
@@ -104,7 +115,7 @@ export class MySqlConnManager {
 
   /**
    * Ensures open connection to DB
-   *
+   * @param databaseIdentifier (optional) identifier of database connection in question
    */
   public async ensureAliveSql(databaseIdentifier: string = DbConnectionType.PRIMARY, conn?: mysql.PoolConnection): Promise<void> {
     if (!this._connections[databaseIdentifier]) {
