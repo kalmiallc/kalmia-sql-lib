@@ -17,6 +17,16 @@ export { prop };
 export abstract class BaseModel extends Model<Context> {
 
   /**
+   * Base model's id property definition
+   */
+  @prop({
+    parser: { resolver: integerParser() },
+    populatable: [PopulateFor.DB],
+    serializable: [SerializeFor.PROFILE]
+  })
+  public id: number;
+
+  /**
    * Time of creation
    */
   @prop({
@@ -45,16 +55,6 @@ export abstract class BaseModel extends Model<Context> {
     serializable: [SerializeFor.PROFILE]
   })
   public _deletedAt: Date;
-
-  /**
-   * Base model's id property definition
-   */
-  @prop({
-    parser: { resolver: integerParser() },
-    populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.PROFILE]
-  })
-  public id: number;
 
   /**
    * Base model's status property definition
@@ -255,5 +255,20 @@ export abstract class BaseModel extends Model<Context> {
     }
 
     return this;
+  }
+
+  /**
+   * Returns base model select fields used in querying.
+   * @param table Queried table synonym.
+   * @returns 
+   */
+  public getSelectColumns(table: string) {
+    return `
+      ${table}.id,
+      ${table}.status,
+      ${table}._createdAt,
+      ${table}._updatedAt,
+      ${table}._deletedAt,
+    `;
   }
 }
