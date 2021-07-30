@@ -22,6 +22,7 @@ export class MySqlConnManager {
   private _connections: {[identifier: string]: mysql.Pool | mysql.Connection} = {};
   private _connectionsSync: {[identifier: string]: mysqlSync.Pool | mysqlSync.Connection} = {};
   private _connectionDetails: {[identifier: string]: IConnectionDetails} = {};
+  private _connectionSyncDetails: {[identifier: string]: IConnectionDetails} = {};
 
   private constructor() {}
 
@@ -81,6 +82,7 @@ export class MySqlConnManager {
    */
   public getConnectionSync(databaseIdentifier: string = DbConnectionType.PRIMARY): mysqlSync.Pool {
     if (!this._connectionsSync[databaseIdentifier]) {
+      this._connectionSyncDetails[databaseIdentifier] = this.populateDetails();
       this._connectionsSync[databaseIdentifier] = this.getMySqlConnectionSync();
     }
     return this._connectionsSync[databaseIdentifier] as mysqlSync.Pool;
@@ -106,7 +108,7 @@ export class MySqlConnManager {
       delete this._connectionsSync[databaseIdentifier];
     }
     if (this._connections[databaseIdentifier]) {
-      AppLogger.info('mysql-conn-manager.ts', 'end', 'Ending connection mysql pool', AppLogger.stringifyObjectForLog(this._connectionDetails[databaseIdentifier]));
+      AppLogger.info('mysql-conn-manager.ts', 'end', 'Ending connection mysql pool', AppLogger.stringifyObjectForLog(this._connectionSyncDetails[databaseIdentifier]));
       await (this._connections[databaseIdentifier] as mysql.Pool).end();
       delete this._connections[databaseIdentifier];
       delete this._connectionDetails[databaseIdentifier];
