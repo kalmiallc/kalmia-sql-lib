@@ -268,7 +268,7 @@ export abstract class BaseModel extends Model<Context> {
       ${table}.status,
       ${table}._createdAt,
       ${table}._updatedAt,
-      ${table}._deletedAt,
+      ${table}._deletedAt
     `;
   }
 }
