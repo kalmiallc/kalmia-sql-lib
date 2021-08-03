@@ -237,7 +237,7 @@ module.exports = {
       'error',
       'never'
     ],
-    'prefer-arrow/prefer-arrow-functions': 'warn',
+    'prefer-arrow/prefer-arrow-functions': 'off',
     'prefer-const': 'error',
     'radix': 'off',
     'spaced-comment': [

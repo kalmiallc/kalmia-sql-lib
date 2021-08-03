@@ -49,3 +49,14 @@ export function uniqueFieldValue(sqlTableName: string, fieldName: string, idFiel
     return count === 0;
   };
 }
+
+export function conditionalPresenceValidator(fieldNames: string[]) {
+  return async function (this: BaseModel) {
+    for (const fieldName of fieldNames) {
+      if (this[fieldName]) {
+        return true;
+      }
+    }
+    return false;
+  };
+}

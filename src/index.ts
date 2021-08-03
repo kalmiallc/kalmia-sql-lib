@@ -17,7 +17,7 @@ import { AppLogger, IAppLogger } from './modules/logger/app-logger';
 import { StandardLogger } from './modules/logger/logger';
 import { Context } from './modules/common/context';
 
-import { uniqueFieldValue, enumInclusionValidator } from './modules/common/validators';
+import { uniqueFieldValue, enumInclusionValidator, conditionalPresenceValidator } from './modules/common/validators';
 import { isPlainObject } from './modules/common/utils';
 
 import {
@@ -68,6 +68,7 @@ export {
 
   uniqueFieldValue,
   enumInclusionValidator,
+  conditionalPresenceValidator,
 
   IEnv,
   env,
