@@ -101,6 +101,13 @@ export abstract class BaseModel extends Model<Context> {
    */
   public async create(options: { conn?: PoolConnection } = {}): Promise<this> {
     const serializedModel = this.serialize(SerializeFor.INSERT_DB);
+
+    // remove non-creatable parameters
+    delete serializedModel.id;
+    delete serializedModel._createdAt;
+    delete serializedModel._deletedAt;
+    delete serializedModel._updatedAt;
+
     let isSingleTrans = false;
     let mySqlHelper: MySqlUtil;
     if (!options.conn) {
@@ -130,6 +137,8 @@ export abstract class BaseModel extends Model<Context> {
       }
 
       if (isSingleTrans) {
+        this._createdAt = new Date();
+        this._updatedAt = this._createdAt;
         await mySqlHelper.commit(options.conn);
       }
     } catch (err) {
@@ -150,9 +159,9 @@ export abstract class BaseModel extends Model<Context> {
 
     // remove non-updatable parameters
     delete serializedModel.id;
-    delete serializedModel.createTime;
-    // delete serializedModel.deletionTime;
-    // delete serializedModel.updateTime;
+    delete serializedModel._createdAt;
+    delete serializedModel._deletedAt;
+    delete serializedModel._updatedAt;
 
     let isSingleTrans = false;
     let mySqlHelper: MySqlUtil;
@@ -181,6 +190,7 @@ export abstract class BaseModel extends Model<Context> {
       await mySqlHelper.paramExecute(createQuery, serializedModel, options.conn);
 
       if (isSingleTrans) {
+        this._updatedAt = new Date();
         await mySqlHelper.commit(options.conn);
       }
     } catch (err) {
@@ -245,6 +255,7 @@ export abstract class BaseModel extends Model<Context> {
       }, options.conn);
 
       if (isSingleTrans) {
+        this._updatedAt = this._deletedAt;
         await mySqlHelper.commit(options.conn);
       }
     } catch (err) {
