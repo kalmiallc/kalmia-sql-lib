@@ -175,6 +175,7 @@ export abstract class BaseModel extends Model<Context> {
     if (isSingleTrans) {
       options.conn = await mySqlHelper.start();
     }
+    mySqlHelper = new MySqlUtil(options.conn);
 
     try {
       const createQuery = `
@@ -240,6 +241,7 @@ export abstract class BaseModel extends Model<Context> {
     if (isSingleTrans) {
       options.conn = await mySqlHelper.start();
     }
+    mySqlHelper = new MySqlUtil(options.conn);
 
     try {
       const createQuery = `
