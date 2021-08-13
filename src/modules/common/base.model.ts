@@ -233,12 +233,10 @@ export abstract class BaseModel extends Model<Context> {
 
     try {
       const createQuery = `
-      UPDATE \`${this.tableName}\`
-      SET
-        status = @status,
-      WHERE id = @id
+        UPDATE \`${this.tableName}\`
+        SET status = @status
+        WHERE id = @id
       `;
-
 
       await mySqlHelper.paramExecute(createQuery, {
         id: this.id,
