@@ -47,16 +47,6 @@ export abstract class BaseModel extends Model<Context> {
   public _updateTime: Date;
 
   /**
-   * Time of marking as deleted
-   */
-  @prop({
-    parser: { resolver: dateParser() },
-    populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.PROFILE]
-  })
-  public _deletedAt: Date;
-
-  /**
    * Base model's status property definition
    */
   @prop({
@@ -85,8 +75,8 @@ export abstract class BaseModel extends Model<Context> {
   /**
    * Tells if the model represents a document stored in the database.
    */
-  public isPersistent(): boolean {
-    return !!this.id && !this._deletedAt;
+  public exists(): boolean {
+    return !!this.id && (this.status !== DbModelStatus.DELETED);
   }
 
   /**
@@ -105,7 +95,6 @@ export abstract class BaseModel extends Model<Context> {
     // remove non-creatable parameters
     delete serializedModel.id;
     delete serializedModel._createTime;
-    delete serializedModel._deletedAt;
     delete serializedModel._updateTime;
 
     let isSingleTrans = false;
@@ -162,7 +151,6 @@ export abstract class BaseModel extends Model<Context> {
     // remove non-updatable parameters
     delete serializedModel.id;
     delete serializedModel._createTime;
-    delete serializedModel._deletedAt;
     delete serializedModel._updateTime;
 
     let isSingleTrans = false;
@@ -246,8 +234,8 @@ export abstract class BaseModel extends Model<Context> {
     try {
       const createQuery = `
       UPDATE \`${this.tableName}\`
-      SET status = @status,
-        _deletedAt = @_deletedAt
+      SET
+        status = @status,
       WHERE id = @id
       `;
 
@@ -255,11 +243,10 @@ export abstract class BaseModel extends Model<Context> {
       await mySqlHelper.paramExecute(createQuery, {
         id: this.id,
         status: (this.status = DbModelStatus.DELETED),
-        _deletedAt: (this._deletedAt = new Date()),
       }, options.conn);
 
       if (isSingleTrans) {
-        this._updateTime = this._deletedAt;
+        this._updateTime = new Date();
         await mySqlHelper.commit(options.conn);
       }
     } catch (err) {
@@ -283,7 +270,6 @@ export abstract class BaseModel extends Model<Context> {
       ${table}.status,
       ${table}._createTime,
       ${table}._updateTime,
-      ${table}._deletedAt
     `;
   }
 }

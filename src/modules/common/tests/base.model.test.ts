@@ -135,12 +135,12 @@ describe('Base model', () => {
     };
     const newUser = new TestUser(obj);
     await newUser.create();
-    expect(newUser.isPersistent()).toBe(true);
+    expect(newUser.exists()).toBe(true);
   });
 
   it('Persistence - NOK 1', async () => {
     const getUser = await new TestUser().populateById(1234);
-    expect(getUser.isPersistent()).toBe(false);
+    expect(getUser.exists()).toBe(false);
   });
 
   it('Persistence - NOK 2', async () => {
@@ -151,7 +151,7 @@ describe('Base model', () => {
     const newUser = new TestUser(obj);
     await newUser.create();
     await newUser.delete();
-    expect(newUser.isPersistent()).toBe(false);
+    expect(newUser.exists()).toBe(false);
   });
 
   it('Update - OK', async () => {
@@ -187,20 +187,20 @@ describe('Base model', () => {
     const newUser = new TestUser(obj);
     await newUser.create();
     await newUser.delete();
-    expect(newUser.isPersistent()).toBe(false);
-    expect(newUser._deletedAt).toBeTruthy();
+    expect(newUser.exists()).toBe(false);
+    expect(newUser._updateTime).toBeTruthy();
     expect(newUser.status).toBe(DbModelStatus.DELETED);
     const getUser = await new TestUser().populateById(newUser.id);
-    expect(getUser.isPersistent()).toBe(false);
-    expect(getUser._deletedAt).toBeTruthy();
+    expect(getUser.exists()).toBe(false);
+    expect(getUser._updateTime).toBeTruthy();
     expect(getUser.status).toBe(DbModelStatus.DELETED);
   });
 
   it('Delete - OK?', async () => {
     const newUser = await new TestUser().populateById(1234);
     await newUser.delete();
-    expect(newUser.isPersistent()).toBe(false);
-    expect(newUser._deletedAt).toBeTruthy();
+    expect(newUser.exists()).toBe(false);
+    expect(newUser._updateTime).toBeTruthy();
     expect(newUser.status).toBe(DbModelStatus.DELETED);
   });
 });
@@ -216,7 +216,6 @@ async function setupDatabase() {
       \`status\` INT NOT NULL DEFAULT 1,
       \`_createTime\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
       \`_updateTime\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-      \`_deletedAt\` DATETIME NULL,
       PRIMARY KEY (\`id\`));
   `,
     { },
