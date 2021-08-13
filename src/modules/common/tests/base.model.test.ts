@@ -26,13 +26,13 @@ describe('Base model', () => {
     const obj = {
       id: 1234,
       email: 'cotton-eyed joe',
-      _createdAt: new Date(),
+      _createTime: new Date(),
       notAProp: 'ladaee'
     };
     const newUser = new TestUser(obj);
     expect(newUser.email).toBe(obj.email)
     expect(newUser.id).toBe(obj.id)
-    expect(newUser._createdAt).toBe(obj._createdAt)
+    expect(newUser._createTime).toBe(obj._createTime)
     expect((newUser as any).notAProp).toBe(undefined)
   });
 
@@ -40,13 +40,13 @@ describe('Base model', () => {
     const obj = {
       id: 1234,
       email: 'cotton-eyed joe',
-      _createdAt: new Date(),
+      _createTime: new Date(),
       notAProp: 'ladaee'
     };
     const newUser = new TestUser().populate(obj);
     expect(newUser.email).toBe(obj.email)
     expect(newUser.id).toBe(obj.id)
-    expect(newUser._createdAt).toBe(obj._createdAt)
+    expect(newUser._createTime).toBe(obj._createTime)
     expect((newUser as any).notAProp).toBe(undefined)
   });
 
@@ -54,13 +54,13 @@ describe('Base model', () => {
     const obj = {
       id: 1234,
       email: 'cotton-eyed joe',
-      _createdAt: new Date(),
+      _createTime: new Date(),
       notAProp: 'ladaee'
     };
     const newUser = new TestUser().populate(obj, PopulateFor.PROFILE);
     expect(newUser.email).toBe(obj.email)
     expect(newUser.id).toBe(null)
-    expect(newUser._createdAt).toBe(null)
+    expect(newUser._createTime).toBe(null)
     expect((newUser as any).notAProp).toBe(undefined)
   });
 
@@ -68,32 +68,32 @@ describe('Base model', () => {
     const obj = {
       id: 1234,
       email: 'cotton-eyed joe',
-      _createdAt: new Date()
+      _createTime: new Date()
     };
     const newUser = new TestUser().populate(obj);
     const serialized = newUser.serialize();
     expect(serialized.email).toBe(obj.email)
     expect(serialized.id).toBe(obj.id)
-    expect(serialized._createdAt).toBe(obj._createdAt)
+    expect(serialized._createTime).toBe(obj._createTime)
   });
 
   it('Prop serialization - profile', () => {
     const obj = {
       id: 1234,
       email: 'cotton-eyed joe',
-      _createdAt: new Date()
+      _createTime: new Date()
     };
     const newUser = new TestUser().populate(obj, SerializeFor.PROFILE);
     const serialized = newUser.serialize();
     expect(serialized.email).toBe(obj.email)
     expect(serialized.id).toBe(null)
-    expect(serialized._createdAt).toBe(null)
+    expect(serialized._createTime).toBe(null)
   });
 
   it('Create - OK', async () => {
     const obj = {
       email: 'cotton-eyed joe',
-      _createdAt: new Date()
+      _createTime: new Date()
     };
     const newUser = new TestUser(obj);
     await newUser.create();
@@ -102,7 +102,7 @@ describe('Base model', () => {
 
   it('Create - NOK', async () => {
     const obj = {
-      _createdAt: new Date()
+      _createTime: new Date()
     };
     const newUser = new TestUser(obj);
     await expect(newUser.create()).rejects.toThrowError();
@@ -111,7 +111,7 @@ describe('Base model', () => {
   it('Read - OK', async () => {
     const obj = {
       email: 'cotton-eyed joe',
-      _createdAt: new Date()
+      _createTime: new Date()
     };
     const newUser = new TestUser(obj);
     await newUser.create();
@@ -119,8 +119,8 @@ describe('Base model', () => {
     const getUser = await new TestUser().populateById(newUser.id);
     expect(getUser.id).toBeTruthy();
     expect(getUser.id).toBe(newUser.id);
-    expect(getUser._createdAt).toBeTruthy();
-    expect(getUser._updatedAt).toBeTruthy();
+    expect(getUser._createTime).toBeTruthy();
+    expect(getUser._updateTime).toBeTruthy();
   });
 
   it('Read - NOK', async () => {
@@ -131,7 +131,7 @@ describe('Base model', () => {
   it('Persistence - OK', async () => {
     const obj = {
       email: 'cotton-eyed joe',
-      _createdAt: new Date()
+      _createTime: new Date()
     };
     const newUser = new TestUser(obj);
     await newUser.create();
@@ -146,7 +146,7 @@ describe('Base model', () => {
   it('Persistence - NOK 2', async () => {
     const obj = {
       email: 'cotton-eyed joe',
-      _createdAt: new Date()
+      _createTime: new Date()
     };
     const newUser = new TestUser(obj);
     await newUser.create();
@@ -157,7 +157,7 @@ describe('Base model', () => {
   it('Update - OK', async () => {
     const obj = {
       email: 'cotton-eyed joe',
-      _createdAt: new Date()
+      _createTime: new Date()
     };
     const newUser = new TestUser(obj);
     await newUser.create();
@@ -171,7 +171,7 @@ describe('Base model', () => {
   it('Update - NOK', async () => {
     const obj = {
       email: 'cotton-eyed joe',
-      _createdAt: new Date()
+      _createTime: new Date()
     };
     const newUser = new TestUser(obj);
     await newUser.create();
@@ -182,7 +182,7 @@ describe('Base model', () => {
   it('Delete - OK', async () => {
     const obj = {
       email: 'cotton-eyed joe',
-      _createdAt: new Date()
+      _createTime: new Date()
     };
     const newUser = new TestUser(obj);
     await newUser.create();
@@ -214,8 +214,8 @@ async function setupDatabase() {
       \`id\` INT NOT NULL AUTO_INCREMENT,
       \`email\` VARCHAR(255) NOT NULL,
       \`status\` INT NOT NULL DEFAULT 1,
-      \`_createdAt\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      \`_updatedAt\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      \`_createTime\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      \`_updateTime\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       \`_deletedAt\` DATETIME NULL,
       PRIMARY KEY (\`id\`));
   `,

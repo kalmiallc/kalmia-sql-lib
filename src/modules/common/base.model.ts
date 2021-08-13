@@ -34,7 +34,7 @@ export abstract class BaseModel extends Model<Context> {
     populatable: [PopulateFor.DB],
     serializable: [SerializeFor.PROFILE]
   })
-  public _createdAt: Date;
+  public _createTime: Date;
 
   /**
    * Time of last update
@@ -44,7 +44,7 @@ export abstract class BaseModel extends Model<Context> {
     populatable: [PopulateFor.DB],
     serializable: [SerializeFor.PROFILE]
   })
-  public _updatedAt: Date;
+  public _updateTime: Date;
 
   /**
    * Time of marking as deleted
@@ -104,9 +104,9 @@ export abstract class BaseModel extends Model<Context> {
 
     // remove non-creatable parameters
     delete serializedModel.id;
-    delete serializedModel._createdAt;
+    delete serializedModel._createTime;
     delete serializedModel._deletedAt;
-    delete serializedModel._updatedAt;
+    delete serializedModel._updateTime;
 
     let isSingleTrans = false;
     let mySqlHelper: MySqlUtil;
@@ -139,8 +139,8 @@ export abstract class BaseModel extends Model<Context> {
       }
 
       if (isSingleTrans) {
-        this._createdAt = new Date();
-        this._updatedAt = this._createdAt;
+        this._createTime = new Date();
+        this._updateTime = this._createTime;
         await mySqlHelper.commit(options.conn);
       }
     } catch (err) {
@@ -161,9 +161,9 @@ export abstract class BaseModel extends Model<Context> {
 
     // remove non-updatable parameters
     delete serializedModel.id;
-    delete serializedModel._createdAt;
+    delete serializedModel._createTime;
     delete serializedModel._deletedAt;
-    delete serializedModel._updatedAt;
+    delete serializedModel._updateTime;
 
     let isSingleTrans = false;
     let mySqlHelper: MySqlUtil;
@@ -193,7 +193,7 @@ export abstract class BaseModel extends Model<Context> {
       await mySqlHelper.paramExecute(createQuery, serializedModel, options.conn);
 
       if (isSingleTrans) {
-        this._updatedAt = new Date();
+        this._updateTime = new Date();
         await mySqlHelper.commit(options.conn);
       }
     } catch (err) {
@@ -259,7 +259,7 @@ export abstract class BaseModel extends Model<Context> {
       }, options.conn);
 
       if (isSingleTrans) {
-        this._updatedAt = this._deletedAt;
+        this._updateTime = this._deletedAt;
         await mySqlHelper.commit(options.conn);
       }
     } catch (err) {
@@ -281,8 +281,8 @@ export abstract class BaseModel extends Model<Context> {
     return `
       ${table}.id,
       ${table}.status,
-      ${table}._createdAt,
-      ${table}._updatedAt,
+      ${table}._createTime,
+      ${table}._updateTime,
       ${table}._deletedAt
     `;
   }
