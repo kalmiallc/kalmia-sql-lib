@@ -8,6 +8,7 @@ All documentation is MD based and resides in the docs directory.
 | ------------------------------------ | ---------------------------------------------------------------------- |
 | [Contributing](docs/CONTRIBUTING.md) | Notes to start and deploy this project. And rules for the contribution |
 | [Testing](docs/TESTING.md)           | Link to test scenarios, instructions.                                  |
+| [Usage](docs/USAGE.md)               | Guide to API usage                                                     |
 
 
 ## People working on the project
