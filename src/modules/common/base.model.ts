@@ -127,9 +127,9 @@ export abstract class BaseModel extends Model<Context> {
         this.id = req[0].id;
       }
 
-      if (isSingleTrans) {
-        this._createTime = new Date();
-        this._updateTime = this._createTime;
+      this._createTime = new Date();
+      this._updateTime = this._createTime;
+      if (isSingleTrans) {        
         await mySqlHelper.commit(options.conn);
       }
     } catch (err) {
