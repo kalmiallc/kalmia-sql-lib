@@ -17,7 +17,7 @@ export { prop };
 export abstract class BaseModel extends Model<Context> {
 
   /**
-   * Base model's id property definition
+   * Base model's id property definition.
    */
   @prop({
     parser: { resolver: integerParser() },
@@ -27,7 +27,7 @@ export abstract class BaseModel extends Model<Context> {
   public id: number;
 
   /**
-   * Time of creation
+   * Time of creation.
    */
   @prop({
     parser: { resolver: dateParser() },
@@ -35,6 +35,16 @@ export abstract class BaseModel extends Model<Context> {
     serializable: [SerializeFor.PROFILE]
   })
   public _createTime: Date;
+
+  /**
+   * ID of the user that created the model.
+   */
+  @prop({
+    parser: { resolver: integerParser() },
+    populatable: [PopulateFor.DB],
+    serializable: [SerializeFor.PROFILE]
+  })
+  public _createUser: number;
 
   /**
    * Time of last update
@@ -45,6 +55,16 @@ export abstract class BaseModel extends Model<Context> {
     serializable: [SerializeFor.PROFILE]
   })
   public _updateTime: Date;
+
+  /**
+   * ID of the user that updated the model.
+   */
+  @prop({
+    parser: { resolver: integerParser() },
+    populatable: [PopulateFor.DB],
+    serializable: [SerializeFor.PROFILE]
+  })
+  public _updateUser: number;
 
   /**
    * Base model's status property definition
@@ -89,7 +109,12 @@ export abstract class BaseModel extends Model<Context> {
   /**
    * Saves model data in the database as a new document.
    */
-  public async create(options: { conn?: PoolConnection } = {}): Promise<this> {
+  public async create(options: { conn?: PoolConnection; context?: Context } = {}): Promise<this> {
+    if (options?.context?.user?.id) {
+      this._createUser = options.context.user.id;
+      this._updateUser = this._createUser;
+    }
+
     const serializedModel = this.serialize(SerializeFor.INSERT_DB);
 
     // remove non-creatable parameters
@@ -145,7 +170,11 @@ export abstract class BaseModel extends Model<Context> {
   /**
    * Updates model data in the database.
    */
-  public async update(options: { conn?: PoolConnection } = {}): Promise<this> {
+  public async update(options: { conn?: PoolConnection; context?: Context } = {}): Promise<this> {
+    if (options?.context?.user?.id) {
+      this._updateUser = options.context.user.id;
+    }
+
     const serializedModel = this.serialize(SerializeFor.UPDATE_DB);
 
     // remove non-updatable parameters
@@ -180,8 +209,8 @@ export abstract class BaseModel extends Model<Context> {
 
       await mySqlHelper.paramExecute(createQuery, serializedModel, options.conn);
 
+      this._updateTime = new Date();
       if (isSingleTrans) {
-        this._updateTime = new Date();
         await mySqlHelper.commit(options.conn);
       }
     } catch (err) {
@@ -218,7 +247,11 @@ export abstract class BaseModel extends Model<Context> {
   /**
    * Mark model as deleted in the database.
    */
-  public async delete(options: { conn?: PoolConnection } = {}): Promise<this> {
+  public async delete(options: { conn?: PoolConnection; context?: Context } = {}): Promise<this> {
+    if (options?.context?.user?.id) {
+      this._updateUser = options.context.user.id;
+    }
+
     let isSingleTrans = false;
     let mySqlHelper: MySqlUtil;
     if (!options.conn) {
@@ -242,9 +275,9 @@ export abstract class BaseModel extends Model<Context> {
         id: this.id,
         status: (this.status = DbModelStatus.DELETED),
       }, options.conn);
-
+      
+      this._updateTime = new Date();
       if (isSingleTrans) {
-        this._updateTime = new Date();
         await mySqlHelper.commit(options.conn);
       }
     } catch (err) {
