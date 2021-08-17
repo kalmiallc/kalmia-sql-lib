@@ -318,9 +318,10 @@ export abstract class BaseModel extends Model<Context> {
    * @returns {
    *  singleTrans: Tells if connection will be used in transaction.
    *  sql: MySqlUtil
+   *  conn: PoolConnection
    * }
    */
-  public async getDbConnection(conn?: PoolConnection): Promise<{ singleTrans: boolean; sql: MySqlUtil }> {
+  public async getDbConnection(conn?: PoolConnection): Promise<{ singleTrans: boolean; sql: MySqlUtil; conn: PoolConnection }> {
     const singleTrans = !conn;
     let sql: MySqlUtil;
 
@@ -330,6 +331,6 @@ export abstract class BaseModel extends Model<Context> {
     }
     sql = new MySqlUtil(conn);
 
-    return { singleTrans, sql };
+    return { singleTrans, sql, conn };
   }
 }
