@@ -98,7 +98,7 @@ export abstract class BaseModel extends Model<any> {
    * @param data Input data.
    * @param config Model configuration.
    */
-  public constructor(data?: unknown, context?: ModelConfig<any>, parent?: Model) {
+  public constructor(data?: unknown, context?: any, parent?: Model) {
     super(data, { context, parent });
   }
 
