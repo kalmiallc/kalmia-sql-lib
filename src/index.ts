@@ -15,11 +15,8 @@ import {
 } from './config/types';
 import { AppLogger, IAppLogger } from './modules/logger/app-logger';
 import { StandardLogger } from './modules/logger/logger';
-import { Context } from './modules/common/context';
-
 import { uniqueFieldValue, enumInclusionValidator, conditionalPresenceValidator } from './modules/common/validators';
 import { isPlainObject } from './modules/common/utils';
-
 import {
   WhereQueryComparator,
   SqlQueryObject,
@@ -29,9 +26,7 @@ import {
   unionSelectAndCountQuery,
   buildWhereCondition
 } from './modules/db-connection/sql-utils';
-
 import { IEnv, env } from './config/env';
-
 import { MySqlStage } from './modules/test-helpers/mysql-stage';
 
 export {
@@ -62,7 +57,6 @@ export {
   AppLogger,
   IAppLogger,
   StandardLogger,
-  Context,
 
   isPlainObject,
 

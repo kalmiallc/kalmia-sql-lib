@@ -4,7 +4,17 @@ import { Connection, Pool, PoolConnection } from 'mysql2/promise';
 import { DbModelStatus, PopulateFor, SerializeFor } from '../../config/types';
 import { MySqlConnManager } from '../db-connection/mysql-conn-manager';
 import { MySqlUtil } from '../db-connection/mysql-util';
-import { Context } from './context';
+
+/**
+ * Update, delete and create actions options.
+ */
+export interface ActionOptions {
+  conn?: PoolConnection;
+  context?: {
+    user?: any;
+  }; 
+}
+
 
 /**
  * Common model related objects.
@@ -14,7 +24,7 @@ export { prop };
 /**
  * Base model.
  */
-export abstract class BaseModel extends Model<Context> {
+export abstract class BaseModel extends Model<any> {
 
   /**
    * Base model's id property definition.
@@ -88,7 +98,7 @@ export abstract class BaseModel extends Model<Context> {
    * @param data Input data.
    * @param config Model configuration.
    */
-  public constructor(data?: unknown, config?: ModelConfig<Context>) {
+  public constructor(data?: unknown, config?: ModelConfig<any>) {
     super(data, config);
   }
 
@@ -112,7 +122,7 @@ export abstract class BaseModel extends Model<Context> {
    * @param options Create options.
    * @returns this
    */
-  public async create(options: { conn?: PoolConnection; context?: Context } = {}): Promise<this> {
+  public async create(options: ActionOptions = {}): Promise<this> {
     if (options?.context?.user?.id) {
       this._createUser = options.context.user.id;
       this._updateUser = this._createUser;
@@ -176,7 +186,7 @@ export abstract class BaseModel extends Model<Context> {
    * @param options Update options.
    * @returns this
    */
-  public async update(options: { conn?: PoolConnection; context?: Context } = {}): Promise<this> {
+  public async update(options: ActionOptions = {}): Promise<this> {
     if (options?.context?.user?.id) {
       this._updateUser = options.context.user.id;
     }
@@ -255,7 +265,7 @@ export abstract class BaseModel extends Model<Context> {
    * @param options Delete options.
    * @returns this
    */
-  public async delete(options: { conn?: PoolConnection; context?: Context } = {}): Promise<this> {
+  public async delete(options: ActionOptions = {}): Promise<this> {
     if (options?.context?.user?.id) {
       this._updateUser = options.context.user.id;
     }
