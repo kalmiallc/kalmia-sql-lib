@@ -47,7 +47,7 @@ export abstract class BaseModel extends Model<Context> {
   public _createUser: number;
 
   /**
-   * Time of last update
+   * Time of the last update.
    */
   @prop({
     parser: { resolver: dateParser() },
@@ -106,8 +106,11 @@ export abstract class BaseModel extends Model<Context> {
     return await MySqlConnManager.getInstance().getConnection();
   }
 
+
   /**
-   * Saves model data in the database as a new document.
+   * Saves model data in the database as a new row.
+   * @param options Create options.
+   * @returns this
    */
   public async create(options: { conn?: PoolConnection; context?: Context } = {}): Promise<this> {
     if (options?.context?.user?.id) {
@@ -117,7 +120,7 @@ export abstract class BaseModel extends Model<Context> {
 
     const serializedModel = this.serialize(SerializeFor.INSERT_DB);
 
-    // remove non-creatable parameters
+    // Remove non-creatable parameters
     delete serializedModel.id;
     delete serializedModel._createTime;
     delete serializedModel._updateTime;
@@ -129,6 +132,7 @@ export abstract class BaseModel extends Model<Context> {
       const pool = (await MySqlConnManager.getInstance().getConnection()) as PoolConnection;
       mySqlHelper = new MySqlUtil(pool);
     }
+
     if (isSingleTrans) {
       options.conn = await mySqlHelper.start();
     }
@@ -169,6 +173,8 @@ export abstract class BaseModel extends Model<Context> {
 
   /**
    * Updates model data in the database.
+   * @param options Update options.
+   * @returns this
    */
   public async update(options: { conn?: PoolConnection; context?: Context } = {}): Promise<this> {
     if (options?.context?.user?.id) {
@@ -177,7 +183,7 @@ export abstract class BaseModel extends Model<Context> {
 
     const serializedModel = this.serialize(SerializeFor.UPDATE_DB);
 
-    // remove non-updatable parameters
+    // Remove non-updatable parameters
     delete serializedModel.id;
     delete serializedModel._createTime;
     delete serializedModel._updateTime;
@@ -195,7 +201,7 @@ export abstract class BaseModel extends Model<Context> {
     mySqlHelper = new MySqlUtil(options.conn);
 
     try {
-      const createQuery = `
+      const updateQuery = `
       UPDATE \`${this.tableName}\`
       SET
         ${Object.keys(serializedModel)
@@ -204,10 +210,9 @@ export abstract class BaseModel extends Model<Context> {
       WHERE id = @id
       `;
 
-      // re-set id parameter for where clause.
+      // Reset id parameter for where clause.
       serializedModel.id = this.id;
-
-      await mySqlHelper.paramExecute(createQuery, serializedModel, options.conn);
+      await mySqlHelper.paramExecute(updateQuery, serializedModel, options.conn);
 
       this._updateTime = new Date();
       if (isSingleTrans) {
@@ -226,7 +231,7 @@ export abstract class BaseModel extends Model<Context> {
   /**
    * Populates model fields by id.
    *
-   * @param id User's id.
+   * @param id Model's database ID.
    */
   public async populateById(id: any): Promise<this> {
     const data = await new MySqlUtil((await MySqlConnManager.getInstance().getConnection()) as Pool).paramQuery(
@@ -245,7 +250,10 @@ export abstract class BaseModel extends Model<Context> {
   }
 
   /**
-   * Mark model as deleted in the database.
+   * Marks model as deleted in the database - soft delete.
+   * 
+   * @param options Delete options.
+   * @returns this
    */
   public async delete(options: { conn?: PoolConnection; context?: Context } = {}): Promise<this> {
     if (options?.context?.user?.id) {
@@ -265,13 +273,13 @@ export abstract class BaseModel extends Model<Context> {
     mySqlHelper = new MySqlUtil(options.conn);
 
     try {
-      const createQuery = `
+      const deleteQuery = `
         UPDATE \`${this.tableName}\`
         SET status = @status
         WHERE id = @id
       `;
 
-      await mySqlHelper.paramExecute(createQuery, {
+      await mySqlHelper.paramExecute(deleteQuery, {
         id: this.id,
         status: (this.status = DbModelStatus.DELETED),
       }, options.conn);
@@ -293,14 +301,35 @@ export abstract class BaseModel extends Model<Context> {
   /**
    * Returns base model select fields used in querying.
    * @param table Queried table synonym.
-   * @returns 
+   * @returns Default select columns.
    */
-  public getSelectColumns(table: string) {
+  public getSelectColumns(table: string): string {
     return `
       ${table}.id,
       ${table}.status,
       ${table}._createTime,
       ${table}._updateTime
     `;
+  }
+
+  /**
+   * Returns DB connection with transaction support.
+   * @param conn Existing connection.
+   * @returns {
+   *  singleTrans: Tells if connection will be used in transaction.
+   *  sql: MySqlUtil
+   * }
+   */
+  public async getDbConnection(conn?: PoolConnection): Promise<{ singleTrans: boolean; sql: MySqlUtil }> {
+    const singleTrans = !conn;
+    let sql: MySqlUtil;
+
+    if (singleTrans) {
+      sql = new MySqlUtil(await this.db());
+      conn = await sql.start();
+    }
+    sql = new MySqlUtil(conn);
+
+    return { singleTrans, sql };
   }
 }
