@@ -96,7 +96,8 @@ export abstract class BaseModel extends Model<any> {
    * Class constructor.
    *
    * @param data Input data.
-   * @param config Model configuration.
+   * @param context Application context.
+   * @param parent Model's parent model.
    */
   public constructor(data?: unknown, context?: any, parent?: Model) {
     super(data, { context, parent });
@@ -123,6 +124,10 @@ export abstract class BaseModel extends Model<any> {
    * @returns this
    */
   public async create(options: ActionOptions = {}): Promise<this> {
+    if (!options?.context) {
+      options.context = this.getContext();
+    }
+
     if (options?.context?.user?.id) {
       this._createUser = options.context.user.id;
       this._updateUser = this._createUser;
@@ -187,6 +192,10 @@ export abstract class BaseModel extends Model<any> {
    * @returns this
    */
   public async update(options: ActionOptions = {}): Promise<this> {
+    if (!options?.context) {
+      options.context = this.getContext();
+    }
+
     if (options?.context?.user?.id) {
       this._updateUser = options.context.user.id;
     }
@@ -266,6 +275,10 @@ export abstract class BaseModel extends Model<any> {
    * @returns this
    */
   public async delete(options: ActionOptions = {}): Promise<this> {
+    if (!options?.context) {
+      options.context = this.getContext();
+    }
+
     if (options?.context?.user?.id) {
       this._updateUser = options.context.user.id;
     }
