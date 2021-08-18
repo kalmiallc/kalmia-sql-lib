@@ -144,7 +144,7 @@ export abstract class BaseModel extends Model<any> {
     let mySqlHelper: MySqlUtil;
     if (!options.conn) {
       isSingleTrans = true;
-      const pool = (await MySqlConnManager.getInstance().getConnection()) as PoolConnection;
+      const pool = await this.db();
       mySqlHelper = new MySqlUtil(pool);
     }
 
@@ -211,7 +211,7 @@ export abstract class BaseModel extends Model<any> {
     let mySqlHelper: MySqlUtil;
     if (!options.conn) {
       isSingleTrans = true;
-      const pool = (await MySqlConnManager.getInstance().getConnection()) as PoolConnection;
+      const pool = await this.db();
       mySqlHelper = new MySqlUtil(pool);
     }
     if (isSingleTrans) {
@@ -253,7 +253,7 @@ export abstract class BaseModel extends Model<any> {
    * @param id Model's database ID.
    */
   public async populateById(id: any): Promise<this> {
-    const data = await new MySqlUtil((await MySqlConnManager.getInstance().getConnection()) as Pool).paramQuery(
+    const data = await new MySqlUtil(await this.db()).paramQuery(
       `
       SELECT * FROM ${this.tableName}
       WHERE id = @id
@@ -287,7 +287,7 @@ export abstract class BaseModel extends Model<any> {
     let mySqlHelper: MySqlUtil;
     if (!options.conn) {
       isSingleTrans = true;
-      const pool = (await MySqlConnManager.getInstance().getConnection()) as PoolConnection;
+      const pool = await this.db();
       mySqlHelper = new MySqlUtil(pool);
     }
     if (isSingleTrans) {
