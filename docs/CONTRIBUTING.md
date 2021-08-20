@@ -1,0 +1,1 @@
+A general [contributing guides](https://bitbucket.org/kalmiadevs/kalmia-common-lib/src/master/docs/CONTRIUBTING.md) are a must read, and shall not be duplicated here. 
