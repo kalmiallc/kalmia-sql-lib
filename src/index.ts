@@ -16,6 +16,7 @@ import {
 import { AppLogger, IAppLogger } from './modules/logger/app-logger';
 import { StandardLogger } from './modules/logger/logger';
 import { uniqueFieldValue, enumInclusionValidator, conditionalPresenceValidator } from './modules/common/validators';
+import { JSONParser } from './modules/common/parsers';
 import { isPlainObject } from './modules/common/utils';
 import {
   WhereQueryComparator,
@@ -63,6 +64,7 @@ export {
   uniqueFieldValue,
   enumInclusionValidator,
   conditionalPresenceValidator,
+  JSONParser,
 
   IEnv,
   env,
