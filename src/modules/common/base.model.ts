@@ -83,7 +83,8 @@ export abstract class BaseModel extends Model<any> {
     parser: { resolver: integerParser() },
     populatable: [PopulateFor.DB],
     serializable: [SerializeFor.PROFILE, SerializeFor.ADMIN, SerializeFor.UPDATE_DB, SerializeFor.INSERT_DB],
-    defaultValue: () => DbModelStatus.INACTIVE
+    emptyValue: () => DbModelStatus.INACTIVE,
+    defaultValue: () => DbModelStatus.INACTIVE,
   })
   public status: number;
 
