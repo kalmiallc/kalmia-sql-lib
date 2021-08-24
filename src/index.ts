@@ -15,7 +15,7 @@ import {
 } from './config/types';
 import { AppLogger, IAppLogger } from './modules/logger/app-logger';
 import { StandardLogger } from './modules/logger/logger';
-import { uniqueFieldValue, enumInclusionValidator, conditionalPresenceValidator } from './modules/common/validators';
+import { uniqueFieldValue, enumInclusionValidator, conditionalPresenceValidator, foreignKeyExistence } from './modules/common/validators';
 import { JSONParser } from './modules/common/parsers';
 import { isPlainObject } from './modules/common/utils';
 import {
@@ -65,6 +65,7 @@ export {
   enumInclusionValidator,
   conditionalPresenceValidator,
   JSONParser,
+  foreignKeyExistence,
 
   IEnv,
   env,
