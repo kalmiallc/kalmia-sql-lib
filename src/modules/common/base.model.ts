@@ -1,4 +1,4 @@
-import { Model, ModelConfig, prop } from '@rawmodel/core';
+import { Model, prop } from '@rawmodel/core';
 import { dateParser, integerParser } from '@rawmodel/parsers';
 import { Connection, Pool, PoolConnection } from 'mysql2/promise';
 import { DbModelStatus, PopulateFor, SerializeFor } from '../../config/types';
@@ -32,7 +32,7 @@ export abstract class BaseModel extends Model<any> {
   @prop({
     parser: { resolver: integerParser() },
     populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.PROFILE]
+    serializable: [SerializeFor.PROFILE, SerializeFor.ADMIN]
   })
   public id: number;
 
@@ -42,7 +42,7 @@ export abstract class BaseModel extends Model<any> {
   @prop({
     parser: { resolver: dateParser() },
     populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.PROFILE]
+    serializable: [SerializeFor.PROFILE, SerializeFor.ADMIN]
   })
   public _createTime: Date;
 
@@ -52,7 +52,7 @@ export abstract class BaseModel extends Model<any> {
   @prop({
     parser: { resolver: integerParser() },
     populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.PROFILE]
+    serializable: [SerializeFor.PROFILE, SerializeFor.ADMIN, SerializeFor.INSERT_DB],
   })
   public _createUser: number;
 
@@ -62,7 +62,7 @@ export abstract class BaseModel extends Model<any> {
   @prop({
     parser: { resolver: dateParser() },
     populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.PROFILE]
+    serializable: [SerializeFor.PROFILE, SerializeFor.ADMIN]
   })
   public _updateTime: Date;
 
@@ -72,7 +72,7 @@ export abstract class BaseModel extends Model<any> {
   @prop({
     parser: { resolver: integerParser() },
     populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.PROFILE]
+    serializable: [SerializeFor.PROFILE, SerializeFor.ADMIN, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB]
   })
   public _updateUser: number;
 
@@ -82,8 +82,9 @@ export abstract class BaseModel extends Model<any> {
   @prop({
     parser: { resolver: integerParser() },
     populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.PROFILE, SerializeFor.UPDATE_DB],
-    defaultValue: () => DbModelStatus.INACTIVE
+    serializable: [SerializeFor.PROFILE, SerializeFor.ADMIN, SerializeFor.UPDATE_DB, SerializeFor.INSERT_DB],
+    emptyValue: () => DbModelStatus.INACTIVE,
+    defaultValue: () => DbModelStatus.INACTIVE,
   })
   public status: number;
 
@@ -117,7 +118,35 @@ export abstract class BaseModel extends Model<any> {
     return await MySqlConnManager.getInstance().getConnection();
   }
 
+  /**
+   * Returns an instance of a sql utils.
+   */
+  public async sql(conn?: Pool | Connection): Promise<MySqlUtil> {
+    return new MySqlUtil(conn || await this.db());
+  }
 
+  /**
+   * Returns DB connection with transaction support.
+   * @param conn Existing connection.
+   * @returns {
+     *  singleTrans: Tells if connection will be used in transaction.
+     *  sql: MySqlUtil
+     *  conn: PoolConnection
+     * }
+     */
+  public async getDbConnection(conn?: PoolConnection): Promise<{ singleTrans: boolean; sql: MySqlUtil; conn: PoolConnection }> {
+    const singleTrans = !conn;
+    let sql: MySqlUtil;
+  
+    if (singleTrans) {
+      sql = await this.sql();
+      conn = await sql.start();
+    }
+    sql = new MySqlUtil(conn);
+  
+    return { singleTrans, sql, conn };
+  }
+  
   /**
    * Saves model data in the database as a new row.
    * @param options Create options.
@@ -333,27 +362,5 @@ export abstract class BaseModel extends Model<any> {
       ${table}._createTime,
       ${table}._updateTime
     `;
-  }
-
-  /**
-   * Returns DB connection with transaction support.
-   * @param conn Existing connection.
-   * @returns {
-   *  singleTrans: Tells if connection will be used in transaction.
-   *  sql: MySqlUtil
-   *  conn: PoolConnection
-   * }
-   */
-  public async getDbConnection(conn?: PoolConnection): Promise<{ singleTrans: boolean; sql: MySqlUtil; conn: PoolConnection }> {
-    const singleTrans = !conn;
-    let sql: MySqlUtil;
-
-    if (singleTrans) {
-      sql = new MySqlUtil(await this.db());
-      conn = await sql.start();
-    }
-    sql = new MySqlUtil(conn);
-
-    return { singleTrans, sql, conn };
   }
 }
