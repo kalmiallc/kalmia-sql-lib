@@ -360,7 +360,9 @@ export abstract class BaseModel extends Model<any> {
       ${table}.id,
       ${table}.status,
       ${table}._createTime,
-      ${table}._updateTime
+      ${table}._createUser,
+      ${table}._updateTime,
+      ${table}._updateUser
     `;
   }
 }

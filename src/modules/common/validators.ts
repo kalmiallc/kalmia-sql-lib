@@ -1,6 +1,6 @@
 import { numberSizeValidator, presenceValidator } from '@rawmodel/validators';
 import { Pool } from 'mysql2/promise';
-import { DbModelStatus } from 'src/config/types';
+import { DbModelStatus } from '../../config/types';
 import { MySqlUtil } from '../db-connection/mysql-util';
 import { BaseModel } from './base.model'; 
 
