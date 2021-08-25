@@ -15,9 +15,10 @@
     "test:cov": "jest --coverage"
   },
   "files": [
-    "dist/**/*",
+    "dist/**/*",    
+    "src/**/*",
     "README.md",
-    "src/**/*"
+    "docs/**/*"
   ],
   "repository": {
     "type": "git",
