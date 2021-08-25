@@ -10,6 +10,8 @@ export interface IEnv {
 
   LOG_TARGET: string;
 
+  LOG_OUT_LEVEL: string;
+
   MYSQL_CONN_STRATEGY: string;
   MYSQL_HOST: string;
   MYSQL_PORT: number;
@@ -40,6 +42,7 @@ export const env: IEnv = {
    * Log writing destination.
    */
   LOG_TARGET: process.env['LOG_TARGET'] || 'console',
+  LOG_OUT_LEVEL: process.env['LOG_OUT_LEVEL'] || 'info',
 
   /**
    * Mysql URL.

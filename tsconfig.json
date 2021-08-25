@@ -9,6 +9,7 @@
     "allowSyntheticDefaultImports": true,
     "target": "es2017",
     "sourceMap": true,
+    "sourceRoot": "https://bitbucket.org/kalmiadevs/kalmia-sql-lib/src/master/",
     "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true
