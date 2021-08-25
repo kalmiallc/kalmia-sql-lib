@@ -16,6 +16,11 @@ export interface MigrationOptions {
   silent: boolean;
 }
 
+/**
+ * General class for handling migrations. It uses ts-mysql-migrate tool for handling migrations.
+ * https://github.com/tinemlakar/ts-mysql-migrate
+ */
+
 export class Migrations {
 
   dbMigration: Migration;
