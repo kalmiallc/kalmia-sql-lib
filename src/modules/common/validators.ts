@@ -37,7 +37,7 @@ export function enumInclusionValidator(enumerator: any, allowNull = false) {
  * @param checkNull 
  * @returns 
  */
-export function uniqueFieldValue(sqlTableName: string, fieldName: string, idField = 'id', checkNull = false) {
+export function uniqueFieldWithIdValidator(sqlTableName: string, fieldName: string, idField = 'id', checkNull = false) {
   return async function (this: BaseModel | any, value: any) {
     if ((!checkNull && value === null) || value === undefined) {
       return true;
