@@ -42,7 +42,7 @@ export abstract class BaseModel extends Model<any> {
   @prop({
     parser: { resolver: dateParser() },
     populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.PROFILE, SerializeFor.ADMIN]
+    serializable: [SerializeFor.ADMIN]
   })
   public _createTime: Date;
 
@@ -52,7 +52,7 @@ export abstract class BaseModel extends Model<any> {
   @prop({
     parser: { resolver: integerParser() },
     populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.PROFILE, SerializeFor.ADMIN, SerializeFor.INSERT_DB],
+    serializable: [SerializeFor.ADMIN, SerializeFor.INSERT_DB],
   })
   public _createUser: number;
 
@@ -62,7 +62,7 @@ export abstract class BaseModel extends Model<any> {
   @prop({
     parser: { resolver: dateParser() },
     populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.PROFILE, SerializeFor.ADMIN]
+    serializable: [SerializeFor.ADMIN]
   })
   public _updateTime: Date;
 
@@ -72,7 +72,7 @@ export abstract class BaseModel extends Model<any> {
   @prop({
     parser: { resolver: integerParser() },
     populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.PROFILE, SerializeFor.ADMIN, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB]
+    serializable: [SerializeFor.ADMIN, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB]
   })
   public _updateUser: number;
 
