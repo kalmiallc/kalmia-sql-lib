@@ -215,7 +215,9 @@ async function setupDatabase() {
       \`email\` VARCHAR(255) NOT NULL,
       \`status\` INT NOT NULL DEFAULT 1,
       \`_createTime\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      \`_createUser\` INT NULL,
       \`_updateTime\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      \`_updateUser\` INT NULL,
       PRIMARY KEY (\`id\`));
   `,
     { },
