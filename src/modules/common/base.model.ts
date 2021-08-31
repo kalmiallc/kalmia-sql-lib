@@ -83,8 +83,8 @@ export abstract class BaseModel extends Model<any> {
     parser: { resolver: integerParser() },
     populatable: [PopulateFor.DB],
     serializable: [SerializeFor.PROFILE, SerializeFor.ADMIN, SerializeFor.UPDATE_DB, SerializeFor.INSERT_DB],
-    emptyValue: () => DbModelStatus.INACTIVE,
-    defaultValue: () => DbModelStatus.INACTIVE,
+    emptyValue: () => DbModelStatus.ACTIVE,
+    defaultValue: () => DbModelStatus.ACTIVE,
   })
   public status: number;
 
@@ -282,6 +282,10 @@ export abstract class BaseModel extends Model<any> {
    * @param id Model's database ID.
    */
   public async populateById(id: any): Promise<this> {
+    if (!id) {
+      return this.reset();
+    }
+
     const data = await new MySqlUtil(await this.db()).paramQuery(
       `
       SELECT * FROM ${this.tableName}
