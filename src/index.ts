@@ -1,6 +1,6 @@
 import { MySqlConnManager } from './modules/db-connection/mysql-conn-manager';
 import { MySqlUtil } from './modules/db-connection/mysql-util';
-import { BaseModel } from './modules/common/base.model';
+import { ActionOptions, BaseModel } from './modules/common/base.model';
 import { Migrations, MigrationOptions } from './modules/migrations/migrations';
 import {
   LoggerType,
@@ -40,9 +40,9 @@ export {
   MySqlConnManager,
   MySqlUtil,
   BaseModel,
+  ActionOptions,
   Migrations,
   MigrationOptions,
-
   WhereQueryComparator,
   SqlQueryObject,
   getQueryParams,
@@ -50,7 +50,6 @@ export {
   selectAndCountQuery,
   unionSelectAndCountQuery,
   buildWhereCondition,
-
   LoggerType,
   LogType,
   ConnectionStrategy,
@@ -60,22 +59,17 @@ export {
   DbConnectionType,
   IConnectionDetails,
   DbModelStatus,
-
   AppLogger,
   IAppLogger,
   StandardLogger,
-
   isPlainObject,
-
   uniqueFieldWithIdValidator,
   uniqueFieldValidator,
   enumInclusionValidator,
   conditionalPresenceValidator,
   JSONParser,
   foreignKeyExistence,
-
   IEnv,
   env,
-
-  MySqlStage,
+  MySqlStage
 };
