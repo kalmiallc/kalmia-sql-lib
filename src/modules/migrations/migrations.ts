@@ -22,7 +22,6 @@ export interface MigrationOptions {
  */
 
 export class Migrations {
-
   dbMigration: Migration;
   migrationToolConnectionPool;
 
@@ -39,7 +38,7 @@ export class Migrations {
       dir: options.path,
       silent: options.silent
     });
-  
+
     await this.dbMigration.initialize();
   }
 
@@ -94,5 +93,4 @@ export class Migrations {
     }
     await this.dbMigration.reset();
   }
-
 }

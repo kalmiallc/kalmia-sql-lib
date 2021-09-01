@@ -2,7 +2,7 @@ import { numberSizeValidator, presenceValidator } from '@rawmodel/validators';
 import { DbModelStatus } from '../../config/types';
 import { MySqlUtil } from '../db-connection/mysql-util';
 import { MySqlConnManager } from '../db-connection/mysql-conn-manager';
-import { BaseModel } from './base.model'; 
+import { BaseModel } from './base.model';
 
 /**
  * Expose standard validators.
@@ -31,11 +31,11 @@ export function enumInclusionValidator(enumerator: any, allowNull = false) {
 
 /**
  * Validates uniqueness of the field value of the given entity.
- * @param tableName 
- * @param fieldName 
- * @param idField 
- * @param checkNull 
- * @returns 
+ * @param tableName
+ * @param fieldName
+ * @param idField
+ * @param checkNull
+ * @returns
  */
 export function uniqueFieldWithIdValidator(sqlTableName: string, fieldName: string, idField = 'id', checkNull = false) {
   return async function (this: BaseModel | any, value: any) {
@@ -57,12 +57,12 @@ export function uniqueFieldWithIdValidator(sqlTableName: string, fieldName: stri
 }
 
 /**
-   * Validates uniqueness of the field value.
-   * @param tableName
-   * @param field
-   * @param checkNull
-   * @returns
-   */
+ * Validates uniqueness of the field value.
+ * @param tableName
+ * @param field
+ * @param checkNull
+ * @returns
+ */
 export function uniqueFieldValidator(tableName: string, field: string, checkNull = false) {
   return async function (this: BaseModel | any, value: any) {
     if ((!checkNull && value === null) || value === undefined) {
@@ -81,13 +81,12 @@ export function uniqueFieldValidator(tableName: string, field: string, checkNull
     return count === 0;
   };
 }
-   
 
 /**
  * Checks for the existence of the resources specified as foreign key prop.
  * @param tableName Table name of the foreign key resource.
  * @param idField Foreign key id.
- * @param checkNull 
+ * @param checkNull
  * @returns boolean
  */
 export function foreignKeyExistence(tableName: string, idField = 'id', checkNull = false) {
@@ -96,7 +95,7 @@ export function foreignKeyExistence(tableName: string, idField = 'id', checkNull
       return true;
     }
 
-    const count =  await new MySqlUtil(await MySqlConnManager.getInstance().getConnection())
+    const count = await new MySqlUtil(await MySqlConnManager.getInstance().getConnection())
       .paramExecute(
         `
       SELECT COUNT(*) as Count FROM \`${tableName}\`
@@ -111,9 +110,9 @@ export function foreignKeyExistence(tableName: string, idField = 'id', checkNull
 }
 
 /**
- * 
- * @param fieldNames 
- * @returns 
+ *
+ * @param fieldNames
+ * @returns
  */
 export function conditionalPresenceValidator(fieldNames: string[]) {
   return async function (this: BaseModel | any) {

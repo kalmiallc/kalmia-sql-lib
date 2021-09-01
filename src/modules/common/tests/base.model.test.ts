@@ -12,7 +12,6 @@ describe('Base model', () => {
   let mySqlStage: MySqlStage;
 
   beforeAll(async () => {
-    
     mySqlStage = await MySqlStage.getInstance();
     await setupDatabase();
   });
@@ -30,10 +29,10 @@ describe('Base model', () => {
       notAProp: 'ladaee'
     };
     const newUser = new TestUser(obj);
-    expect(newUser.email).toBe(obj.email)
-    expect(newUser.id).toBe(obj.id)
-    expect(newUser._createTime).toBe(obj._createTime)
-    expect((newUser as any).notAProp).toBe(undefined)
+    expect(newUser.email).toBe(obj.email);
+    expect(newUser.id).toBe(obj.id);
+    expect(newUser._createTime).toBe(obj._createTime);
+    expect((newUser as any).notAProp).toBe(undefined);
   });
 
   it('Prop population - none', () => {
@@ -44,10 +43,10 @@ describe('Base model', () => {
       notAProp: 'ladaee'
     };
     const newUser = new TestUser().populate(obj);
-    expect(newUser.email).toBe(obj.email)
-    expect(newUser.id).toBe(obj.id)
-    expect(newUser._createTime).toBe(obj._createTime)
-    expect((newUser as any).notAProp).toBe(undefined)
+    expect(newUser.email).toBe(obj.email);
+    expect(newUser.id).toBe(obj.id);
+    expect(newUser._createTime).toBe(obj._createTime);
+    expect((newUser as any).notAProp).toBe(undefined);
   });
 
   it('Prop population - profile', () => {
@@ -58,10 +57,10 @@ describe('Base model', () => {
       notAProp: 'ladaee'
     };
     const newUser = new TestUser().populate(obj, PopulateFor.PROFILE);
-    expect(newUser.email).toBe(obj.email)
-    expect(newUser.id).toBe(null)
-    expect(newUser._createTime).toBe(null)
-    expect((newUser as any).notAProp).toBe(undefined)
+    expect(newUser.email).toBe(obj.email);
+    expect(newUser.id).toBe(null);
+    expect(newUser._createTime).toBe(null);
+    expect((newUser as any).notAProp).toBe(undefined);
   });
 
   it('Prop serialization - none', () => {
@@ -72,9 +71,9 @@ describe('Base model', () => {
     };
     const newUser = new TestUser().populate(obj);
     const serialized = newUser.serialize();
-    expect(serialized.email).toBe(obj.email)
-    expect(serialized.id).toBe(obj.id)
-    expect(serialized._createTime).toBe(obj._createTime)
+    expect(serialized.email).toBe(obj.email);
+    expect(serialized.id).toBe(obj.id);
+    expect(serialized._createTime).toBe(obj._createTime);
   });
 
   it('Prop serialization - profile', () => {
@@ -85,9 +84,9 @@ describe('Base model', () => {
     };
     const newUser = new TestUser().populate(obj, SerializeFor.PROFILE);
     const serialized = newUser.serialize();
-    expect(serialized.email).toBe(obj.email)
-    expect(serialized.id).toBe(null)
-    expect(serialized._createTime).toBe(null)
+    expect(serialized.email).toBe(obj.email);
+    expect(serialized.id).toBe(null);
+    expect(serialized._createTime).toBe(null);
   });
 
   it('Create - OK', async () => {
@@ -220,12 +219,12 @@ async function setupDatabase() {
       \`_updateUser\` INT NULL,
       PRIMARY KEY (\`id\`));
   `,
-    { },
+    {}
   );
 }
 
 class TestUser extends BaseModel {
-  tableName = testTableName
+  tableName = testTableName;
 
   /**
    * email
@@ -245,7 +244,7 @@ async function dropDatabase() {
     `
     DROP TABLE IF EXISTS \`${testTableName}\`;
   `,
-    { },
+    {}
   );
 }
 
