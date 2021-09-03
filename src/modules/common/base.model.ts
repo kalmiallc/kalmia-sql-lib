@@ -41,7 +41,7 @@ export abstract class BaseModel extends Model<any> {
   @prop({
     parser: { resolver: dateParser() },
     populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.ADMIN]
+    serializable: [SerializeFor.ADMIN, SerializeFor.PROFILE]
   })
   public _createTime: Date;
 
@@ -51,7 +51,7 @@ export abstract class BaseModel extends Model<any> {
   @prop({
     parser: { resolver: integerParser() },
     populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.ADMIN, SerializeFor.INSERT_DB]
+    serializable: [SerializeFor.ADMIN, SerializeFor.INSERT_DB, SerializeFor.PROFILE]
   })
   public _createUser: number;
 
@@ -61,7 +61,7 @@ export abstract class BaseModel extends Model<any> {
   @prop({
     parser: { resolver: dateParser() },
     populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.ADMIN]
+    serializable: [SerializeFor.ADMIN, SerializeFor.PROFILE]
   })
   public _updateTime: Date;
 
@@ -71,7 +71,7 @@ export abstract class BaseModel extends Model<any> {
   @prop({
     parser: { resolver: integerParser() },
     populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.ADMIN, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB]
+    serializable: [SerializeFor.ADMIN, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.PROFILE]
   })
   public _updateUser: number;
 
@@ -162,8 +162,6 @@ export abstract class BaseModel extends Model<any> {
     }
 
     const serializedModel = this.serialize(SerializeFor.INSERT_DB);
-
-    // Remove non-creatable parameters
     delete serializedModel.id;
     delete serializedModel._createTime;
     delete serializedModel._updateTime;
