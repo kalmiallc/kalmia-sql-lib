@@ -131,6 +131,11 @@ export class MySqlUtil {
     return values;
   }
 
+  /**
+   * 
+   * @deprecated
+   */
+
   public async paramQuery(query: string, values?: unknown): Promise<any[]> {
     const conn = await (this._dbConnection as mysql.Pool).getConnection();
     if (!conn) {
