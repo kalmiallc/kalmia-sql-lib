@@ -141,13 +141,13 @@ export const buildSearchParameter = (searchString, fields: string[]) => {
   return query;
 };
 
-export const selectAndCountQuery = async (db: any, queryObj: SqlQueryObject, params: any, countByField: string): Promise<{items: any[]; total: number}> => {
-  const querySelect = [
-    queryObj.qSelect,
-    queryObj.qFrom,
-    queryObj.qGroup,
-    queryObj.qFilter
-  ].join('\n');
+export const selectAndCountQuery = async (
+  db: any,
+  queryObj: SqlQueryObject,
+  params: any,
+  countByField: string
+): Promise<{ items: any[]; total: number }> => {
+  const querySelect = [queryObj.qSelect, queryObj.qFrom, queryObj.qGroup, queryObj.qFilter].join('\n');
 
   const queryCount = `
   SELECT COUNT(*) as total
@@ -185,7 +185,12 @@ export const selectAndCountQuery = async (db: any, queryObj: SqlQueryObject, par
   return { items, total };
 };
 
-export const unionSelectAndCountQuery = async (db: any, queryObj: any, params: any, countByField: string): Promise<{ items: any[]; total: number }> => {
+export const unionSelectAndCountQuery = async (
+  db: any,
+  queryObj: any,
+  params: any,
+  countByField: string
+): Promise<{ items: any[]; total: number }> => {
   let querySelectAll = '';
   let queryCountAll = '';
 
