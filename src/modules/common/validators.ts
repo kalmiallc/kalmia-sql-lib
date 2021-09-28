@@ -111,9 +111,9 @@ export function foreignKeyExistence(tableName: string, idField = 'id', checkNull
 }
 
 /**
- *
- * @param fieldNames
- * @returns
+ * Validates the presence of at least one of the specified fields.
+ * @param fieldNames Fields to validate.
+ * @returns boolean
  */
 export function conditionalPresenceValidator(fieldNames: string[]) {
   return async function (this: BaseModel | any) {
