@@ -3,6 +3,7 @@ import { DbModelStatus } from '../../config/types';
 import { MySqlUtil } from '../db-connection/mysql-util';
 import { MySqlConnManager } from '../db-connection/mysql-conn-manager';
 import { BaseModel } from './base.model';
+import { isPresent } from '@rawmodel/utils';
 
 /**
  * Expose standard validators.
@@ -117,7 +118,7 @@ export function foreignKeyExistence(tableName: string, idField = 'id', checkNull
 export function conditionalPresenceValidator(fieldNames: string[]) {
   return async function (this: BaseModel | any) {
     for (const fieldName of fieldNames) {
-      if (this[fieldName]) {
+      if (isPresent(this[fieldName])) {
         return true;
       }
     }
