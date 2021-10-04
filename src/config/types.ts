@@ -29,6 +29,7 @@ export enum ConnectionStrategy {
 export enum ApplicationEnv {
   TEST = 'testing',
   DEV = 'development',
+  STG = 'staging',
   PROD = 'production'
 }
 
