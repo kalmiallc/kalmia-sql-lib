@@ -27,7 +27,7 @@ The `MySqlUtil` shall be used for proper database usage.
 
 Example calling the param query  `MySqlUtil`
 ```typescript
-await (new MySqlUtil(await MySqlConnManager.getInstance().getConnection() as Pool)).paramQuery(
+await (new MySqlUtil(await MySqlConnManager.getInstance().getConnection() as Pool)).paramExecute(
       `SELECT COUNT(*) AS 'COUNT' FROM ${DbCollections.ROLE_PERMISSIONS};`,
     );`
 ```

@@ -283,7 +283,7 @@ export abstract class BaseModel extends Model<any> {
       return this.reset();
     }
 
-    const data = await new MySqlUtil(await this.db()).paramQuery(
+    const data = await new MySqlUtil(await this.db()).paramExecute(
       `
       SELECT * FROM ${this.tableName}
       WHERE id = @id
