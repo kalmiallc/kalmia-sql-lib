@@ -15,6 +15,8 @@ export interface IAppLogger {
   warn(args: any[]);
   debug(args: any[]);
   verbose(args: any[]); 
+
+  setLogLevel(ll: string);
 }
 
 export class AppLogger {
@@ -51,7 +53,7 @@ export class AppLogger {
     return inspect(data, { showHidden, depth });
   }
 
-  public static overrideLevel(level: LogType){
-    
+  public static overrideLevel(level: string){
+    this.logger.setLogLevel(level);
   }
 }
