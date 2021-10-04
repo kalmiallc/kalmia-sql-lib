@@ -10,11 +10,11 @@ import { inspect } from 'util';
 import { StandardLogger } from './logger';
 
 export interface IAppLogger {
-  info(args: any[]);
-  debug(args: any[]);
-  verbose(args: any[]);
-  warn(args: any[]);
   error(args: any[]);
+  info(args: any[]);
+  warn(args: any[]);
+  debug(args: any[]);
+  verbose(args: any[]); 
 }
 
 export class AppLogger {
@@ -49,5 +49,9 @@ export class AppLogger {
 
   public static stringifyObjectForLog(data: any, depth: number = 3, showHidden: boolean = false) {
     return inspect(data, { showHidden, depth });
+  }
+
+  public static overrideLevel(level: LogType){
+    
   }
 }
