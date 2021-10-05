@@ -42,7 +42,7 @@ export const env: IEnv = {
    * Log writing destination.
    */
   LOG_TARGET: process.env['LOG_TARGET'] || 'console',
-  LOG_OUT_LEVEL: process.env['LOG_OUT_LEVEL'] || 'info',
+  LOG_OUT_LEVEL: process.env['LOG_OUT_LEVEL'] || 'warn',
 
   /**
    * Mysql URL.

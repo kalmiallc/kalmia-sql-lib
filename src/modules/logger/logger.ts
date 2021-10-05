@@ -57,7 +57,34 @@ function expressInColor(type: LogType, message: string, error?: Error) {
   );
 }
 
-function writeLog(type: LogType, message: string, error?: Error): void {
+function writeLog(type: LogType, message: string, error?: Error, loglevel?: string): void {
+  
+  if (!loglevel) {
+    loglevel = env.LOG_OUT_LEVEL;
+  }
+
+  // filter out log level 
+  if (loglevel === LogType.ERROR) {
+    if (type === LogType.DEBUG || type === LogType.VERBOSE || type === LogType.WARN || type === LogType.INFO) {
+      return;
+    }
+  }
+  if (loglevel === LogType.INFO || loglevel === LogType.ERROR) {
+    if (type === LogType.DEBUG || type === LogType.VERBOSE || type === LogType.WARN) {
+      return;
+    }
+  }
+  if (loglevel === LogType.WARN || loglevel === LogType.INFO || loglevel === LogType.ERROR) {
+    if (type === LogType.DEBUG || type === LogType.VERBOSE) {
+      return;
+    }
+  }
+  if (loglevel === LogType.DEBUG ) {
+    if (type === LogType.VERBOSE) {
+      return;
+    }
+  }
+  
   if (env.LOG_TARGET == 'color') {
     expressInColor(type, message, error);
   } else if (env.LOG_TARGET == 'console') {
@@ -67,19 +94,25 @@ function writeLog(type: LogType, message: string, error?: Error): void {
 
 // console logger is the default logger
 export class StandardLogger {
+ 
+  private loglevel: string;
+  public setLogLevel(ll: string) {
+    this.loglevel = ll;
+  }
+ 
   public info(args: any[]) {
     const fileName = args.shift();
     const methodName = args.shift();
     const location = `[${fileName}/${methodName}]`;
     args.push(location);
-    writeLog(LogType.INFO, args.join(', '));
+    writeLog(LogType.INFO, args.join(', '), null, this.loglevel);
   }
   public debug(args: any[]) {
     const fileName = args.shift();
     const methodName = args.shift();
     const location = `[${fileName}/${methodName}]`;
     args.push(location);
-    writeLog(LogType.DEBUG, args.join(', '));
+    writeLog(LogType.DEBUG, args.join(', '), null, this.loglevel);
   }
 
   public verbose(args: any[]) {
@@ -87,7 +120,7 @@ export class StandardLogger {
     const methodName = args.shift();
     const location = `[${fileName}/${methodName}]`;
     args.push(location);
-    writeLog(LogType.VERBOSE, args.join(', '));
+    writeLog(LogType.VERBOSE, args.join(', '), null, this.loglevel);
   }
 
   public warn(args: any[]) {
@@ -95,14 +128,14 @@ export class StandardLogger {
     const methodName = args.shift();
     const location = `[${fileName}/${methodName}]`;
     args.push(location);
-    writeLog(LogType.WARN, args.join(', '));
+    writeLog(LogType.WARN, args.join(', '), null, this.loglevel);
   }
   public error(args: any[]) {
     const fileName = args.shift();
     const methodName = args.shift();
     const location = `[${fileName}/${methodName}]`;
     args.push(location);
-    writeLog(LogType.ERROR, args.join(', '));
+    writeLog(LogType.ERROR, args.join(', '), null, this.loglevel);
   }
 
   // Intended for the messages form the tests
@@ -112,6 +145,6 @@ export class StandardLogger {
     args.unshift('[ TEST ] ');
     const location = `[${fileName}/${methodName}]`;
     args.push(location);
-    writeLog(LogType.INFO, args.join());
+    writeLog(LogType.INFO, args.join(), null, this.loglevel);
   }
 }
