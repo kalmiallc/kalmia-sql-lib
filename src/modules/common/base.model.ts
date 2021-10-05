@@ -370,4 +370,47 @@ export abstract class BaseModel extends Model<any> {
       ${table}._updateUser
     `;
   }
+
+  /**
+   * Returns mapped default selected columns. Column name is mapped with the table prefix.
+   * @param table Queried table synonym.
+   * @returns Default select mapped columns.
+   */
+  public getMappedSelectColumns(table: string): string {
+    return `
+      ${table}.id as ${table}Id,
+      ${table}.status as ${table}Status,
+      ${table}._createTime as ${table}CreateTime,
+      ${table}._createUser as ${table}CreateUser,
+      ${table}._updateTime as ${table}UpdateTime,
+      ${table}._updateUser as ${table}UpdateUser
+    `;
+  }
+
+  /**
+   * Parses mapped selected columns back to their original fields.
+   * @param table Queried table synonym.
+   * @param data Data to parse from.
+   * @returns Parsed default selected columns.
+   */
+  public parseMappedSelectColumns(
+    table: string,
+    data: any
+  ): {
+    id: number;
+    status: DbModelStatus;
+    _createTime: Date;
+    _createUser: number;
+    _updateTime: Date;
+    _updateUser: number;
+  } {
+    return {
+      ...{ id: data[`${table}Id`] ? data[`${table}Id`] : null },
+      ...{ status: data[`${table}Status`] ? data[`${table}Status`] : null },
+      ...{ _createTime: data[`${table}CreateTime`] ? data[`${table}CreateTime`] : null },
+      ...{ _createUser: data[`${table}CreateUser`] ? data[`${table}CreateUser`] : null },
+      ...{ _updateTime: data[`${table}UpdateTime`] ? data[`${table}UpdateTime`] : null },
+      ...{ _updateUser: data[`${table}UpdateUser`] ? data[`${table}UpdateUser`] : null }
+    };
+  }
 }
