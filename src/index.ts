@@ -12,7 +12,7 @@ import {
   LogType,
   StandardLogger
 } from 'kalmia-common-lib';
-import { IEnv } from './../dist/config/env.d';
+import { IEnv } from './config/env';
 import { ConnectionStrategy, DbConnectionType, DbModelStatus, IConnectionDetails, PopulateFor, SerializeFor } from './config/types';
 import { ActionOptions, BaseModel } from './modules/common/base.model';
 import { foreignKeyExistence, uniqueFieldValidator, uniqueFieldWithIdValidator } from './modules/common/validators';
