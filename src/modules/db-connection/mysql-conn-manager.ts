@@ -1,3 +1,4 @@
+
 /**
  * This is a global connection manager. It's purpose is to provide a single entry point for all types of connections.
  * It allows only one instance, so this manager also handles connection pooling.
@@ -10,11 +11,12 @@
  * TODO: Add options to control the connection from the AWS
  */
 
+
+import { ApplicationEnv, AppLogger } from 'kalmia-common-lib';
 import * as mysqlSync from 'mysql2';
 import * as mysql from 'mysql2/promise';
 import { env } from '../../config/env';
-import { ApplicationEnv, ConnectionStrategy, DbConnectionType, IConnectionDetails } from '../../config/types';
-import { AppLogger } from '../logger/app-logger';
+import { ConnectionStrategy, DbConnectionType, IConnectionDetails } from '../../config/types';
 
 
 export class MySqlConnManager {

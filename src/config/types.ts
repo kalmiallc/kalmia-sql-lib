@@ -1,18 +1,5 @@
 /* eslint-disable no-shadow */
 
-export enum LoggerType {
-  STANDARD = 'STD',
-  NEST = 'NEST'
-}
-
-export enum LogType {
-  VERBOSE = 'VBS',
-  DEBUG = 'DBG',
-  INFO = 'INF',
-  WARN = 'WRN',
-  ERROR = 'ERR'
-}
-
 /**
  * Connection strategy
  */
@@ -21,16 +8,6 @@ export enum ConnectionStrategy {
   LOCAL_POOL = 'local_pool',
   RDS_PROXY_POOL = 'rds_proxy_pool',
   LMD_OUT_OF_HANDLER_CONN = 'lmd_out_of_handler_conn'
-}
-
-/**
- * List of possible applications run environments.
- */
-export enum ApplicationEnv {
-  TEST = 'testing',
-  DEV = 'development',
-  STG = 'staging',
-  PROD = 'production'
 }
 
 /**

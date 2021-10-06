@@ -1,17 +1,12 @@
 /* eslint-disable radix */
 import * as dotenv from 'dotenv';
-import { ApplicationEnv, ConnectionStrategy, LoggerType } from './types';
+import { env as commonEnv, ICommonEnv } from 'kalmia-common-lib';
+import { ConnectionStrategy } from './types';
 
 /**
  * Environment object interface.
  */
 export interface IEnv {
-  APP_ENV: string;
-
-  LOG_TARGET: string;
-
-  LOG_OUT_LEVEL: string;
-
   MYSQL_CONN_STRATEGY: string;
   MYSQL_HOST: string;
   MYSQL_PORT: number;
@@ -26,8 +21,6 @@ export interface IEnv {
   MYSQL_USER_TEST: string;
   MYSQL_PASSWORD_TEST: string;
   MYSQL_POOL_SIZE_TEST: number;
-
-  LOGGER_TYPE: string;
 }
 
 /**
@@ -35,15 +28,8 @@ export interface IEnv {
  */
 dotenv.config();
 
-export const env: IEnv = {
-  APP_ENV: process.env['APP_ENV'] || ApplicationEnv.DEV,
-
-  /**
-   * Log writing destination.
-   */
-  LOG_TARGET: process.env['LOG_TARGET'] || 'console',
-  LOG_OUT_LEVEL: process.env['LOG_OUT_LEVEL'] || 'warn',
-
+export const env: IEnv & ICommonEnv = {
+  ...commonEnv,
   /**
    * Mysql URL.
    */
@@ -105,5 +91,4 @@ export const env: IEnv = {
    */
   MYSQL_POOL_SIZE_TEST: parseInt(process.env['MYSQL_POOL_TEST']) || 5,
 
-  LOGGER_TYPE: process.env['LOGGER_TYPE'] || LoggerType.STANDARD,
 };

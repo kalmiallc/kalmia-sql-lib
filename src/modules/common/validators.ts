@@ -2,32 +2,13 @@ import { numberSizeValidator, presenceValidator } from '@rawmodel/validators';
 import { Pool } from 'mysql2/promise';
 import { DbModelStatus } from '../../config/types';
 import { MySqlUtil } from '../db-connection/mysql-util';
-import { BaseModel } from './base.model'; 
+import { BaseModel } from './base.model';
 
 /**
  * Expose standard validators.
  */
 export { numberSizeValidator, presenceValidator };
 
-/**
- * Validates if value is inside enumerator
- */
-export function enumInclusionValidator(enumerator: any, allowNull = false) {
-  return function (value: any) {
-    if (allowNull && (value === null || value === undefined)) {
-      return true;
-    }
-
-    let valid = false;
-    for (const key in enumerator) {
-      if (Object.prototype.hasOwnProperty.call(enumerator, key) && value === enumerator[key]) {
-        valid = true;
-        break;
-      }
-    }
-    return valid;
-  };
-}
 
 /**
  * Validates uniqueness of field value.
@@ -83,18 +64,3 @@ export function foreignKeyExistence(tableName: string, idField = 'id', checkNull
   };
 }
 
-/**
- * 
- * @param fieldNames 
- * @returns 
- */
-export function conditionalPresenceValidator(fieldNames: string[]) {
-  return async function (this: BaseModel) {
-    for (const fieldName of fieldNames) {
-      if (this[fieldName]) {
-        return true;
-      }
-    }
-    return false;
-  };
-}

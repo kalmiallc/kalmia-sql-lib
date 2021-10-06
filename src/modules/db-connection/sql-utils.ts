@@ -1,5 +1,5 @@
+import { AppLogger } from 'kalmia-common-lib';
 import * as SqlString from 'sqlstring';
-import { AppLogger } from '../logger/app-logger';
 
 // eslint-disable-next-line no-shadow
 export enum WhereQueryComparator {

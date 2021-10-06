@@ -1,7 +1,7 @@
-import { MySqlConnManager } from '../db-connection/mysql-conn-manager';
-import { ApplicationEnv } from '../../config/types';
-import { env } from '../../config/env';
+import { ApplicationEnv } from 'kalmia-common-lib';
 import { Connection, Pool } from 'mysql2/promise';
+import { env } from '../../config/env';
+import { MySqlConnManager } from '../db-connection/mysql-conn-manager';
 import { MySqlUtil } from '../db-connection/mysql-util';
 
 /**

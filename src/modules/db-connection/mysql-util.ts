@@ -1,8 +1,7 @@
+import { AppLogger, isPlainObject } from 'kalmia-common-lib';
 import * as mysql from 'mysql2/promise';
 import { Pool, PoolConnection } from 'mysql2/promise';
 import * as SqlString from 'sqlstring';
-import { isPlainObject } from '../common/utils';
-import { AppLogger } from '../logger/app-logger';
 
 /**
  * MySQL class.
