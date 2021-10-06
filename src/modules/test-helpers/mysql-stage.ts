@@ -20,7 +20,7 @@ export class MySqlStage {
       MySqlStage.instance = new MySqlStage();
       await MySqlStage.instance.init();
     }
-    
+
     return MySqlStage.instance;
   }
 
@@ -40,5 +40,4 @@ export class MySqlStage {
   public async close(): Promise<void> {
     await this.connManager.end();
   }
-
 }

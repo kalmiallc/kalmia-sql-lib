@@ -1,6 +1,6 @@
 import { numberSizeValidator, presenceValidator } from '@rawmodel/validators';
-import { Pool } from 'mysql2/promise';
 import { DbModelStatus } from '../../config/types';
+import { MySqlConnManager } from '../db-connection/mysql-conn-manager';
 import { MySqlUtil } from '../db-connection/mysql-util';
 import { BaseModel } from './base.model';
 
@@ -9,29 +9,54 @@ import { BaseModel } from './base.model';
  */
 export { numberSizeValidator, presenceValidator };
 
-
 /**
- * Validates uniqueness of field value.
- * @param tableName 
- * @param fieldName 
- * @param idField 
- * @param checkNull 
- * @returns 
+ * Validates uniqueness of the field value of the given entity.
+ * @param tableName
+ * @param fieldName
+ * @param idField
+ * @param checkNull
+ * @returns
  */
-export function uniqueFieldValue(sqlTableName: string, fieldName: string, idField = 'id', checkNull = false) {
-  return async function (this: BaseModel, value: any) {
+export function uniqueFieldWithIdValidator(sqlTableName: string, fieldName: string, idField = 'id', checkNull = false) {
+  return async function (this: BaseModel | any, value: any) {
     if ((!checkNull && value === null) || value === undefined) {
       return true;
     }
-    const count = await new MySqlUtil((await this.db()) as Pool)
+    const count = await new MySqlUtil(await MySqlConnManager.getInstance().getConnection())
       .paramExecute(
         `
       SELECT COUNT(*) as Count FROM \`${sqlTableName}\`
       WHERE \`${fieldName}\` = @value
       AND (@id IS NULL OR (@id IS NOT NULL AND \`${idField}\` <> @id ))`,
-        { value, id: this.id }
+        { value, id: this[idField] }
       )
       .then((rows) => rows[0].Count);
+
+    return count === 0;
+  };
+}
+
+/**
+ * Validates uniqueness of the field value.
+ * @param tableName
+ * @param field
+ * @param checkNull
+ * @returns
+ */
+export function uniqueFieldValidator(tableName: string, field: string, checkNull = false) {
+  return async function (this: BaseModel | any, value: any) {
+    if ((!checkNull && value === null) || value === undefined) {
+      return true;
+    }
+
+    const count = await new MySqlUtil(await MySqlConnManager.getInstance().getConnection())
+      .paramExecute(
+        `
+      SELECT COUNT(*) as Count FROM \`${tableName}\`
+      WHERE \`${field}\` = @value`,
+        { value }
+      )
+      .then((rows: any) => rows[0].Count);
 
     return count === 0;
   };
@@ -41,16 +66,16 @@ export function uniqueFieldValue(sqlTableName: string, fieldName: string, idFiel
  * Checks for the existence of the resources specified as foreign key prop.
  * @param tableName Table name of the foreign key resource.
  * @param idField Foreign key id.
- * @param checkNull 
+ * @param checkNull
  * @returns boolean
  */
 export function foreignKeyExistence(tableName: string, idField = 'id', checkNull = false) {
-  return async function (this: BaseModel, value: any) {
+  return async function (this: BaseModel | any, value: any) {
     if ((!checkNull && value === null) || value === undefined) {
       return true;
     }
 
-    const count =  await new MySqlUtil((await this.db()))
+    const count = await new MySqlUtil(await MySqlConnManager.getInstance().getConnection())
       .paramExecute(
         `
       SELECT COUNT(*) as Count FROM \`${tableName}\`
@@ -63,4 +88,3 @@ export function foreignKeyExistence(tableName: string, idField = 'id', checkNull
     return count === 0;
   };
 }
-

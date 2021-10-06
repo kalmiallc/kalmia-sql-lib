@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/indent */
 import { Model, prop } from '@rawmodel/core';
 import { dateParser, integerParser } from '@rawmodel/parsers';
 import { Connection, Pool, PoolConnection } from 'mysql2/promise';
@@ -12,9 +13,8 @@ export interface ActionOptions {
   conn?: PoolConnection;
   context?: {
     user?: any;
-  }; 
+  };
 }
-
 
 /**
  * Common model related objects.
@@ -25,7 +25,6 @@ export { prop };
  * Base model.
  */
 export abstract class BaseModel extends Model<any> {
-
   /**
    * Base model's id property definition.
    */
@@ -42,7 +41,7 @@ export abstract class BaseModel extends Model<any> {
   @prop({
     parser: { resolver: dateParser() },
     populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.PROFILE, SerializeFor.ADMIN]
+    serializable: [SerializeFor.ADMIN, SerializeFor.PROFILE]
   })
   public _createTime: Date;
 
@@ -52,7 +51,7 @@ export abstract class BaseModel extends Model<any> {
   @prop({
     parser: { resolver: integerParser() },
     populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.PROFILE, SerializeFor.ADMIN, SerializeFor.INSERT_DB],
+    serializable: [SerializeFor.ADMIN, SerializeFor.INSERT_DB, SerializeFor.PROFILE]
   })
   public _createUser: number;
 
@@ -62,7 +61,7 @@ export abstract class BaseModel extends Model<any> {
   @prop({
     parser: { resolver: dateParser() },
     populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.PROFILE, SerializeFor.ADMIN]
+    serializable: [SerializeFor.ADMIN, SerializeFor.PROFILE]
   })
   public _updateTime: Date;
 
@@ -72,7 +71,7 @@ export abstract class BaseModel extends Model<any> {
   @prop({
     parser: { resolver: integerParser() },
     populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.PROFILE, SerializeFor.ADMIN, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB]
+    serializable: [SerializeFor.ADMIN, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.PROFILE]
   })
   public _updateUser: number;
 
@@ -83,8 +82,8 @@ export abstract class BaseModel extends Model<any> {
     parser: { resolver: integerParser() },
     populatable: [PopulateFor.DB],
     serializable: [SerializeFor.PROFILE, SerializeFor.ADMIN, SerializeFor.UPDATE_DB, SerializeFor.INSERT_DB],
-    emptyValue: () => DbModelStatus.INACTIVE,
-    defaultValue: () => DbModelStatus.INACTIVE,
+    emptyValue: () => DbModelStatus.ACTIVE,
+    defaultValue: () => DbModelStatus.ACTIVE
   })
   public status: number;
 
@@ -108,7 +107,7 @@ export abstract class BaseModel extends Model<any> {
    * Tells if the model represents a document stored in the database.
    */
   public exists(): boolean {
-    return !!this.id && (this.status !== DbModelStatus.DELETED);
+    return !!this.id && this.status !== DbModelStatus.DELETED;
   }
 
   /**
@@ -122,31 +121,31 @@ export abstract class BaseModel extends Model<any> {
    * Returns an instance of a sql utils.
    */
   public async sql(conn?: Pool | Connection): Promise<MySqlUtil> {
-    return new MySqlUtil(conn || await this.db());
+    return new MySqlUtil(conn || (await this.db()));
   }
 
   /**
    * Returns DB connection with transaction support.
    * @param conn Existing connection.
    * @returns {
-     *  singleTrans: Tells if connection will be used in transaction.
-     *  sql: MySqlUtil
-     *  conn: PoolConnection
-     * }
-     */
+   *  singleTrans: Tells if connection will be used in transaction.
+   *  sql: MySqlUtil
+   *  conn: PoolConnection
+   * }
+   */
   public async getDbConnection(conn?: PoolConnection): Promise<{ singleTrans: boolean; sql: MySqlUtil; conn: PoolConnection }> {
     const singleTrans = !conn;
     let sql: MySqlUtil;
-  
+
     if (singleTrans) {
       sql = await this.sql();
       conn = await sql.start();
     }
     sql = new MySqlUtil(conn);
-  
+
     return { singleTrans, sql, conn };
   }
-  
+
   /**
    * Saves model data in the database as a new row.
    * @param options Create options.
@@ -163,8 +162,6 @@ export abstract class BaseModel extends Model<any> {
     }
 
     const serializedModel = this.serialize(SerializeFor.INSERT_DB);
-
-    // Remove non-creatable parameters
     delete serializedModel.id;
     delete serializedModel._createTime;
     delete serializedModel._updateTime;
@@ -181,17 +178,17 @@ export abstract class BaseModel extends Model<any> {
       options.conn = await mySqlHelper.start();
     }
     mySqlHelper = new MySqlUtil(options.conn);
-  
+
     try {
       const createQuery = `
       INSERT INTO \`${this.tableName}\`
       ( ${Object.keys(serializedModel)
-    .map((x) => `\`${x}\``)
-    .join(', ')} )
+        .map((x) => `\`${x}\``)
+        .join(', ')} )
       VALUES (
         ${Object.keys(serializedModel)
-    .map((key) => `@${key}`)
-    .join(', ')}
+          .map((key) => `@${key}`)
+          .join(', ')}
       )`;
 
       await mySqlHelper.paramExecute(createQuery, serializedModel, options.conn);
@@ -202,7 +199,7 @@ export abstract class BaseModel extends Model<any> {
 
       this._createTime = new Date();
       this._updateTime = this._createTime;
-      if (isSingleTrans) {        
+      if (isSingleTrans) {
         await mySqlHelper.commit(options.conn);
       }
     } catch (err) {
@@ -253,8 +250,8 @@ export abstract class BaseModel extends Model<any> {
       UPDATE \`${this.tableName}\`
       SET
         ${Object.keys(serializedModel)
-    .map((x) => `\`${x}\` = @${x}`)
-    .join(',\n')}
+          .map((x) => `\`${x}\` = @${x}`)
+          .join(',\n')}
       WHERE id = @id
       `;
 
@@ -282,7 +279,11 @@ export abstract class BaseModel extends Model<any> {
    * @param id Model's database ID.
    */
   public async populateById(id: any): Promise<this> {
-    const data = await new MySqlUtil(await this.db()).paramQuery(
+    if (!id) {
+      return this.reset();
+    }
+
+    const data = await new MySqlUtil(await this.db()).paramExecute(
       `
       SELECT * FROM ${this.tableName}
       WHERE id = @id
@@ -299,7 +300,7 @@ export abstract class BaseModel extends Model<any> {
 
   /**
    * Marks model as deleted in the database - soft delete.
-   * 
+   *
    * @param options Delete options.
    * @returns this
    */
@@ -331,11 +332,15 @@ export abstract class BaseModel extends Model<any> {
         WHERE id = @id
       `;
 
-      await mySqlHelper.paramExecute(deleteQuery, {
-        id: this.id,
-        status: (this.status = DbModelStatus.DELETED),
-      }, options.conn);
-      
+      await mySqlHelper.paramExecute(
+        deleteQuery,
+        {
+          id: this.id,
+          status: (this.status = DbModelStatus.DELETED)
+        },
+        options.conn
+      );
+
       this._updateTime = new Date();
       if (isSingleTrans) {
         await mySqlHelper.commit(options.conn);
@@ -364,5 +369,48 @@ export abstract class BaseModel extends Model<any> {
       ${table}._updateTime,
       ${table}._updateUser
     `;
+  }
+
+  /**
+   * Returns mapped default selected columns. Column name is mapped with the table prefix.
+   * @param table Queried table synonym.
+   * @returns Default select mapped columns.
+   */
+  public getMappedSelectColumns(table: string): string {
+    return `
+      ${table}.id as ${table}Id,
+      ${table}.status as ${table}Status,
+      ${table}._createTime as ${table}CreateTime,
+      ${table}._createUser as ${table}CreateUser,
+      ${table}._updateTime as ${table}UpdateTime,
+      ${table}._updateUser as ${table}UpdateUser
+    `;
+  }
+
+  /**
+   * Parses mapped selected columns back to their original fields.
+   * @param table Queried table synonym.
+   * @param data Data to parse from.
+   * @returns Parsed default selected columns.
+   */
+  public parseMappedSelectColumns(
+    table: string,
+    data: any
+  ): {
+    id: number;
+    status: DbModelStatus;
+    _createTime: Date;
+    _createUser: number;
+    _updateTime: Date;
+    _updateUser: number;
+  } {
+    return {
+      ...{ id: data[`${table}Id`] ? data[`${table}Id`] : null },
+      ...{ status: data[`${table}Status`] ? data[`${table}Status`] : null },
+      ...{ _createTime: data[`${table}CreateTime`] ? data[`${table}CreateTime`] : null },
+      ...{ _createUser: data[`${table}CreateUser`] ? data[`${table}CreateUser`] : null },
+      ...{ _updateTime: data[`${table}UpdateTime`] ? data[`${table}UpdateTime`] : null },
+      ...{ _updateUser: data[`${table}UpdateUser`] ? data[`${table}UpdateUser`] : null }
+    };
   }
 }
