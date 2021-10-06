@@ -3,7 +3,6 @@ import {
   AppLogger,
   conditionalPresenceValidator,
   enumInclusionValidator,
-  env,
   IAppLogger,
   ICommonEnv,
   isPlainObject,
@@ -12,7 +11,7 @@ import {
   LogType,
   StandardLogger
 } from 'kalmia-common-lib';
-import { IEnv } from './config/env';
+import { env, IMySqlEnv } from './config/env';
 import { ConnectionStrategy, DbConnectionType, DbModelStatus, IConnectionDetails, PopulateFor, SerializeFor } from './config/types';
 import { ActionOptions, BaseModel } from './modules/common/base.model';
 import { foreignKeyExistence, uniqueFieldValidator, uniqueFieldWithIdValidator } from './modules/common/validators';
@@ -63,7 +62,7 @@ export {
   conditionalPresenceValidator,
   JSONParser,
   foreignKeyExistence,
-  IEnv,
+  IMySqlEnv as IEnv,
   ICommonEnv,
   env,
   MySqlStage

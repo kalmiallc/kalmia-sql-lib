@@ -6,7 +6,7 @@ import { ConnectionStrategy } from './types';
 /**
  * Environment object interface.
  */
-export interface IEnv {
+export interface IMySqlEnv {
   MYSQL_CONN_STRATEGY: string;
   MYSQL_HOST: string;
   MYSQL_PORT: number;
@@ -28,7 +28,7 @@ export interface IEnv {
  */
 dotenv.config();
 
-export const env: IEnv & ICommonEnv = {
+export const env: IMySqlEnv & ICommonEnv = {
   ...commonEnv,
   /**
    * Mysql URL.
@@ -89,6 +89,5 @@ export const env: IEnv & ICommonEnv = {
   /**
    * Mysql test connection pool size.
    */
-  MYSQL_POOL_SIZE_TEST: parseInt(process.env['MYSQL_POOL_TEST']) || 5,
-
+  MYSQL_POOL_SIZE_TEST: parseInt(process.env['MYSQL_POOL_TEST']) || 5
 };
