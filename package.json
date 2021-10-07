@@ -1,12 +1,10 @@
 {
   "name": "kalmia-sql-lib",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "SQL lib for Kalmia projects",
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
   "scripts": {
     "build": "rimraf dist && tsc --build tsconfig.json",
-    "prepare": "npm run build",
     "index": "ts-node src/index.ts",
     "lint": "eslint -c .eslintrc.js --ext .ts ./src",
     "lintFix": "eslint --fix -c .eslintrc.js --ext .ts ./src",
