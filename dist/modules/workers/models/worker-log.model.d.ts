@@ -1,5 +1,5 @@
-import { WorkerDbTables } from 'src/config/types';
-import { BaseModel } from 'src/modules/common/base.model';
+import { WorkerDbTables } from '../../../config/types';
+import { BaseModel } from '../../common/base.model';
 /**
  * Worker log model.
  */
@@ -11,7 +11,15 @@ export declare class WorkerLog extends BaseModel {
     /**
      * Worker ID.
      */
-    workerId: string;
+    workerId: number;
+    /**
+     * Worker name.
+     */
+    workerName: number;
+    /**
+     * Worker type.
+     */
+    workerType: string;
     /**
      * Worker log level.
      */
@@ -21,9 +29,9 @@ export declare class WorkerLog extends BaseModel {
      */
     message: string;
     /**
-     * Worker log invocation method.
+     * Worker log source function.
      */
-    method: string;
+    sourceFunction: string;
     /**
      * Worker log additional data in JSON format.
      */

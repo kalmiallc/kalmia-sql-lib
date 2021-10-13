@@ -1,8 +1,7 @@
-import { PopulateFor, SerializeFor, WorkerDbTables } from 'src/config/types';
+import { PopulateFor, SerializeFor, WorkerDbTables } from '../../../config/types';
 import { stringParser, integerParser } from '@rawmodel/parsers';
-import { BaseModel } from 'src/modules/common/base.model';
+import { BaseModel } from '../../common/base.model';
 import { prop } from '@rawmodel/core';
-import { serialize } from 'v8';
 
 /**
  * Worker log model.

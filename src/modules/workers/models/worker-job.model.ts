@@ -1,9 +1,9 @@
 import { booleanParser, dateParser, integerParser, stringParser } from '@rawmodel/parsers';
 import { prop } from '@rawmodel/core';
 import { JSONParser } from 'kalmia-common-lib';
-import { BaseModel } from 'src/modules/common/base.model';
-import { DbModelStatus, PopulateFor, SerializeFor, WorkerDbTables } from 'src/config/types';
-import { MySqlUtil } from 'src/modules/db-connection/mysql-util';
+import { BaseModel } from '../../common/base.model';
+import { DbModelStatus, PopulateFor, SerializeFor, WorkerDbTables } from '../../../config/types';
+import { MySqlUtil } from '../../db-connection/mysql-util';
 
 /**
  * Worker job model.

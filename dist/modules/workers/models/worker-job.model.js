@@ -13,9 +13,9 @@ exports.WorkerJob = void 0;
 const parsers_1 = require("@rawmodel/parsers");
 const core_1 = require("@rawmodel/core");
 const kalmia_common_lib_1 = require("kalmia-common-lib");
-const base_model_1 = require("src/modules/common/base.model");
-const types_1 = require("src/config/types");
-const mysql_util_1 = require("src/modules/db-connection/mysql-util");
+const base_model_1 = require("../../common/base.model");
+const types_1 = require("../../../config/types");
+const mysql_util_1 = require("../../db-connection/mysql-util");
 /**
  * Worker job model.
  */

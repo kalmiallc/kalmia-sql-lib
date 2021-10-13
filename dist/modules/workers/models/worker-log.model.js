@@ -10,9 +10,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WorkerLog = void 0;
-const types_1 = require("src/config/types");
+const types_1 = require("../../../config/types");
 const parsers_1 = require("@rawmodel/parsers");
-const base_model_1 = require("src/modules/common/base.model");
+const base_model_1 = require("../../common/base.model");
 const core_1 = require("@rawmodel/core");
 /**
  * Worker log model.
@@ -28,36 +28,57 @@ class WorkerLog extends base_model_1.BaseModel {
 }
 __decorate([
     (0, core_1.prop)({
-        parser: { resolver: (0, parsers_1.stringParser)() },
-        populatable: [types_1.PopulateFor.DB]
+        parser: { resolver: (0, parsers_1.integerParser)() },
+        populatable: [types_1.PopulateFor.DB],
+        serializable: [types_1.SerializeFor.INSERT_DB]
     }),
-    __metadata("design:type", String)
+    __metadata("design:type", Number)
 ], WorkerLog.prototype, "workerId", void 0);
 __decorate([
     (0, core_1.prop)({
+        parser: { resolver: (0, parsers_1.stringParser)() },
+        populatable: [types_1.PopulateFor.DB],
+        serializable: [types_1.SerializeFor.INSERT_DB]
+    }),
+    __metadata("design:type", Number)
+], WorkerLog.prototype, "workerName", void 0);
+__decorate([
+    (0, core_1.prop)({
+        parser: { resolver: (0, parsers_1.stringParser)() },
+        populatable: [types_1.PopulateFor.DB],
+        serializable: [types_1.SerializeFor.INSERT_DB]
+    }),
+    __metadata("design:type", String)
+], WorkerLog.prototype, "workerType", void 0);
+__decorate([
+    (0, core_1.prop)({
         parser: { resolver: (0, parsers_1.integerParser)() },
-        populatable: [types_1.PopulateFor.DB]
+        populatable: [types_1.PopulateFor.DB],
+        serializable: [types_1.SerializeFor.INSERT_DB]
     }),
     __metadata("design:type", Number)
 ], WorkerLog.prototype, "level", void 0);
 __decorate([
     (0, core_1.prop)({
         parser: { resolver: (0, parsers_1.stringParser)() },
-        populatable: [types_1.PopulateFor.DB]
+        populatable: [types_1.PopulateFor.DB],
+        serializable: [types_1.SerializeFor.INSERT_DB]
     }),
     __metadata("design:type", String)
 ], WorkerLog.prototype, "message", void 0);
 __decorate([
     (0, core_1.prop)({
         parser: { resolver: (0, parsers_1.stringParser)() },
-        populatable: [types_1.PopulateFor.DB]
+        populatable: [types_1.PopulateFor.DB],
+        serializable: [types_1.SerializeFor.INSERT_DB]
     }),
     __metadata("design:type", String)
-], WorkerLog.prototype, "method", void 0);
+], WorkerLog.prototype, "sourceFunction", void 0);
 __decorate([
     (0, core_1.prop)({
         parser: { resolver: (0, parsers_1.stringParser)() },
-        populatable: [types_1.PopulateFor.DB]
+        populatable: [types_1.PopulateFor.DB],
+        serializable: [types_1.SerializeFor.INSERT_DB]
     }),
     __metadata("design:type", String)
 ], WorkerLog.prototype, "data", void 0);

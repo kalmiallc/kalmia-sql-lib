@@ -1,5 +1,5 @@
-import { BaseModel } from 'src/modules/common/base.model';
-import { WorkerDbTables } from 'src/config/types';
+import { BaseModel } from '../../common/base.model';
+import { WorkerDbTables } from '../../../config/types';
 /**
  * Worker job model.
  */

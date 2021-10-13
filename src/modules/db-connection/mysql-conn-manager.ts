@@ -13,7 +13,7 @@
 import { ApplicationEnv, AppLogger } from 'kalmia-common-lib';
 import * as mysqlSync from 'mysql2';
 import * as mysql from 'mysql2/promise';
-import { IConnectionDetails } from 'src/config/interfaces';
+import { IConnectionDetails } from '../../config/interfaces';
 import { env } from '../../config/env';
 import { ConnectionStrategy, DbConnectionType } from '../../config/types';
 
