@@ -1,7 +1,8 @@
-import { PopulateFor, WorkerDbTables } from 'src/config/types';
+import { PopulateFor, SerializeFor, WorkerDbTables } from 'src/config/types';
 import { stringParser, integerParser } from '@rawmodel/parsers';
 import { BaseModel } from 'src/modules/common/base.model';
 import { prop } from '@rawmodel/core';
+import { serialize } from 'v8';
 
 /**
  * Worker log model.
@@ -16,17 +17,39 @@ export class WorkerLog extends BaseModel {
    * Worker ID.
    */
   @prop({
-    parser: { resolver: stringParser() },
-    populatable: [PopulateFor.DB]
+    parser: { resolver: integerParser() },
+    populatable: [PopulateFor.DB],
+    serializable: [SerializeFor.INSERT_DB]
   })
-  public workerId: string;
+  public workerId: number;
+
+  /**
+   * Worker name.
+   */
+  @prop({
+    parser: { resolver: stringParser() },
+    populatable: [PopulateFor.DB],
+    serializable: [SerializeFor.INSERT_DB]
+  })
+  public workerName: number;
+
+  /**
+   * Worker type.
+   */
+  @prop({
+    parser: { resolver: stringParser() },
+    populatable: [PopulateFor.DB],
+    serializable: [SerializeFor.INSERT_DB]
+  })
+  public workerType: string;
 
   /**
    * Worker log level.
    */
   @prop({
     parser: { resolver: integerParser() },
-    populatable: [PopulateFor.DB]
+    populatable: [PopulateFor.DB],
+    serializable: [SerializeFor.INSERT_DB]
   })
   public level: number;
 
@@ -35,25 +58,28 @@ export class WorkerLog extends BaseModel {
    */
   @prop({
     parser: { resolver: stringParser() },
-    populatable: [PopulateFor.DB]
+    populatable: [PopulateFor.DB],
+    serializable: [SerializeFor.INSERT_DB]
   })
   public message: string;
 
   /**
-   * Worker log invocation method.
+   * Worker log source function.
    */
   @prop({
     parser: { resolver: stringParser() },
-    populatable: [PopulateFor.DB]
+    populatable: [PopulateFor.DB],
+    serializable: [SerializeFor.INSERT_DB]
   })
-  public method: string;
+  public sourceFunction: string;
 
   /**
    * Worker log additional data in JSON format.
    */
   @prop({
     parser: { resolver: stringParser() },
-    populatable: [PopulateFor.DB]
+    populatable: [PopulateFor.DB],
+    serializable: [SerializeFor.INSERT_DB]
   })
   public data: string;
 }

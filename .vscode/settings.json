@@ -6,5 +6,7 @@
       "editor.formatOnPaste": true
     },
     "cSpell.words": [
+      "DATETIME",
+      "VARCHAR"
     ],
   }
