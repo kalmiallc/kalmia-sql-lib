@@ -1,4 +1,3 @@
-
 /**
  * This is a global connection manager. It's purpose is to provide a single entry point for all types of connections.
  * It allows only one instance, so this manager also handles connection pooling.
@@ -11,12 +10,12 @@
  * TODO: Add options to control the connection from the AWS
  */
 
-
 import { ApplicationEnv, AppLogger } from 'kalmia-common-lib';
 import * as mysqlSync from 'mysql2';
 import * as mysql from 'mysql2/promise';
+import { IConnectionDetails } from 'src/config/interfaces';
 import { env } from '../../config/env';
-import { ConnectionStrategy, DbConnectionType, IConnectionDetails } from '../../config/types';
+import { ConnectionStrategy, DbConnectionType } from '../../config/types';
 
 export class MySqlConnManager {
   private static instance: MySqlConnManager;
@@ -200,6 +199,7 @@ export class MySqlConnManager {
     }
 
     AppLogger.debug('mysql-conn-manager.ts', 'getMySqlLocalPoolConnection', '[DBM] SQL Connection details:', env.APP_ENV, user, port, host, database);
+
     let conn;
     try {
       conn = await mysql.createPool({

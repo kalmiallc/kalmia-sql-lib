@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MySqlStage = exports.env = exports.foreignKeyExistence = exports.uniqueFieldValidator = exports.uniqueFieldWithIdValidator = exports.DbModelStatus = exports.DbConnectionType = exports.SerializeFor = exports.PopulateFor = exports.ConnectionStrategy = exports.buildWhereCondition = exports.unionSelectAndCountQuery = exports.selectAndCountQuery = exports.buildSearchParameter = exports.getQueryParams = exports.WhereQueryComparator = exports.Migrations = exports.BaseModel = exports.MySqlUtil = exports.MySqlConnManager = void 0;
+exports.WorkerDbTables = exports.WorkerLog = exports.WorkerJob = exports.MySqlStage = exports.env = exports.foreignKeyExistence = exports.uniqueFieldValidator = exports.uniqueFieldWithIdValidator = exports.DbModelStatus = exports.DbConnectionType = exports.SerializeFor = exports.PopulateFor = exports.ConnectionStrategy = exports.buildWhereCondition = exports.unionSelectAndCountQuery = exports.selectAndCountQuery = exports.buildSearchParameter = exports.getQueryParams = exports.WhereQueryComparator = exports.Migrations = exports.BaseModel = exports.MySqlUtil = exports.MySqlConnManager = void 0;
 const env_1 = require("./config/env");
 Object.defineProperty(exports, "env", { enumerable: true, get: function () { return env_1.env; } });
 const types_1 = require("./config/types");
@@ -9,6 +9,7 @@ Object.defineProperty(exports, "DbConnectionType", { enumerable: true, get: func
 Object.defineProperty(exports, "DbModelStatus", { enumerable: true, get: function () { return types_1.DbModelStatus; } });
 Object.defineProperty(exports, "PopulateFor", { enumerable: true, get: function () { return types_1.PopulateFor; } });
 Object.defineProperty(exports, "SerializeFor", { enumerable: true, get: function () { return types_1.SerializeFor; } });
+Object.defineProperty(exports, "WorkerDbTables", { enumerable: true, get: function () { return types_1.WorkerDbTables; } });
 const base_model_1 = require("./modules/common/base.model");
 Object.defineProperty(exports, "BaseModel", { enumerable: true, get: function () { return base_model_1.BaseModel; } });
 const validators_1 = require("./modules/common/validators");
@@ -30,4 +31,7 @@ const migrations_1 = require("./modules/migrations/migrations");
 Object.defineProperty(exports, "Migrations", { enumerable: true, get: function () { return migrations_1.Migrations; } });
 const mysql_stage_1 = require("./modules/test-helpers/mysql-stage");
 Object.defineProperty(exports, "MySqlStage", { enumerable: true, get: function () { return mysql_stage_1.MySqlStage; } });
+const models_1 = require("./modules/workers/models");
+Object.defineProperty(exports, "WorkerJob", { enumerable: true, get: function () { return models_1.WorkerJob; } });
+Object.defineProperty(exports, "WorkerLog", { enumerable: true, get: function () { return models_1.WorkerLog; } });
 //# sourceMappingURL=index.js.map

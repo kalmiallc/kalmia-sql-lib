@@ -131,7 +131,7 @@ export class MySqlUtil {
   }
 
   /**
-   * 
+   *
    * @deprecated
    */
 
