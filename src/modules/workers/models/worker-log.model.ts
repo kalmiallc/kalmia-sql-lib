@@ -1,7 +1,8 @@
-import { PopulateFor, SerializeFor, WorkerDbTables } from '../../../config/types';
-import { stringParser, integerParser } from '@rawmodel/parsers';
-import { BaseModel } from '../../common/base.model';
+/* eslint-disable @typescript-eslint/member-ordering */
 import { prop } from '@rawmodel/core';
+import { integerParser, stringParser } from '@rawmodel/parsers';
+import { PopulateFor, SerializeFor, WorkerDbTables } from '../../../config/types';
+import { BaseModel } from '../../common/base.model';
 
 /**
  * Worker log model.

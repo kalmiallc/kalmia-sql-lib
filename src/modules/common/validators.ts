@@ -11,6 +11,7 @@ export { numberSizeValidator, presenceValidator };
 
 /**
  * Validates uniqueness of the field value of the given entity.
+ *
  * @param tableName
  * @param fieldName
  * @param idField
@@ -38,6 +39,7 @@ export function uniqueFieldWithIdValidator(sqlTableName: string, fieldName: stri
 
 /**
  * Validates uniqueness of the field value.
+ *
  * @param tableName
  * @param field
  * @param checkNull
@@ -64,6 +66,7 @@ export function uniqueFieldValidator(tableName: string, field: string, checkNull
 
 /**
  * Checks for the existence of the resources specified as foreign key prop.
+ *
  * @param tableName Table name of the foreign key resource.
  * @param idField Foreign key id.
  * @param checkNull

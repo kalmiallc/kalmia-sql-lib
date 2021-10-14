@@ -6,13 +6,12 @@
  * All the connection data needed is handled from the environment variables. These are defined in {@link ./../../config/env}
  *
  */
-
 import { ApplicationEnv, AppLogger } from 'kalmia-common-lib';
 import * as mysqlSync from 'mysql2';
 import * as mysql from 'mysql2/promise';
 import { IConnectionDetails } from '../../config/interfaces';
-import { env } from '../../config/env';
-import { ConnectionStrategy, DbConnectionType } from '../../config/types';
+import { DbConnectionType } from '../../config/types';
+import { env } from './../../config/env';
 
 export class MySqlConnManager {
   private static instance: MySqlConnManager;
@@ -25,6 +24,7 @@ export class MySqlConnManager {
 
   /**
    * Gets MySqlConnectionManager instance
+   *
    * @param conn (optional) connection to set as primary
    * @returns MySqlConnectionManager instance
    */
@@ -45,27 +45,65 @@ export class MySqlConnManager {
         await conn.release();
         throw new Error('Test pool connection unsuccessful!');
       }
-      await conn.execute('set session wait_timeout=3600');
-
       await conn.release();
     } catch (e) {
       throw new Error('Test pool connection unsuccessful!, ' + e);
     }
   }
 
+  private static async testMySqlNoPoolConnection(mySqlConnection: mysql.Connection) {
+    try {
+      const conn = mySqlConnection;
+      if ((conn as any).connection.stream.readyState !== 'open') {
+        await conn.end();
+        throw new Error('Test connection unsuccessful!');
+      }
+    } catch (e) {
+      throw new Error('Test pool connection unsuccessful!, ' + e);
+    }
+  }
+
   /**
-   * Provides database connection assigned to identifier, defaulting to primary.
+   * Provides database connection as pool assigned to identifier, defaulting to primary.
+   *
    * @param databaseIdentifier (optional) identifier of database connection in question
    */
-  public async getConnection(
-    databaseIdentifier: string = DbConnectionType.PRIMARY,
-    config: mysql.ConnectionOptions = {}
-  ): Promise<mysql.Pool | mysql.Connection> {
+  public async getConnection(databaseIdentifier: string = DbConnectionType.PRIMARY, config: mysql.ConnectionOptions = {}): Promise<mysql.Pool> {
     if (!this._connections[databaseIdentifier]) {
       this._connectionDetails[databaseIdentifier] = this.populateDetails(config);
-      this._connections[databaseIdentifier] = await this.getMySqlConnection(config);
+      this._connections[databaseIdentifier] = await this.getMySqlPoolConnection(config);
     }
+    AppLogger.debug(
+      'mysql-conn-manager.ts',
+      'getConnection',
+      'Returning pool connection from db manager for',
+      databaseIdentifier,
+      AppLogger.stringifyObjectForLog(this._connectionDetails[databaseIdentifier])
+    );
     return this._connections[databaseIdentifier] as mysql.Pool;
+  }
+
+  /**
+   * Provides direct database connection (no pool) assigned to identifier, defaulting to primary.
+   *
+   * @param databaseIdentifier (optional) identifier of database connection in question
+   */
+  public async getConnectionNoPool(
+    databaseIdentifier: string = DbConnectionType.PRIMARY,
+    config: mysql.ConnectionOptions = {}
+  ): Promise<mysql.Connection> {
+    if (!this._connections[databaseIdentifier]) {
+      this._connectionDetails[databaseIdentifier] = this.populateDetails(config);
+      this._connections[databaseIdentifier] = await this.getMySqlNoPoolConnection(config);
+    }
+    AppLogger.debug(
+      'mysql-conn-manager.ts',
+      'getConnection',
+      'Returning no pool connection from db manager for',
+      databaseIdentifier,
+      AppLogger.stringifyObjectForLog(this._connectionDetails[databaseIdentifier])
+    );
+    return this._connections[databaseIdentifier] as mysql.Connection;
   }
 
   /**
@@ -80,9 +118,12 @@ export class MySqlConnManager {
 
   /**
    * Primary connection in sync version. This can coexist with the async connection.
+   *
    * @param databaseIdentifier (optional) identifier of database connection in question
+   * @param config (optional) settings that can override the env settings.
+   * @returns Sync connection
    */
-  public getConnectionSync(databaseIdentifier: string = DbConnectionType.PRIMARY): mysqlSync.Pool {
+  public getConnectionSync(databaseIdentifier: string = DbConnectionType.PRIMARY, config: mysql.ConnectionOptions = {}): mysqlSync.Pool {
     if (!this._connectionsSync[databaseIdentifier]) {
       this._connectionSyncDetails[databaseIdentifier] = this.populateDetails();
       this._connectionsSync[databaseIdentifier] = this.getMySqlConnectionSync();
@@ -92,6 +133,7 @@ export class MySqlConnManager {
 
   /**
    * Gets connection details for provided identifier
+   *
    * @param databaseIdentifier (optional) identifier of database connection in question
    * @returns
    */
@@ -101,6 +143,7 @@ export class MySqlConnManager {
 
   /**
    * Ends primary connection (pool -- closes all connections gracefully)
+   *
    * @param databaseIdentifier (optional) identifier of database connection in question
    */
   public async end(databaseIdentifier: string = DbConnectionType.PRIMARY): Promise<any> {
@@ -108,27 +151,30 @@ export class MySqlConnManager {
       AppLogger.info(
         'mysql-conn-manager.ts',
         'end',
-        'Ending connection mysql sync pool',
-        AppLogger.stringifyObjectForLog(this._connectionDetails[databaseIdentifier])
+        'Ending connection mysql sync pool for',
+        databaseIdentifier,
+        AppLogger.stringifyObjectForLog(this._connectionSyncDetails[databaseIdentifier])
       );
       this._connectionsSync[databaseIdentifier].end();
-      delete this._connectionsSync[databaseIdentifier];
+      this._connectionsSync[databaseIdentifier] = null;
     }
     if (this._connections[databaseIdentifier]) {
       AppLogger.info(
         'mysql-conn-manager.ts',
         'end',
-        'Ending connection mysql pool',
-        AppLogger.stringifyObjectForLog(this._connectionSyncDetails[databaseIdentifier])
+        'Ending connection mysql for',
+        databaseIdentifier,
+        AppLogger.stringifyObjectForLog(this._connectionDetails[databaseIdentifier])
       );
-      await (this._connections[databaseIdentifier] as mysql.Pool).end();
-      delete this._connections[databaseIdentifier];
-      delete this._connectionDetails[databaseIdentifier];
+      await (this._connections[databaseIdentifier] as any).end();
+      this._connections[databaseIdentifier] = null;
+      this._connectionDetails[databaseIdentifier] = null;
     }
   }
 
   /**
    * Ensures open connection to DB
+   *
    * @param databaseIdentifier (optional) identifier of database connection in question
    */
   public async ensureAliveSql(databaseIdentifier: string = DbConnectionType.PRIMARY, conn?: mysql.PoolConnection): Promise<void> {
@@ -158,8 +204,7 @@ export class MySqlConnManager {
         host: config.host || env.MYSQL_HOST_TEST,
         port: config.port || env.MYSQL_PORT_TEST,
         user: config.user || env.MYSQL_USER_TEST,
-        poolSize: config.connectionLimit || env.MYSQL_POOL_SIZE_TEST,
-        strategy: ConnectionStrategy[process.env.MYSQL_CONN_STRATEGY] || ConnectionStrategy.LOCAL_POOL
+        poolSize: config.connectionLimit || env.MYSQL_POOL_SIZE_TEST
       };
     }
 
@@ -168,17 +213,95 @@ export class MySqlConnManager {
       host: config.host || env.MYSQL_HOST,
       port: config.port || env.MYSQL_PORT,
       user: config.user || env.MYSQL_USER,
-      poolSize: config.connectionLimit || env.MYSQL_POOL_SIZE,
-      strategy: ConnectionStrategy[process.env.MYSQL_CONN_STRATEGY] || ConnectionStrategy.LOCAL_POOL
+      poolSize: config.connectionLimit || env.MYSQL_POOL_SIZE
     };
   }
 
-  private async getMySqlConnection(config: mysql.ConnectionOptions = {}): Promise<mysql.Pool | mysql.Connection> {
-    return await this.getMySqlLocalPoolConnection(config);
-    // TODO: Handle AWS RDS, no poll....
+  private async getMySqlNoPoolConnection(config: mysqlSync.ConnectionOptions): Promise<mysql.Connection> {
+    const { user, port, host, database, password } = this.setDbCredentials(config);
+    AppLogger.debug('mysql-conn-manager.ts', 'getMySqlNoPoolConnection', '[DBM] SQL Connection details:', env.APP_ENV, user, port, host, database);
+
+    let conn;
+    try {
+      conn = await mysql.createConnection({
+        ...config,
+        host,
+        port,
+        database,
+        password,
+        user,
+        connectTimeout: env.MYSQL_CONNECTION_TIMEOUT,
+        decimalNumbers: true
+      });
+      await MySqlConnManager.testMySqlNoPoolConnection(conn);
+      AppLogger.info(
+        'mysql-conn-manager.ts',
+        'getMySqlNoPoolConnection',
+        `[DBM] Successfully created MySQL connection for ${host}:${port} | DatabaseName: ${database}`
+      );
+      return conn as mysql.Connection;
+    } catch (e) {
+      AppLogger.error('mysql-conn-manager.ts', 'getMySqlNoPoolConnection', '[DBM] Database connection failed.', e);
+      conn = null;
+    }
   }
 
-  private async getMySqlLocalPoolConnection(config: mysql.ConnectionOptions = {}): Promise<mysql.Pool> {
+  private async getMySqlPoolConnection(config: mysql.ConnectionOptions = {}): Promise<mysql.Pool> {
+    const { user, port, host, database, password } = this.setDbCredentials(config);
+
+    AppLogger.debug('mysql-conn-manager.ts', 'getMySqlLocalPoolConnection', '[DBM] SQL Connection details:', env.APP_ENV, user, port, host, database);
+
+    let conn;
+    try {
+      conn = await mysql.createPool({
+        ...config,
+        host,
+        port,
+        database,
+        password,
+        user,
+        waitForConnections: true,
+        connectTimeout: env.MYSQL_CONNECTION_TIMEOUT,
+        decimalNumbers: true,
+        connectionLimit: config.connectionLimit || env.MYSQL_POOL_SIZE,
+        queueLimit: 100
+      });
+      await MySqlConnManager.testMySqlPoolConnection(conn);
+      AppLogger.info(
+        'mysql-conn-manager.ts',
+        'getMySqlLocalPoolConnection',
+        `[DBM] Successfully created MySQL pool for  ${host}:${port} | DatabaseName: ${database}`
+      );
+
+      // state listeners
+      conn.on('acquire', function (connection) {
+        AppLogger.trace('mysql-conn-manager.ts', 'getMySqlLocalPoolConnection', `[DBM] Connection ${connection.threadId} acquired`);
+      });
+      conn.on('connection', function (connection) {
+        connection.execute(`set session wait_timeout=${env.MYSQL_WAIT_TIMEOUT}`);
+        const timeout = connection.execute('SELECT @@wait_timeout');
+        AppLogger.debug(
+          'mysql-conn-manager.ts',
+          'testMySqlPoolConnection',
+          'Connection wait timeout set to',
+          AppLogger.stringifyObjectForLog(timeout[0])
+        );
+      });
+      conn.on('release', function (connection) {
+        AppLogger.trace('mysql-conn-manager.ts', 'getMySqlLocalPoolConnection', `[DBM] Connection ${connection.threadId} release`);
+      });
+      conn.on('enqueue', function () {
+        AppLogger.trace('mysql-conn-manager.ts', 'getMySqlLocalPoolConnection', '[DBM] Waiting for available connection slot');
+      });
+
+      return conn as mysql.Pool;
+    } catch (e) {
+      AppLogger.error('mysql-conn-manager.ts', 'getMySqlLocalPoolConnection', '[DBM] Database connection failed.', e);
+      conn = null;
+    }
+  }
+
+  private setDbCredentials(config: mysqlSync.ConnectionOptions) {
     if (!config) {
       config = {};
     }
@@ -196,50 +319,11 @@ export class MySqlConnManager {
       user = config.user || env.MYSQL_USER_TEST;
       password = config.password || env.MYSQL_PASSWORD_TEST;
     }
-
-    AppLogger.debug('mysql-conn-manager.ts', 'getMySqlLocalPoolConnection', '[DBM] SQL Connection details:', env.APP_ENV, user, port, host, database);
-
-    let conn;
-    try {
-      conn = await mysql.createPool({
-        host,
-        port,
-        database,
-        password,
-        user,
-        waitForConnections: true,
-        decimalNumbers: true,
-        connectionLimit: config.connectionLimit || env.MYSQL_POOL_SIZE,
-        queueLimit: 100
-      });
-      await MySqlConnManager.testMySqlPoolConnection(conn);
-      AppLogger.info(
-        'mysql-conn-manager.ts',
-        'getMySqlLocalPoolConnection',
-        `[DBM] Successfully created MySQL pool for  ${host}:${port} | DatabaseName: ${database}`
-      );
-      return conn as mysql.Pool;
-    } catch (e) {
-      AppLogger.error('mysql-conn-manager.ts', 'getMySqlLocalPoolConnection', '[DBM] Database connection failed.', e);
-      conn = null;
-    }
+    return { user, port, host, database, password, config };
   }
 
-  private getMySqlConnectionSync(): mysqlSync.Pool {
-    let host = env.MYSQL_HOST;
-    let port = env.MYSQL_PORT;
-    let database = env.MYSQL_DB;
-    let user = env.MYSQL_USER;
-    let password = env.MYSQL_PASSWORD;
-
-    // connect to test DB is APP_ENV variable is set to testing.
-    if (env.APP_ENV === ApplicationEnv.TEST) {
-      host = env.MYSQL_HOST_TEST;
-      port = env.MYSQL_PORT_TEST;
-      database = env.MYSQL_DB_TEST;
-      user = env.MYSQL_USER_TEST;
-      password = env.MYSQL_PASSWORD_TEST;
-    }
+  private getMySqlConnectionSync(config?: mysqlSync.ConnectionOptions): mysqlSync.Pool {
+    const { user, port, host, database, password } = this.setDbCredentials(config);
 
     const poolConfig: mysqlSync.ConnectionOptions = {
       host,
@@ -254,7 +338,7 @@ export class MySqlConnManager {
     AppLogger.info(
       'mysql-conn-manager.ts',
       'getMySqlConnectionSync',
-      `[DBM] Successfully created MySQL pool for  ${host}:${port} | DatabaseName: ${database}`
+      `[DBM] Successfully created sync type MySQL pool for  ${host}:${port} | DatabaseName: ${database}`
     );
     return pool;
   }

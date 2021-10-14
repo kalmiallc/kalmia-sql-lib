@@ -10,11 +10,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WorkerJob = void 0;
-const parsers_1 = require("@rawmodel/parsers");
+/* eslint-disable @typescript-eslint/member-ordering */
 const core_1 = require("@rawmodel/core");
+const parsers_1 = require("@rawmodel/parsers");
 const kalmia_common_lib_1 = require("kalmia-common-lib");
-const base_model_1 = require("../../common/base.model");
 const types_1 = require("../../../config/types");
+const base_model_1 = require("../../common/base.model");
 const mysql_util_1 = require("../../db-connection/mysql-util");
 /**
  * Worker job model.
@@ -29,6 +30,7 @@ class WorkerJob extends base_model_1.BaseModel {
     }
     /**
      * Gets pending jobs.
+     *
      * @returns Array of pending jobs.
      */
     async getPendingJobs() {
@@ -49,6 +51,7 @@ class WorkerJob extends base_model_1.BaseModel {
     }
     /**
      * Gets worker definition.
+     *
      * @returns Worker definition object.
      */
     getWorkerDefinition() {
@@ -60,6 +63,7 @@ class WorkerJob extends base_model_1.BaseModel {
     }
     /**
      * Updates the worker's definition.
+     *
      * @param data Worker definition data.
      */
     async updateWorkerDefinition(data) {

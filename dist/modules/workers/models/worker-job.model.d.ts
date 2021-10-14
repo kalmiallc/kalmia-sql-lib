@@ -1,5 +1,5 @@
-import { BaseModel } from '../../common/base.model';
 import { WorkerDbTables } from '../../../config/types';
+import { BaseModel } from '../../common/base.model';
 /**
  * Worker job model.
  */
@@ -66,16 +66,19 @@ export declare class WorkerJob extends BaseModel {
     lastFailed: Date;
     /**
      * Gets pending jobs.
+     *
      * @returns Array of pending jobs.
      */
-    getPendingJobs(): Promise<Array<WorkerJob>>;
+    getPendingJobs(): Promise<WorkerJob[]>;
     /**
      * Gets worker definition.
+     *
      * @returns Worker definition object.
      */
     getWorkerDefinition(): any;
     /**
      * Updates the worker's definition.
+     *
      * @param data Worker definition data.
      */
     updateWorkerDefinition(data: any): Promise<void>;

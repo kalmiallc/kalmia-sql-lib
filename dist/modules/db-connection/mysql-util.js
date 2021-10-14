@@ -2,14 +2,31 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MySqlUtil = void 0;
 const kalmia_common_lib_1 = require("kalmia-common-lib");
-const SqlString = require("sqlstring");
 /**
- * MySQL class.
+ * MySQL helper. This helper is designed for usage of SQL connection pool.
  */
 class MySqlUtil {
     constructor(dbConnection) {
-        this._dbConnection = dbConnection;
+        this._dbConnectionPool = dbConnection;
         return this;
+    }
+    /**
+     * Set active connection (pool connection)
+     */
+    setActiveConnection(ac) {
+        this._currentPooledConnection = ac;
+    }
+    /**
+     * Get active connection (pool connection)
+     */
+    getActiveConnection() {
+        return this._currentPooledConnection;
+    }
+    /**
+     * Release active connection (pool connection)
+     */
+    releaseActiveConnection() {
+        this._currentPooledConnection.release();
     }
     /**
      * Call single stored procedure inside transaction
@@ -41,7 +58,7 @@ class MySqlUtil {
         let isSingleTrans = false;
         if (!connection) {
             isSingleTrans = true;
-            connection = this._dbConnection;
+            connection = await this._dbConnectionPool.getConnection();
         }
         if (!connection) {
             throw Error('MySql Db Connection not provided');
@@ -73,7 +90,7 @@ class MySqlUtil {
     }
     async start() {
         // await this.db.query('SET SESSION autocommit = 0; START TRANSACTION;');
-        const conn = await this._dbConnection.getConnection();
+        const conn = await this._dbConnectionPool.getConnection();
         if (!conn) {
             throw Error('MySql Db Connection not provided');
         }
@@ -120,30 +137,6 @@ class MySqlUtil {
         return values;
     }
     /**
-     *
-     * @deprecated
-     */
-    async paramQuery(query, values) {
-        const conn = await this._dbConnection.getConnection();
-        if (!conn) {
-            throw Error('MySql Db Connection not provided');
-        }
-        if (values) {
-            for (const key of Object.keys(values)) {
-                if (Array.isArray(values[key])) {
-                    values[key] = values[key].join(',') || null;
-                }
-                // SqlString.escape prevents SQL injection!
-                const re = new RegExp(`@${key}\\b`, 'gi');
-                query = query.replace(re, values[key] ? SqlString.escape(values[key]) : 'NULL');
-            }
-        }
-        kalmia_common_lib_1.AppLogger.debug('mysql-util.ts', 'paramQuery', 'DB ', query);
-        const result = await conn.query(query);
-        conn.release();
-        return result[0];
-    }
-    /**
      * Function replaces sql query parameters with "@variable" notation with values from object {variable: replace_value}
      * and executes prepared statement
      *
@@ -156,7 +149,7 @@ class MySqlUtil {
         let isSingleTrans = false;
         if (!connection) {
             isSingleTrans = true;
-            connection = await this._dbConnection.getConnection();
+            connection = await this._dbConnectionPool.getConnection();
         }
         if (!connection) {
             throw Error('MySql Db Connection not provided');

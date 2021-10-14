@@ -9,6 +9,7 @@ const mysql_conn_manager_1 = require("../db-connection/mysql-conn-manager");
 const mysql_util_1 = require("../db-connection/mysql-util");
 /**
  * Validates uniqueness of the field value of the given entity.
+ *
  * @param tableName
  * @param fieldName
  * @param idField
@@ -32,6 +33,7 @@ function uniqueFieldWithIdValidator(sqlTableName, fieldName, idField = 'id', che
 exports.uniqueFieldWithIdValidator = uniqueFieldWithIdValidator;
 /**
  * Validates uniqueness of the field value.
+ *
  * @param tableName
  * @param field
  * @param checkNull
@@ -53,6 +55,7 @@ function uniqueFieldValidator(tableName, field, checkNull = false) {
 exports.uniqueFieldValidator = uniqueFieldValidator;
 /**
  * Checks for the existence of the resources specified as foreign key prop.
+ *
  * @param tableName Table name of the foreign key resource.
  * @param idField Foreign key id.
  * @param checkNull

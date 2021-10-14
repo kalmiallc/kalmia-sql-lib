@@ -1,6 +1,6 @@
 {
   "name": "kalmia-sql-lib",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "SQL lib for Kalmia projects",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -14,7 +14,7 @@
     "test:cov": "jest --coverage"
   },
   "files": [
-    "dist/**/*",    
+    "dist/**/*",
     "src/**/*",
     "README.md",
     "docs/**/*"
@@ -40,10 +40,10 @@
     "@rawmodel/validators": "^3.3.4",
     "colors": "^1.4.0",
     "dotenv": "^10.0.0",
-    "mysql2": "^2.2.5",
+    "kalmia-common-lib": "git+ssh://git@bitbucket.org/kalmiadevs/kalmia-common-lib",
+    "mysql2": "^2.3.0",
     "rimraf": "^3.0.2",
     "sqlstring": "^2.3.2",
-    "kalmia-common-lib": "git+ssh://git@bitbucket.org/kalmiadevs/kalmia-common-lib",
     "ts-mysql-migrate": "^1.0.2"
   },
   "devDependencies": {
@@ -53,8 +53,10 @@
     "@typescript-eslint/parser": "^4.28.5",
     "eslint": "^7.31.0",
     "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-jsdoc": "^36.1.1",
     "eslint-plugin-no-async-foreach": "^0.1.1",
     "eslint-plugin-prefer-arrow": "^1.2.3",
+    "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-promise": "^5.1.0",
     "eslint-plugin-security": "^1.4.0",
     "eslint-plugin-sonarjs": "^0.9.1",
@@ -67,7 +69,7 @@
     "@rawmodel/core": "^3.3.4",
     "@rawmodel/parsers": "^3.3.4",
     "@rawmodel/validators": "^3.3.4",
-    "mysql2": "^2.2.5",
-    "dotenv": "^10.0.0"
+    "dotenv": "^10.0.0",
+    "mysql2": "^2.3.0"
   }
 }

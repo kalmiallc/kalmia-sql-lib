@@ -15,6 +15,7 @@ export interface MigrationOptions {
 }
 /**
  * General class for handling migrations. It uses ts-mysql-migrate tool for handling migrations.
+ *
  * @link https://github.com/tinemlakar/ts-mysql-migrate
  */
 export declare class Migrations {
@@ -22,16 +23,19 @@ export declare class Migrations {
     migrationToolConnectionPool: any;
     /**
      * Initialized migration options. This should be called first
+     *
      * @param options parameters for initialization
      */
     init(options: MigrationOptions): Promise<void>;
     /**
      * Upgrades migrations by number of steps. If not provided, runs all migrations that have not yet been run.
+     *
      * @param steps (optional) number of steps to upgrade by
      */
     upgrade(steps?: number): Promise<void>;
     /**
      * Downgrades migrations by number of steps. If not provided, downgrades completely.
+     *
      * @param steps (optional) number of steps to downgrade by
      */
     downgrade(steps?: number): Promise<void>;

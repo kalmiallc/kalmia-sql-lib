@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/indent */
 import { Model, prop } from '@rawmodel/core';
 import { dateParser, integerParser } from '@rawmodel/parsers';
-import { Connection, Pool, PoolConnection } from 'mysql2/promise';
+import { Pool, PoolConnection } from 'mysql2/promise';
 import { DbModelStatus, PopulateFor, SerializeFor } from '../../config/types';
 import { MySqlConnManager } from '../db-connection/mysql-conn-manager';
 import { MySqlUtil } from '../db-connection/mysql-util';
@@ -113,24 +113,25 @@ export abstract class BaseModel extends Model<any> {
   /**
    * Returns an instance of a database connection.
    */
-  public async db(): Promise<Pool | Connection> {
+  public async db(): Promise<Pool> {
     return await MySqlConnManager.getInstance().getConnection();
   }
 
   /**
    * Returns an instance of a sql utils.
    */
-  public async sql(conn?: Pool | Connection): Promise<MySqlUtil> {
+  public async sql(conn?: Pool): Promise<MySqlUtil> {
     return new MySqlUtil(conn || (await this.db()));
   }
 
   /**
    * Returns DB connection with transaction support.
+   *
    * @param conn Existing connection.
    * @returns {
-   *  singleTrans: Tells if connection will be used in transaction.
-   *  sql: MySqlUtil
-   *  conn: PoolConnection
+   * singleTrans: Tells if connection will be used in transaction.
+   * sql: MySqlUtil
+   * conn: PoolConnection
    * }
    */
   public async getDbConnection(conn?: PoolConnection): Promise<{ singleTrans: boolean; sql: MySqlUtil; conn: PoolConnection }> {
@@ -141,13 +142,15 @@ export abstract class BaseModel extends Model<any> {
       sql = await this.sql();
       conn = await sql.start();
     }
-    sql = new MySqlUtil(conn);
+    sql = new MySqlUtil();
+    sql.setActiveConnection(conn);
 
     return { singleTrans, sql, conn };
   }
 
   /**
    * Saves model data in the database as a new row.
+   *
    * @param options Create options.
    * @returns this
    */
@@ -177,7 +180,8 @@ export abstract class BaseModel extends Model<any> {
     if (isSingleTrans) {
       options.conn = await mySqlHelper.start();
     }
-    mySqlHelper = new MySqlUtil(options.conn);
+    mySqlHelper = new MySqlUtil();
+    mySqlHelper.setActiveConnection(options.conn);
 
     try {
       const createQuery = `
@@ -214,6 +218,7 @@ export abstract class BaseModel extends Model<any> {
 
   /**
    * Updates model data in the database.
+   *
    * @param options Update options.
    * @returns this
    */
@@ -243,7 +248,8 @@ export abstract class BaseModel extends Model<any> {
     if (isSingleTrans) {
       options.conn = await mySqlHelper.start();
     }
-    mySqlHelper = new MySqlUtil(options.conn);
+    mySqlHelper = new MySqlUtil();
+    mySqlHelper.setActiveConnection(options.conn);
 
     try {
       const updateQuery = `
@@ -323,7 +329,8 @@ export abstract class BaseModel extends Model<any> {
     if (isSingleTrans) {
       options.conn = await mySqlHelper.start();
     }
-    mySqlHelper = new MySqlUtil(options.conn);
+    mySqlHelper = new MySqlUtil();
+    mySqlHelper.setActiveConnection(options.conn);
 
     try {
       const deleteQuery = `
@@ -357,6 +364,7 @@ export abstract class BaseModel extends Model<any> {
 
   /**
    * Returns base model select fields used in querying.
+   *
    * @param table Queried table synonym.
    * @returns Default select columns.
    */
@@ -373,6 +381,7 @@ export abstract class BaseModel extends Model<any> {
 
   /**
    * Returns mapped default selected columns. Column name is mapped with the table prefix.
+   *
    * @param table Queried table synonym.
    * @returns Default select mapped columns.
    */
@@ -389,6 +398,7 @@ export abstract class BaseModel extends Model<any> {
 
   /**
    * Parses mapped selected columns back to their original fields.
+   *
    * @param table Queried table synonym.
    * @param data Data to parse from.
    * @returns Parsed default selected columns.

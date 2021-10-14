@@ -51,11 +51,12 @@ class BaseModel extends core_1.Model {
     }
     /**
      * Returns DB connection with transaction support.
+     *
      * @param conn Existing connection.
      * @returns {
-     *  singleTrans: Tells if connection will be used in transaction.
-     *  sql: MySqlUtil
-     *  conn: PoolConnection
+     * singleTrans: Tells if connection will be used in transaction.
+     * sql: MySqlUtil
+     * conn: PoolConnection
      * }
      */
     async getDbConnection(conn) {
@@ -65,11 +66,13 @@ class BaseModel extends core_1.Model {
             sql = await this.sql();
             conn = await sql.start();
         }
-        sql = new mysql_util_1.MySqlUtil(conn);
+        sql = new mysql_util_1.MySqlUtil();
+        sql.setActiveConnection(conn);
         return { singleTrans, sql, conn };
     }
     /**
      * Saves model data in the database as a new row.
+     *
      * @param options Create options.
      * @returns this
      */
@@ -96,7 +99,8 @@ class BaseModel extends core_1.Model {
         if (isSingleTrans) {
             options.conn = await mySqlHelper.start();
         }
-        mySqlHelper = new mysql_util_1.MySqlUtil(options.conn);
+        mySqlHelper = new mysql_util_1.MySqlUtil();
+        mySqlHelper.setActiveConnection(options.conn);
         try {
             const createQuery = `
       INSERT INTO \`${this.tableName}\`
@@ -129,6 +133,7 @@ class BaseModel extends core_1.Model {
     }
     /**
      * Updates model data in the database.
+     *
      * @param options Update options.
      * @returns this
      */
@@ -155,7 +160,8 @@ class BaseModel extends core_1.Model {
         if (isSingleTrans) {
             options.conn = await mySqlHelper.start();
         }
-        mySqlHelper = new mysql_util_1.MySqlUtil(options.conn);
+        mySqlHelper = new mysql_util_1.MySqlUtil();
+        mySqlHelper.setActiveConnection(options.conn);
         try {
             const updateQuery = `
       UPDATE \`${this.tableName}\`
@@ -225,7 +231,8 @@ class BaseModel extends core_1.Model {
         if (isSingleTrans) {
             options.conn = await mySqlHelper.start();
         }
-        mySqlHelper = new mysql_util_1.MySqlUtil(options.conn);
+        mySqlHelper = new mysql_util_1.MySqlUtil();
+        mySqlHelper.setActiveConnection(options.conn);
         try {
             const deleteQuery = `
         UPDATE \`${this.tableName}\`
@@ -251,6 +258,7 @@ class BaseModel extends core_1.Model {
     }
     /**
      * Returns base model select fields used in querying.
+     *
      * @param table Queried table synonym.
      * @returns Default select columns.
      */
@@ -266,6 +274,7 @@ class BaseModel extends core_1.Model {
     }
     /**
      * Returns mapped default selected columns. Column name is mapped with the table prefix.
+     *
      * @param table Queried table synonym.
      * @returns Default select mapped columns.
      */
@@ -281,6 +290,7 @@ class BaseModel extends core_1.Model {
     }
     /**
      * Parses mapped selected columns back to their original fields.
+     *
      * @param table Queried table synonym.
      * @param data Data to parse from.
      * @returns Parsed default selected columns.

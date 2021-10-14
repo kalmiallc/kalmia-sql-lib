@@ -1,6 +1,6 @@
 import { env, IMySqlEnv } from './config/env';
 import { IConnectionDetails } from './config/interfaces';
-import { ConnectionStrategy, DbConnectionType, DbModelStatus, PopulateFor, SerializeFor, WorkerDbTables } from './config/types';
+import { DbConnectionType, DbModelStatus, PopulateFor, SerializeFor, WorkerDbTables } from './config/types';
 import { ActionOptions, BaseModel } from './modules/common/base.model';
 import { foreignKeyExistence, uniqueFieldValidator, uniqueFieldWithIdValidator } from './modules/common/validators';
 import { MySqlConnManager } from './modules/db-connection/mysql-conn-manager';
@@ -9,5 +9,5 @@ import { buildSearchParameter, buildWhereCondition, getQueryParams, selectAndCou
 import { MigrationOptions, Migrations } from './modules/migrations/migrations';
 import { MySqlStage } from './modules/test-helpers/mysql-stage';
 import { WorkerJob, WorkerLog } from './modules/workers/models';
-export { MySqlConnManager, MySqlUtil, BaseModel, ActionOptions, Migrations, MigrationOptions, WhereQueryComparator, SqlQueryObject, getQueryParams, buildSearchParameter, selectAndCountQuery, unionSelectAndCountQuery, buildWhereCondition, ConnectionStrategy, PopulateFor, SerializeFor, DbConnectionType, IConnectionDetails, DbModelStatus, uniqueFieldWithIdValidator, uniqueFieldValidator, foreignKeyExistence, IMySqlEnv as IEnv, env, MySqlStage, WorkerJob, WorkerLog, WorkerDbTables };
+export { MySqlConnManager, MySqlUtil, BaseModel, ActionOptions, Migrations, MigrationOptions, WhereQueryComparator, SqlQueryObject, getQueryParams, buildSearchParameter, selectAndCountQuery, unionSelectAndCountQuery, buildWhereCondition, PopulateFor, SerializeFor, DbConnectionType, IConnectionDetails, DbModelStatus, uniqueFieldWithIdValidator, uniqueFieldValidator, foreignKeyExistence, IMySqlEnv as IEnv, env, MySqlStage, WorkerJob, WorkerLog, WorkerDbTables };
 //# sourceMappingURL=index.d.ts.map

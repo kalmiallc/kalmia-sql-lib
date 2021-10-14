@@ -19,6 +19,7 @@ export interface MigrationOptions {
 
 /**
  * General class for handling migrations. It uses ts-mysql-migrate tool for handling migrations.
+ *
  * @link https://github.com/tinemlakar/ts-mysql-migrate
  */
 export class Migrations {
@@ -27,6 +28,7 @@ export class Migrations {
 
   /**
    * Initialized migration options. This should be called first
+   *
    * @param options parameters for initialization
    */
   public async init(options: MigrationOptions) {
@@ -44,6 +46,7 @@ export class Migrations {
 
   /**
    * Upgrades migrations by number of steps. If not provided, runs all migrations that have not yet been run.
+   *
    * @param steps (optional) number of steps to upgrade by
    */
   public async upgrade(steps: number = undefined) {
@@ -55,6 +58,7 @@ export class Migrations {
 
   /**
    * Downgrades migrations by number of steps. If not provided, downgrades completely.
+   *
    * @param steps (optional) number of steps to downgrade by
    */
   public async downgrade(steps: number = -1) {

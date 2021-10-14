@@ -1,11 +1,24 @@
 import * as mysql from 'mysql2/promise';
 import { Pool, PoolConnection } from 'mysql2/promise';
 /**
- * MySQL class.
+ * MySQL helper. This helper is designed for usage of SQL connection pool.
  */
 export declare class MySqlUtil {
-    private _dbConnection;
-    constructor(dbConnection: mysql.Connection | Pool);
+    private _dbConnectionPool;
+    private _currentPooledConnection;
+    constructor(dbConnection?: Pool);
+    /**
+     * Set active connection (pool connection)
+     */
+    setActiveConnection(ac: PoolConnection): void;
+    /**
+     * Get active connection (pool connection)
+     */
+    getActiveConnection(): mysql.PoolConnection;
+    /**
+     * Release active connection (pool connection)
+     */
+    releaseActiveConnection(): void;
     /**
      * Call single stored procedure inside transaction
      *
@@ -37,11 +50,6 @@ export declare class MySqlUtil {
      * @returns Array of values
      */
     mapValues(data: any, logOutput?: boolean): string[];
-    /**
-     *
-     * @deprecated
-     */
-    paramQuery(query: string, values?: unknown): Promise<any[]>;
     /**
      * Function replaces sql query parameters with "@variable" notation with values from object {variable: replace_value}
      * and executes prepared statement

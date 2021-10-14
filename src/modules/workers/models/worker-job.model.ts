@@ -1,8 +1,9 @@
-import { booleanParser, dateParser, integerParser, stringParser } from '@rawmodel/parsers';
+/* eslint-disable @typescript-eslint/member-ordering */
 import { prop } from '@rawmodel/core';
+import { booleanParser, dateParser, integerParser, stringParser } from '@rawmodel/parsers';
 import { JSONParser } from 'kalmia-common-lib';
-import { BaseModel } from '../../common/base.model';
 import { DbModelStatus, PopulateFor, SerializeFor, WorkerDbTables } from '../../../config/types';
+import { BaseModel } from '../../common/base.model';
 import { MySqlUtil } from '../../db-connection/mysql-util';
 
 /**
@@ -162,9 +163,10 @@ export class WorkerJob extends BaseModel {
 
   /**
    * Gets pending jobs.
+   *
    * @returns Array of pending jobs.
    */
-  public async getPendingJobs(): Promise<Array<WorkerJob>> {
+  public async getPendingJobs(): Promise<WorkerJob[]> {
     const pendingJobs = new MySqlUtil(await this.db())
       .paramExecute(
         `
@@ -186,6 +188,7 @@ export class WorkerJob extends BaseModel {
 
   /**
    * Gets worker definition.
+   *
    * @returns Worker definition object.
    */
   public getWorkerDefinition(): any {
@@ -201,6 +204,7 @@ export class WorkerJob extends BaseModel {
 
   /**
    * Updates the worker's definition.
+   *
    * @param data Worker definition data.
    */
   public async updateWorkerDefinition(data: any): Promise<void> {

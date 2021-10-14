@@ -1,0 +1,32 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "pwa-node",
+      "request": "launch",
+      "name": "Jest Test All",
+      "program": "${workspaceFolder}/node_modules/jest/bin/jest.js",
+      "args": ["--config=${workspaceFolder}/jest.config.ts",],
+      "env": {
+        "APP_ENV": "testing"
+      },
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "type": "pwa-node",
+      "request": "launch",
+      "name": "Jest Test Current file",
+      "program": "${workspaceFolder}/node_modules/jest/bin/jest.js",
+      "args": ["--runInBand", "--config=${workspaceFolder}/jest.config.ts", "--detectOpenHandles", "${fileBasename}" ],
+      "env": {
+        "APP_ENV": "testing"
+      },
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    }
+  ]
+}

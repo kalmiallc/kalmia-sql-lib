@@ -1,6 +1,6 @@
 import { env, IMySqlEnv } from './config/env';
 import { IConnectionDetails } from './config/interfaces';
-import { ConnectionStrategy, DbConnectionType, DbModelStatus, PopulateFor, SerializeFor, WorkerDbTables } from './config/types';
+import { DbConnectionType, DbModelStatus, PopulateFor, SerializeFor, WorkerDbTables } from './config/types';
 import { ActionOptions, BaseModel } from './modules/common/base.model';
 import { foreignKeyExistence, uniqueFieldValidator, uniqueFieldWithIdValidator } from './modules/common/validators';
 import { MySqlConnManager } from './modules/db-connection/mysql-conn-manager';
@@ -32,7 +32,6 @@ export {
   selectAndCountQuery,
   unionSelectAndCountQuery,
   buildWhereCondition,
-  ConnectionStrategy,
   PopulateFor,
   SerializeFor,
   DbConnectionType,

@@ -1,10 +1,12 @@
-import { MySqlConnManager } from '../../db-connection/mysql-conn-manager';
-import { MySqlUtil } from './../../db-connection/mysql-util';
-import { BaseModel } from '../base.model';
+/* eslint-disable @typescript-eslint/member-ordering */
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import { prop } from '@rawmodel/core';
 import { stringParser } from '@rawmodel/parsers';
 import { DbModelStatus, PopulateFor, SerializeFor } from '../../../config/types';
+import { MySqlConnManager } from '../../db-connection/mysql-conn-manager';
 import { MySqlStage } from '../../test-helpers/mysql-stage';
+import { BaseModel } from '../base.model';
+import { MySqlUtil } from './../../db-connection/mysql-util';
 
 const testTableName = 'sql_lib_user';
 

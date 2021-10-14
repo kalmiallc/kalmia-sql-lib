@@ -10,10 +10,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WorkerLog = void 0;
-const types_1 = require("../../../config/types");
-const parsers_1 = require("@rawmodel/parsers");
-const base_model_1 = require("../../common/base.model");
+/* eslint-disable @typescript-eslint/member-ordering */
 const core_1 = require("@rawmodel/core");
+const parsers_1 = require("@rawmodel/parsers");
+const types_1 = require("../../../config/types");
+const base_model_1 = require("../../common/base.model");
 /**
  * Worker log model.
  */

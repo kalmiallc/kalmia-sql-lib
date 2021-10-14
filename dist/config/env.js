@@ -4,7 +4,6 @@ exports.env = void 0;
 /* eslint-disable radix */
 const dotenv = require("dotenv");
 const kalmia_common_lib_1 = require("kalmia-common-lib");
-const types_1 = require("./types");
 /**
  * Load variables from .env.
  */
@@ -19,10 +18,6 @@ exports.env = Object.assign(Object.assign({}, kalmia_common_lib_1.env), {
      */
     MYSQL_DB: process.env['MYSQL_DB'], 
     /**
-     * Defines the type of connection pooling used for the database
-     */
-    MYSQL_CONN_STRATEGY: process.env['MYSQL_CONN_STRATEGY'] || types_1.ConnectionStrategy.LOCAL_POOL, 
-    /**
      * Mysql user.
      */
     MYSQL_USER: process.env['MYSQL_USER'], 
@@ -31,15 +26,25 @@ exports.env = Object.assign(Object.assign({}, kalmia_common_lib_1.env), {
      */
     MYSQL_PASSWORD: process.env['MYSQL_PASSWORD'], 
     /**
-     * Mysql connection pool size.
+     * Mysql connection pool size. If pool size = 0 -- don't use pool
      */
-    MYSQL_POOL_SIZE: parseInt(process.env['MYSQL_POOL_SIZE']) || 10, 
+    MYSQL_POOL_SIZE: parseInt(process.env['MYSQL_POOL_SIZE']) == 0 ? 0 : 10, 
     /**
-     * MongoDB test host.
+     * Time to wait for getting the connection.
+     * This value is in milliseconds.
+     */
+    MYSQL_CONNECTION_TIMEOUT: parseInt(process.env['MYSQL_CONNECTION_TIMEOUT']) || 300, 
+    /**
+     * Mysql wait timeout https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_wait_timeout
+     * This value is in seconds
+     */
+    MYSQL_WAIT_TIMEOUT: parseInt(process.env['MYSQL_WAIT_TIMEOUT']) || 320, 
+    /**
+     * Mysql test host.
      */
     MYSQL_HOST_TEST: process.env['MYSQL_HOST_TEST'] || 'localhost', 
     /**
-     * MongoDB test port.
+     * Mysql test port.
      */
     MYSQL_PORT_TEST: parseInt(process.env['MYSQL_PORT_TEST']) || 3306, 
     /**
@@ -57,5 +62,5 @@ exports.env = Object.assign(Object.assign({}, kalmia_common_lib_1.env), {
     /**
      * Mysql test connection pool size.
      */
-    MYSQL_POOL_SIZE_TEST: parseInt(process.env['MYSQL_POOL_TEST']) || 5 });
+    MYSQL_POOL_SIZE_TEST: parseInt(process.env['MYSQL_POOL_SIZE_TEST']) == 0 ? 0 : 5 });
 //# sourceMappingURL=env.js.map

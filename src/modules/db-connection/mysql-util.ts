@@ -1,17 +1,38 @@
 import { AppLogger, isPlainObject } from 'kalmia-common-lib';
 import * as mysql from 'mysql2/promise';
 import { Pool, PoolConnection } from 'mysql2/promise';
-import * as SqlString from 'sqlstring';
 
 /**
- * MySQL class.
+ * MySQL helper. This helper is designed for usage of SQL connection pool.
  */
 export class MySqlUtil {
-  private _dbConnection: mysql.Connection | mysql.Pool;
+  private _dbConnectionPool: Pool;
+  private _currentPooledConnection: PoolConnection;
 
-  constructor(dbConnection: mysql.Connection | Pool) {
-    this._dbConnection = dbConnection;
+  constructor(dbConnection?: Pool) {
+    this._dbConnectionPool = dbConnection;
     return this;
+  }
+
+  /**
+   * Set active connection (pool connection)
+   */
+  public setActiveConnection(ac: PoolConnection) {
+    this._currentPooledConnection = ac;
+  }
+
+  /**
+   * Get active connection (pool connection)
+   */
+  public getActiveConnection() {
+    return this._currentPooledConnection;
+  }
+
+  /**
+   * Release active connection (pool connection)
+   */
+  public releaseActiveConnection() {
+    this._currentPooledConnection.release();
   }
 
   /**
@@ -44,7 +65,7 @@ export class MySqlUtil {
     let isSingleTrans = false;
     if (!connection) {
       isSingleTrans = true;
-      connection = this._dbConnection as PoolConnection;
+      connection = await this._dbConnectionPool.getConnection();
     }
     if (!connection) {
       throw Error('MySql Db Connection not provided');
@@ -81,7 +102,7 @@ export class MySqlUtil {
 
   public async start(): Promise<PoolConnection> {
     // await this.db.query('SET SESSION autocommit = 0; START TRANSACTION;');
-    const conn = await (this._dbConnection as mysql.Pool).getConnection();
+    const conn = await (this._dbConnectionPool as mysql.Pool).getConnection();
     if (!conn) {
       throw Error('MySql Db Connection not provided');
     }
@@ -131,33 +152,6 @@ export class MySqlUtil {
   }
 
   /**
-   *
-   * @deprecated
-   */
-
-  public async paramQuery(query: string, values?: unknown): Promise<any[]> {
-    const conn = await (this._dbConnection as mysql.Pool).getConnection();
-    if (!conn) {
-      throw Error('MySql Db Connection not provided');
-    }
-    if (values) {
-      for (const key of Object.keys(values)) {
-        if (Array.isArray(values[key])) {
-          values[key] = values[key].join(',') || null;
-        }
-        // SqlString.escape prevents SQL injection!
-        const re = new RegExp(`@${key}\\b`, 'gi');
-        query = query.replace(re, values[key] ? SqlString.escape(values[key]) : 'NULL');
-      }
-    }
-    AppLogger.debug('mysql-util.ts', 'paramQuery', 'DB ', query);
-
-    const result = await conn.query(query);
-    conn.release();
-    return result[0] as any[];
-  }
-
-  /**
    * Function replaces sql query parameters with "@variable" notation with values from object {variable: replace_value}
    * and executes prepared statement
    *
@@ -168,9 +162,10 @@ export class MySqlUtil {
   public async paramExecute(query: string, values?: unknown, connection?: PoolConnection): Promise<any[]> {
     const sqlParamValues = [];
     let isSingleTrans = false;
+
     if (!connection) {
       isSingleTrans = true;
-      connection = await (this._dbConnection as mysql.Pool).getConnection();
+      connection = await this._dbConnectionPool.getConnection();
     }
     if (!connection) {
       throw Error('MySql Db Connection not provided');

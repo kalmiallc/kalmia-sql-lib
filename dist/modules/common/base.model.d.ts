@@ -1,5 +1,5 @@
 import { Model, prop } from '@rawmodel/core';
-import { Connection, Pool, PoolConnection } from 'mysql2/promise';
+import { Pool, PoolConnection } from 'mysql2/promise';
 import { DbModelStatus } from '../../config/types';
 import { MySqlUtil } from '../db-connection/mysql-util';
 /**
@@ -62,18 +62,19 @@ export declare abstract class BaseModel extends Model<any> {
     /**
      * Returns an instance of a database connection.
      */
-    db(): Promise<Pool | Connection>;
+    db(): Promise<Pool>;
     /**
      * Returns an instance of a sql utils.
      */
-    sql(conn?: Pool | Connection): Promise<MySqlUtil>;
+    sql(conn?: Pool): Promise<MySqlUtil>;
     /**
      * Returns DB connection with transaction support.
+     *
      * @param conn Existing connection.
      * @returns {
-     *  singleTrans: Tells if connection will be used in transaction.
-     *  sql: MySqlUtil
-     *  conn: PoolConnection
+     * singleTrans: Tells if connection will be used in transaction.
+     * sql: MySqlUtil
+     * conn: PoolConnection
      * }
      */
     getDbConnection(conn?: PoolConnection): Promise<{
@@ -83,12 +84,14 @@ export declare abstract class BaseModel extends Model<any> {
     }>;
     /**
      * Saves model data in the database as a new row.
+     *
      * @param options Create options.
      * @returns this
      */
     create(options?: ActionOptions): Promise<this>;
     /**
      * Updates model data in the database.
+     *
      * @param options Update options.
      * @returns this
      */
@@ -108,18 +111,21 @@ export declare abstract class BaseModel extends Model<any> {
     delete(options?: ActionOptions): Promise<this>;
     /**
      * Returns base model select fields used in querying.
+     *
      * @param table Queried table synonym.
      * @returns Default select columns.
      */
     getSelectColumns(table: string): string;
     /**
      * Returns mapped default selected columns. Column name is mapped with the table prefix.
+     *
      * @param table Queried table synonym.
      * @returns Default select mapped columns.
      */
     getMappedSelectColumns(table: string): string;
     /**
      * Parses mapped selected columns back to their original fields.
+     *
      * @param table Queried table synonym.
      * @param data Data to parse from.
      * @returns Parsed default selected columns.

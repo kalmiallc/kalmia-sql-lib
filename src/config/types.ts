@@ -1,12 +1,4 @@
-/**
- * Connection strategy
- */
-export enum ConnectionStrategy {
-  NO_POOL = 'no_pool',
-  LOCAL_POOL = 'local_pool',
-  RDS_PROXY_POOL = 'rds_proxy_pool',
-  LMD_OUT_OF_HANDLER_CONN = 'lmd_out_of_handler_conn'
-}
+/* eslint-disable no-shadow */
 
 /**
  * Model population strategies.
