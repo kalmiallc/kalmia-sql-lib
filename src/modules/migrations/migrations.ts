@@ -6,9 +6,10 @@ import { MySqlConnManager } from '../db-connection/mysql-conn-manager';
  */
 export interface MigrationOptions {
   /**
-   * Math to migration files. Should be made with path.join, starting with __dirname
+   * Path to migration files. Should be made with path.join, starting with __dirname.
    */
   path: string;
+
   /**
    * Name of database table migrations should be saved to. Should be unique for every package.
    */
@@ -18,9 +19,8 @@ export interface MigrationOptions {
 
 /**
  * General class for handling migrations. It uses ts-mysql-migrate tool for handling migrations.
- * https://github.com/tinemlakar/ts-mysql-migrate
+ * @link https://github.com/tinemlakar/ts-mysql-migrate
  */
-
 export class Migrations {
   dbMigration: Migration;
   migrationToolConnectionPool;

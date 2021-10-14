@@ -5,7 +5,7 @@ const ts_mysql_migrate_1 = require("ts-mysql-migrate");
 const mysql_conn_manager_1 = require("../db-connection/mysql-conn-manager");
 /**
  * General class for handling migrations. It uses ts-mysql-migrate tool for handling migrations.
- * https://github.com/tinemlakar/ts-mysql-migrate
+ * @link https://github.com/tinemlakar/ts-mysql-migrate
  */
 class Migrations {
     /**

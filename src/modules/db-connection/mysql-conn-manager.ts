@@ -10,8 +10,9 @@
 import { ApplicationEnv, AppLogger } from 'kalmia-common-lib';
 import * as mysqlSync from 'mysql2';
 import * as mysql from 'mysql2/promise';
+import { IConnectionDetails } from '../../config/interfaces';
 import { env } from '../../config/env';
-import { ConnectionStrategy, DbConnectionType, IConnectionDetails } from '../../config/types';
+import { ConnectionStrategy, DbConnectionType } from '../../config/types';
 
 export class MySqlConnManager {
   private static instance: MySqlConnManager;
@@ -197,6 +198,7 @@ export class MySqlConnManager {
     }
 
     AppLogger.debug('mysql-conn-manager.ts', 'getMySqlLocalPoolConnection', '[DBM] SQL Connection details:', env.APP_ENV, user, port, host, database);
+
     let conn;
     try {
       conn = await mysql.createPool({

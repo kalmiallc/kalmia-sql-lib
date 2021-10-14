@@ -8,7 +8,7 @@
  */
 import * as mysqlSync from 'mysql2';
 import * as mysql from 'mysql2/promise';
-import { IConnectionDetails } from '../../config/types';
+import { IConnectionDetails } from '../../config/interfaces';
 export declare class MySqlConnManager {
     private static instance;
     private _connections;
