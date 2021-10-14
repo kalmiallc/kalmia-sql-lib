@@ -1,16 +1,11 @@
-
 /**
- * This is a global connection manager. It's purpose is to provide a single entry point for all types of connections.
+ * This is a global connection manager. It's purpose is to provide a single entry point for sql connections.
  * It allows only one instance, so this manager also handles connection pooling.
  *
  * Based on the environment variable setting, the connection is returned. Different strategies are used. The strategy defines how we handle connection pooling.
  * All the connection data needed is handled from the environment variables. These are defined in {@link ./../../config/env}
  *
- *
- *
- * TODO: Add options to control the connection from the AWS
  */
-
 
 import { ApplicationEnv, AppLogger } from 'kalmia-common-lib';
 import * as mysqlSync from 'mysql2';
@@ -49,6 +44,8 @@ export class MySqlConnManager {
         await conn.release();
         throw new Error('Test pool connection unsuccessful!');
       }
+      await conn.execute('set session wait_timeout=3600');
+
       await conn.release();
     } catch (e) {
       throw new Error('Test pool connection unsuccessful!, ' + e);
