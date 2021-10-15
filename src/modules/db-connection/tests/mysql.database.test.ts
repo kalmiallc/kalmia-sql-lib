@@ -107,6 +107,105 @@ describe('MySQL coon pool', () => {
   }
 });
 
+describe('MySQL coon pool automatic', () => {
+  let conn: mysql.Pool;
+  let sqlUtil: MySqlUtil;
+
+  beforeAll(async () => {
+    conn = (await MySqlConnManager.getInstance().getConnection()) as Pool;
+    sqlUtil = new MySqlUtil(conn);
+    await setupDatabase();
+  });
+
+  afterAll(async () => {
+    await dropDatabase();
+    await MySqlConnManager.getInstance().end();
+  });
+
+  it('Query should find one', async () => {
+    await sqlUtil.paramExecuteDirect(
+      `INSERT INTO \`sql_lib_user\` (
+        email,
+        id
+      ) VALUES (
+        @email,
+        @id
+      )`,
+      {
+        email: `${Math.floor(Math.random() * 10_000)}@example.com`,
+        id: Math.floor(Math.random() * 1_000_000)
+      }
+    );
+
+    const count = await sqlUtil.paramExecuteDirect("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;");
+    expect(count.length).toBe(1);
+    expect(count).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          COUNT: 1
+        })
+      ])
+    );
+  });
+
+  it('Query should fail', async () => {
+    await insertObject();
+    await cleanDatabase();
+
+    try {
+      await sqlUtil.paramExecuteDirect("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;");
+      expect(true).toBe(false);
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
+  });
+
+  it('Query should use two connections', async () => {
+    const secondConn = (await MySqlConnManager.getInstance().getConnection('secondary')) as Pool;
+    const secondUtil = new MySqlUtil(secondConn);
+    await sqlUtil.paramExecuteDirect(
+      `INSERT INTO \`sql_lib_user\` (
+        email,
+        id
+      ) VALUES (
+        @email,
+        @id
+      )`,
+      {
+        email: `${Math.floor(Math.random() * 10_000)}@example.com`,
+        id: Math.floor(Math.random() * 1_000_000)
+      }
+    );
+
+    const count = await secondUtil.paramExecuteDirect("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;");
+    await MySqlConnManager.getInstance().end('secondary');
+    expect(count.length).toBe(1);
+    expect(count).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          COUNT: 1
+        })
+      ])
+    );
+  });
+
+  async function insertObject() {
+    await sqlUtil.paramExecuteDirect(
+      `INSERT INTO \`sql_lib_user\` (
+        email,
+        id
+      ) VALUES (
+        @email,
+        @id
+      )`,
+      {
+        email: `${Math.floor(Math.random() * 10_000)}@example.com`,
+        id: Math.floor(Math.random() * 1_000_000)
+      }
+    );
+  }
+});
+
 describe('MySQL no pool', () => {
   let conn: mysql.Connection;
 

@@ -36,7 +36,8 @@ export class MySqlUtil {
   }
 
   /**
-   * Call single stored procedure inside transaction
+   * Call single stored procedure inside transaction, and make commit.
+   * In case of error the transaction is rolled back.
    *
    * @param procedure name of procedure
    * @param data procedure parameters
@@ -61,7 +62,12 @@ export class MySqlUtil {
    * @param data Object with call parameters
    * @returns array of results from database
    */
-  public async call(procedure: string, data: any, connection?: PoolConnection, options: { multiSet?: boolean } = {}): Promise<any> {
+  public async call(
+    procedure: string,
+    data: any,
+    connection: PoolConnection = this._currentPooledConnection,
+    options: { multiSet?: boolean } = {}
+  ): Promise<any> {
     let isSingleTrans = false;
     if (!connection) {
       isSingleTrans = true;
@@ -100,6 +106,45 @@ export class MySqlUtil {
     }
   }
 
+  /**
+   * Call stored procedure on database
+   *
+   * @param procedure procedure name
+   * @param data Object with call parameters
+   * @returns array of results from database
+   */
+  public async callDirect(procedure: string, data: any, options: { multiSet?: boolean } = {}): Promise<any> {
+    const query = `CALL ${procedure}(${Object.keys(data).length ? Array(Object.keys(data).length).fill('?').join(',') : ''});`;
+
+    AppLogger.debug('mysql-util.ts', 'call', 'DB ', query);
+    AppLogger.debug('mysql-util.ts', 'call', 'DB ', this.mapValues(data, true).join(';'));
+
+    const result = await this._dbConnectionPool.query(query, this.mapValues(data));
+
+    for (const resultSet of result[0] as mysql.RowDataPacket[][]) {
+      if (resultSet.length && resultSet[0].ErrorCode > 0) {
+        throw new Error(`${resultSet[0].ErrorCode}: '${resultSet[0].Message}'`);
+        // throw new CodeException({
+        //   status: 500,
+        //   code: resultSet[0].ErrorCode,
+        //   errorMessage: resultSet[0].Message,
+        //   details: result
+        // });
+      }
+    }
+    if (!options.multiSet) {
+      return result[0][0];
+    } else {
+      return result[0];
+    }
+  }
+
+  /**
+   * This function takes a new connection form the poll and starts transaction.
+   *
+   * @returns connection from the pool.
+   */
+
   public async start(): Promise<PoolConnection> {
     // await this.db.query('SET SESSION autocommit = 0; START TRANSACTION;');
     const conn = await (this._dbConnectionPool as mysql.Pool).getConnection();
@@ -111,7 +156,7 @@ export class MySqlUtil {
     return conn;
   }
 
-  public async commit(connection: PoolConnection): Promise<void> {
+  public async commit(connection: PoolConnection = this._currentPooledConnection): Promise<void> {
     // await this.db.query('COMMIT; SET SESSION autocommit = 1;');
     if (!connection) {
       throw Error('MySql Db Connection not provided');
@@ -121,7 +166,7 @@ export class MySqlUtil {
     AppLogger.debug('mysql-util.ts', 'commit', 'DB ', 'COMMIT TRANSACTION');
   }
 
-  public async rollback(connection: PoolConnection): Promise<void> {
+  public async rollback(connection: PoolConnection = this._currentPooledConnection): Promise<void> {
     // await this.db.query('ROLLBACK; SET SESSION autocommit = 1;');
     if (!connection) {
       throw Error('MySql Db Connection not provided');
@@ -153,13 +198,15 @@ export class MySqlUtil {
 
   /**
    * Function replaces sql query parameters with "@variable" notation with values from object {variable: replace_value}
-   * and executes prepared statement
+   * and executes prepared statement. If there is no connection added to the parameter (or no current pooled connection present on the object)
+   * then a new connection will be taken from the pool and released after.
+   *
    *
    * @param query SQL query
    * @param values object with replacement values
    * @param connection PoolConnection reference - needed if query is part of transaction
    */
-  public async paramExecute(query: string, values?: unknown, connection?: PoolConnection): Promise<any[]> {
+  public async paramExecute(query: string, values?: unknown, connection: PoolConnection = this._currentPooledConnection): Promise<any[]> {
     const sqlParamValues = [];
     let isSingleTrans = false;
 
@@ -222,6 +269,65 @@ export class MySqlUtil {
     }
     // const diff = process.hrtime(time);
 
+    return result[0] as any[];
+  }
+
+  /**
+   * Function replaces sql query parameters with "@variable" notation with values from object {variable: replace_value}
+   * This function uses automatic connection creation and release functionality of mysql lib.
+   *
+   * @param query SQL query
+   * @param values object with replacement values
+   *
+   */
+  public async paramExecuteDirect(query: string, values?: unknown): Promise<any[]> {
+    const sqlParamValues = [];
+
+    if (values) {
+      // split query to array to find right order of variables
+      const queryArray = query.split(/\n|\s/).filter((x) => !!x && /@.*\b/.test(x));
+
+      for (const word of queryArray) {
+        for (const key of Object.keys(values)) {
+          // transform array values to string
+          if (Array.isArray(values[key])) {
+            values[key] = values[key].join(',') || null;
+          }
+
+          // regex
+          const re = new RegExp(`@${key}\\b`, 'gi');
+
+          if (word.match(re)) {
+            if (isPlainObject(values[key])) {
+              sqlParamValues.push(JSON.stringify(values[key]));
+            } else {
+              sqlParamValues.push(values[key]);
+            }
+          }
+        }
+      }
+
+      // replace keys with '?' for prepared statement
+      for (const key of Object.keys(values)) {
+        const re = new RegExp(`@${key}\\b`, 'gi');
+        query = query.replace(re, '?');
+      }
+    }
+
+    AppLogger.debug('mysql-util.ts', 'paramExecute', 'DB ', query);
+    AppLogger.debug('mysql-util.ts', 'paramExecute', 'DB ', this.mapValues(sqlParamValues, true).join(';'));
+
+    let result;
+    // const time = process.hrtime();
+    try {
+      result = await this._dbConnectionPool.execute(query, sqlParamValues);
+    } catch (err) {
+      AppLogger.error('mysql-util.ts', 'paramExecute', err);
+      AppLogger.error('mysql-util.ts', 'paramExecute', query);
+      AppLogger.error('mysql-util.ts', 'paramExecute', sqlParamValues);
+
+      throw err;
+    }
     return result[0] as any[];
   }
 }
