@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MySqlUtil = void 0;
 const kalmia_common_lib_1 = require("kalmia-common-lib");
+const SqlString = require("sqlstring");
 /**
  * MySQL helper. This helper is designed for usage of SQL connection pool.
  */
@@ -194,7 +195,9 @@ class MySqlUtil {
         }
         if (values) {
             // split query to array to find right order of variables
-            const queryArray = query.split(/\n|\s/).filter((x) => !!x && /@.*\b/.test(x));
+            const queryArray = SqlString.escapeId(query)
+                .split(/\n|\s/)
+                .filter((x) => !!x && /@.*\b/.test(x));
             for (const word of queryArray) {
                 for (const key of Object.keys(values)) {
                     // transform array values to string
@@ -205,10 +208,10 @@ class MySqlUtil {
                     const re = new RegExp(`@${key}\\b`, 'gi');
                     if (word.match(re)) {
                         if ((0, kalmia_common_lib_1.isPlainObject)(values[key])) {
-                            sqlParamValues.push(JSON.stringify(values[key]));
+                            SqlString.escapeId(sqlParamValues.push(JSON.stringify(values[key])));
                         }
                         else {
-                            sqlParamValues.push(values[key]);
+                            SqlString.escapeId(sqlParamValues.push(values[key]));
                         }
                     }
                 }
@@ -252,7 +255,9 @@ class MySqlUtil {
         const sqlParamValues = [];
         if (values) {
             // split query to array to find right order of variables
-            const queryArray = query.split(/\n|\s/).filter((x) => !!x && /@.*\b/.test(x));
+            const queryArray = SqlString.escapeId(query)
+                .split(/\n|\s/)
+                .filter((x) => !!x && /@.*\b/.test(x));
             for (const word of queryArray) {
                 for (const key of Object.keys(values)) {
                     // transform array values to string
@@ -263,10 +268,10 @@ class MySqlUtil {
                     const re = new RegExp(`@${key}\\b`, 'gi');
                     if (word.match(re)) {
                         if ((0, kalmia_common_lib_1.isPlainObject)(values[key])) {
-                            sqlParamValues.push(JSON.stringify(values[key]));
+                            SqlString.escapeId(sqlParamValues.push(JSON.stringify(values[key])));
                         }
                         else {
-                            sqlParamValues.push(values[key]);
+                            SqlString.escapeId(sqlParamValues.push(values[key]));
                         }
                     }
                 }

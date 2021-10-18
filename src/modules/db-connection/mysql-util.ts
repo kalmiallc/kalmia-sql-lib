@@ -1,6 +1,7 @@
 import { AppLogger, isPlainObject } from 'kalmia-common-lib';
 import * as mysql from 'mysql2/promise';
 import { Pool, PoolConnection } from 'mysql2/promise';
+import * as SqlString from 'sqlstring';
 
 /**
  * MySQL helper. This helper is designed for usage of SQL connection pool.
@@ -220,7 +221,9 @@ export class MySqlUtil {
 
     if (values) {
       // split query to array to find right order of variables
-      const queryArray = query.split(/\n|\s/).filter((x) => !!x && /@.*\b/.test(x));
+      const queryArray = SqlString.escapeId(query)
+        .split(/\n|\s/)
+        .filter((x) => !!x && /@.*\b/.test(x));
 
       for (const word of queryArray) {
         for (const key of Object.keys(values)) {
@@ -234,9 +237,9 @@ export class MySqlUtil {
 
           if (word.match(re)) {
             if (isPlainObject(values[key])) {
-              sqlParamValues.push(JSON.stringify(values[key]));
+              SqlString.escapeId(sqlParamValues.push(JSON.stringify(values[key])));
             } else {
-              sqlParamValues.push(values[key]);
+              SqlString.escapeId(sqlParamValues.push(values[key]));
             }
           }
         }
@@ -285,7 +288,9 @@ export class MySqlUtil {
 
     if (values) {
       // split query to array to find right order of variables
-      const queryArray = query.split(/\n|\s/).filter((x) => !!x && /@.*\b/.test(x));
+      const queryArray = SqlString.escapeId(query)
+        .split(/\n|\s/)
+        .filter((x) => !!x && /@.*\b/.test(x));
 
       for (const word of queryArray) {
         for (const key of Object.keys(values)) {
@@ -299,9 +304,9 @@ export class MySqlUtil {
 
           if (word.match(re)) {
             if (isPlainObject(values[key])) {
-              sqlParamValues.push(JSON.stringify(values[key]));
+              SqlString.escapeId(sqlParamValues.push(JSON.stringify(values[key])));
             } else {
-              sqlParamValues.push(values[key]);
+              SqlString.escapeId(sqlParamValues.push(values[key]));
             }
           }
         }

@@ -61,6 +61,19 @@ describe('MySQL coon pool', () => {
     }
   });
 
+  it('Should escape param', async () => {
+    await insertObject();
+    const attack = "' UNION all SELECT @@version, NULL, NULL--'";
+    const SQL = `SELECT * FROM oro.sql_lib_user Where email like @attack`;
+    const data = await sqlUtil.paramExecute(SQL, { attack });
+    expect(data.length).toBe(0);
+
+    const data2 = await sqlUtil.paramExecuteDirect(SQL, { attack });
+    expect(data2.length).toBe(0);
+
+    await cleanDatabase();
+  });
+
   it('Query should use two connections', async () => {
     const secondConn = (await MySqlConnManager.getInstance().getConnection('secondary')) as Pool;
     const secondUtil = new MySqlUtil(secondConn);
