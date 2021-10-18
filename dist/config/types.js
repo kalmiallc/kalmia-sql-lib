@@ -7,7 +7,7 @@ exports.WorkerDbTables = exports.DbModelStatus = exports.DbConnectionType = expo
  */
 var PopulateFor;
 (function (PopulateFor) {
-    PopulateFor["PROFILE"] = "profile";
+    PopulateFor["ALL"] = "all";
     PopulateFor["DB"] = "db";
     PopulateFor["ADMIN"] = "admin";
     PopulateFor["WORKER"] = "worker";
@@ -17,7 +17,7 @@ var PopulateFor;
  */
 var SerializeFor;
 (function (SerializeFor) {
-    SerializeFor["PROFILE"] = "profile";
+    SerializeFor["ALL"] = "ALL";
     SerializeFor["INSERT_DB"] = "insert_db";
     SerializeFor["UPDATE_DB"] = "update_db";
     SerializeFor["ADMIN"] = "admin";

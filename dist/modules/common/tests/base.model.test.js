@@ -55,14 +55,14 @@ describe('Base model', () => {
         expect(newUser._createTime).toBe(obj._createTime);
         expect(newUser.notAProp).toBe(undefined);
     });
-    it('Prop population - profile', () => {
+    it('Prop population - ALL', () => {
         const obj = {
             id: 1234,
             email: 'cotton-eyed joe',
             _createTime: new Date(),
             notAProp: 'ladaee'
         };
-        const newUser = new TestUser().populate(obj, types_1.PopulateFor.PROFILE);
+        const newUser = new TestUser().populate(obj, types_1.PopulateFor.ALL);
         expect(newUser.email).toBe(obj.email);
         expect(newUser.id).toBe(null);
         expect(newUser._createTime).toBe(null);
@@ -80,13 +80,13 @@ describe('Base model', () => {
         expect(serialized.id).toBe(obj.id);
         expect(serialized._createTime).toBe(obj._createTime);
     });
-    it('Prop serialization - profile', () => {
+    it('Prop serialization - ALL', () => {
         const obj = {
             id: 1234,
             email: 'cotton-eyed joe',
             _createTime: new Date()
         };
-        const newUser = new TestUser().populate(obj, types_1.SerializeFor.PROFILE);
+        const newUser = new TestUser().populate(obj, types_1.PopulateFor.ALL);
         const serialized = newUser.serialize();
         expect(serialized.email).toBe(obj.email);
         expect(serialized.id).toBe(null);
@@ -219,8 +219,8 @@ class TestUser extends base_model_1.BaseModel {
 __decorate([
     (0, core_1.prop)({
         parser: { resolver: (0, parsers_1.stringParser)() },
-        populatable: [types_1.PopulateFor.DB, types_1.SerializeFor.PROFILE],
-        serializable: [types_1.SerializeFor.PROFILE, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB]
+        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.ALL],
+        serializable: [types_1.SerializeFor.ALL, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB]
     }),
     __metadata("design:type", String)
 ], TestUser.prototype, "email", void 0);

@@ -4,7 +4,7 @@
  * Model population strategies.
  */
 export enum PopulateFor {
-  PROFILE = 'profile',
+  ALL = 'all',
   DB = 'db',
   ADMIN = 'admin',
   WORKER = 'worker'
@@ -14,7 +14,7 @@ export enum PopulateFor {
  * Model serialization strategies.
  */
 export enum SerializeFor {
-  PROFILE = 'profile',
+  ALL = 'ALL',
   INSERT_DB = 'insert_db',
   UPDATE_DB = 'update_db',
   ADMIN = 'admin',

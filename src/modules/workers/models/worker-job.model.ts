@@ -20,8 +20,8 @@ export class WorkerJob extends BaseModel {
    */
   @prop({
     parser: { resolver: stringParser() },
-    serializable: [SerializeFor.PROFILE, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
-    populatable: [PopulateFor.DB, PopulateFor.PROFILE, PopulateFor.WORKER]
+    serializable: [SerializeFor.ALL, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
+    populatable: [PopulateFor.DB, PopulateFor.ALL, PopulateFor.WORKER]
   })
   public name: string;
 
@@ -30,8 +30,8 @@ export class WorkerJob extends BaseModel {
    */
   @prop({
     parser: { resolver: integerParser() },
-    serializable: [SerializeFor.PROFILE, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
-    populatable: [PopulateFor.DB, PopulateFor.PROFILE, PopulateFor.WORKER],
+    serializable: [SerializeFor.ALL, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
+    populatable: [PopulateFor.DB, PopulateFor.ALL, PopulateFor.WORKER],
     defaultValue: 1,
     fakeValue: 1
   })
@@ -42,8 +42,8 @@ export class WorkerJob extends BaseModel {
    */
   @prop({
     parser: { resolver: stringParser() },
-    serializable: [SerializeFor.PROFILE, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
-    populatable: [PopulateFor.DB, PopulateFor.PROFILE, PopulateFor.WORKER],
+    serializable: [SerializeFor.ALL, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
+    populatable: [PopulateFor.DB, PopulateFor.ALL, PopulateFor.WORKER],
     fakeValue: '* * * * * *'
   })
   public interval: string;
@@ -53,8 +53,8 @@ export class WorkerJob extends BaseModel {
    */
   @prop({
     parser: { resolver: dateParser() },
-    serializable: [SerializeFor.PROFILE, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
-    populatable: [PopulateFor.DB, PopulateFor.PROFILE, PopulateFor.WORKER]
+    serializable: [SerializeFor.ALL, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
+    populatable: [PopulateFor.DB, PopulateFor.ALL, PopulateFor.WORKER]
   })
   public lastRun: Date;
 
@@ -63,8 +63,8 @@ export class WorkerJob extends BaseModel {
    */
   @prop({
     parser: { resolver: dateParser() },
-    serializable: [SerializeFor.PROFILE, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
-    populatable: [PopulateFor.DB, PopulateFor.PROFILE, PopulateFor.WORKER]
+    serializable: [SerializeFor.ALL, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
+    populatable: [PopulateFor.DB, PopulateFor.ALL, PopulateFor.WORKER]
   })
   public nextRun: Date;
 
@@ -73,8 +73,8 @@ export class WorkerJob extends BaseModel {
    */
   @prop({
     parser: { resolver: integerParser() },
-    serializable: [SerializeFor.PROFILE, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
-    populatable: [PopulateFor.DB, PopulateFor.PROFILE, PopulateFor.WORKER],
+    serializable: [SerializeFor.ALL, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
+    populatable: [PopulateFor.DB, PopulateFor.ALL, PopulateFor.WORKER],
     defaultValue: 15 * 60
   })
   public timeout: number;
@@ -84,8 +84,8 @@ export class WorkerJob extends BaseModel {
    */
   @prop({
     parser: { resolver: stringParser() },
-    serializable: [SerializeFor.PROFILE, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
-    populatable: [PopulateFor.DB, PopulateFor.PROFILE, PopulateFor.WORKER]
+    serializable: [SerializeFor.ALL, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
+    populatable: [PopulateFor.DB, PopulateFor.ALL, PopulateFor.WORKER]
   })
   public input: string;
 
@@ -94,8 +94,8 @@ export class WorkerJob extends BaseModel {
    */
   @prop({
     parser: { resolver: integerParser() },
-    serializable: [SerializeFor.PROFILE, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
-    populatable: [PopulateFor.DB, PopulateFor.PROFILE, PopulateFor.WORKER],
+    serializable: [SerializeFor.ALL, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
+    populatable: [PopulateFor.DB, PopulateFor.ALL, PopulateFor.WORKER],
     defaultValue: 0,
     fakeValue: 1
   })
@@ -106,8 +106,8 @@ export class WorkerJob extends BaseModel {
    */
   @prop({
     parser: { resolver: JSONParser() },
-    serializable: [SerializeFor.PROFILE, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
-    populatable: [PopulateFor.DB, PopulateFor.PROFILE, PopulateFor.WORKER]
+    serializable: [SerializeFor.ALL, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
+    populatable: [PopulateFor.DB, PopulateFor.ALL, PopulateFor.WORKER]
   })
   public parameters: any;
 
@@ -116,8 +116,8 @@ export class WorkerJob extends BaseModel {
    */
   @prop({
     parser: { resolver: booleanParser() },
-    serializable: [SerializeFor.PROFILE, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
-    populatable: [PopulateFor.DB, PopulateFor.PROFILE, PopulateFor.WORKER]
+    serializable: [SerializeFor.ALL, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
+    populatable: [PopulateFor.DB, PopulateFor.ALL, PopulateFor.WORKER]
   })
   public autoRemove: boolean;
 
@@ -126,8 +126,8 @@ export class WorkerJob extends BaseModel {
    */
   @prop({
     parser: { resolver: integerParser() },
-    serializable: [SerializeFor.PROFILE, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
-    populatable: [PopulateFor.DB, PopulateFor.PROFILE, PopulateFor.WORKER]
+    serializable: [SerializeFor.ALL, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
+    populatable: [PopulateFor.DB, PopulateFor.ALL, PopulateFor.WORKER]
   })
   public lastDuration: number;
 
@@ -136,8 +136,8 @@ export class WorkerJob extends BaseModel {
    */
   @prop({
     parser: { resolver: stringParser() },
-    serializable: [SerializeFor.PROFILE, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
-    populatable: [PopulateFor.DB, PopulateFor.PROFILE, PopulateFor.WORKER]
+    serializable: [SerializeFor.ALL, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
+    populatable: [PopulateFor.DB, PopulateFor.ALL, PopulateFor.WORKER]
   })
   public lastError: string;
 
@@ -146,8 +146,8 @@ export class WorkerJob extends BaseModel {
    */
   @prop({
     parser: { resolver: dateParser() },
-    serializable: [SerializeFor.PROFILE, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
-    populatable: [PopulateFor.DB, PopulateFor.PROFILE, PopulateFor.WORKER]
+    serializable: [SerializeFor.ALL, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
+    populatable: [PopulateFor.DB, PopulateFor.ALL, PopulateFor.WORKER]
   })
   public lastCompleted: Date;
 
@@ -156,8 +156,8 @@ export class WorkerJob extends BaseModel {
    */
   @prop({
     parser: { resolver: dateParser() },
-    serializable: [SerializeFor.PROFILE, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
-    populatable: [PopulateFor.DB, PopulateFor.PROFILE, PopulateFor.WORKER]
+    serializable: [SerializeFor.ALL, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.WORKER],
+    populatable: [PopulateFor.DB, PopulateFor.ALL, PopulateFor.WORKER]
   })
   public lastFailed: Date;
 

@@ -51,14 +51,14 @@ describe('Base model', () => {
     expect((newUser as any).notAProp).toBe(undefined);
   });
 
-  it('Prop population - profile', () => {
+  it('Prop population - ALL', () => {
     const obj = {
       id: 1234,
       email: 'cotton-eyed joe',
       _createTime: new Date(),
       notAProp: 'ladaee'
     };
-    const newUser = new TestUser().populate(obj, PopulateFor.PROFILE);
+    const newUser = new TestUser().populate(obj, PopulateFor.ALL);
     expect(newUser.email).toBe(obj.email);
     expect(newUser.id).toBe(null);
     expect(newUser._createTime).toBe(null);
@@ -78,13 +78,13 @@ describe('Base model', () => {
     expect(serialized._createTime).toBe(obj._createTime);
   });
 
-  it('Prop serialization - profile', () => {
+  it('Prop serialization - ALL', () => {
     const obj = {
       id: 1234,
       email: 'cotton-eyed joe',
       _createTime: new Date()
     };
-    const newUser = new TestUser().populate(obj, SerializeFor.PROFILE);
+    const newUser = new TestUser().populate(obj, PopulateFor.ALL);
     const serialized = newUser.serialize();
     expect(serialized.email).toBe(obj.email);
     expect(serialized.id).toBe(null);
@@ -233,8 +233,8 @@ class TestUser extends BaseModel {
    */
   @prop({
     parser: { resolver: stringParser() },
-    populatable: [PopulateFor.DB, SerializeFor.PROFILE],
-    serializable: [SerializeFor.PROFILE, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB]
+    populatable: [PopulateFor.DB, PopulateFor.ALL],
+    serializable: [SerializeFor.ALL, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB]
   })
   public email: string;
 }

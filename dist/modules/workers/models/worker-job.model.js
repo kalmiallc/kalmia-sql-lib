@@ -75,16 +75,16 @@ class WorkerJob extends base_model_1.BaseModel {
 __decorate([
     (0, core_1.prop)({
         parser: { resolver: (0, parsers_1.stringParser)() },
-        serializable: [types_1.SerializeFor.PROFILE, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
-        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.PROFILE, types_1.PopulateFor.WORKER]
+        serializable: [types_1.SerializeFor.ALL, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
+        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.ALL, types_1.PopulateFor.WORKER]
     }),
     __metadata("design:type", String)
 ], WorkerJob.prototype, "name", void 0);
 __decorate([
     (0, core_1.prop)({
         parser: { resolver: (0, parsers_1.integerParser)() },
-        serializable: [types_1.SerializeFor.PROFILE, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
-        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.PROFILE, types_1.PopulateFor.WORKER],
+        serializable: [types_1.SerializeFor.ALL, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
+        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.ALL, types_1.PopulateFor.WORKER],
         defaultValue: 1,
         fakeValue: 1
     }),
@@ -93,8 +93,8 @@ __decorate([
 __decorate([
     (0, core_1.prop)({
         parser: { resolver: (0, parsers_1.stringParser)() },
-        serializable: [types_1.SerializeFor.PROFILE, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
-        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.PROFILE, types_1.PopulateFor.WORKER],
+        serializable: [types_1.SerializeFor.ALL, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
+        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.ALL, types_1.PopulateFor.WORKER],
         fakeValue: '* * * * * *'
     }),
     __metadata("design:type", String)
@@ -102,24 +102,24 @@ __decorate([
 __decorate([
     (0, core_1.prop)({
         parser: { resolver: (0, parsers_1.dateParser)() },
-        serializable: [types_1.SerializeFor.PROFILE, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
-        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.PROFILE, types_1.PopulateFor.WORKER]
+        serializable: [types_1.SerializeFor.ALL, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
+        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.ALL, types_1.PopulateFor.WORKER]
     }),
     __metadata("design:type", Date)
 ], WorkerJob.prototype, "lastRun", void 0);
 __decorate([
     (0, core_1.prop)({
         parser: { resolver: (0, parsers_1.dateParser)() },
-        serializable: [types_1.SerializeFor.PROFILE, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
-        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.PROFILE, types_1.PopulateFor.WORKER]
+        serializable: [types_1.SerializeFor.ALL, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
+        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.ALL, types_1.PopulateFor.WORKER]
     }),
     __metadata("design:type", Date)
 ], WorkerJob.prototype, "nextRun", void 0);
 __decorate([
     (0, core_1.prop)({
         parser: { resolver: (0, parsers_1.integerParser)() },
-        serializable: [types_1.SerializeFor.PROFILE, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
-        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.PROFILE, types_1.PopulateFor.WORKER],
+        serializable: [types_1.SerializeFor.ALL, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
+        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.ALL, types_1.PopulateFor.WORKER],
         defaultValue: 15 * 60
     }),
     __metadata("design:type", Number)
@@ -127,16 +127,16 @@ __decorate([
 __decorate([
     (0, core_1.prop)({
         parser: { resolver: (0, parsers_1.stringParser)() },
-        serializable: [types_1.SerializeFor.PROFILE, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
-        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.PROFILE, types_1.PopulateFor.WORKER]
+        serializable: [types_1.SerializeFor.ALL, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
+        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.ALL, types_1.PopulateFor.WORKER]
     }),
     __metadata("design:type", String)
 ], WorkerJob.prototype, "input", void 0);
 __decorate([
     (0, core_1.prop)({
         parser: { resolver: (0, parsers_1.integerParser)() },
-        serializable: [types_1.SerializeFor.PROFILE, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
-        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.PROFILE, types_1.PopulateFor.WORKER],
+        serializable: [types_1.SerializeFor.ALL, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
+        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.ALL, types_1.PopulateFor.WORKER],
         defaultValue: 0,
         fakeValue: 1
     }),
@@ -145,48 +145,48 @@ __decorate([
 __decorate([
     (0, core_1.prop)({
         parser: { resolver: (0, kalmia_common_lib_1.JSONParser)() },
-        serializable: [types_1.SerializeFor.PROFILE, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
-        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.PROFILE, types_1.PopulateFor.WORKER]
+        serializable: [types_1.SerializeFor.ALL, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
+        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.ALL, types_1.PopulateFor.WORKER]
     }),
     __metadata("design:type", Object)
 ], WorkerJob.prototype, "parameters", void 0);
 __decorate([
     (0, core_1.prop)({
         parser: { resolver: (0, parsers_1.booleanParser)() },
-        serializable: [types_1.SerializeFor.PROFILE, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
-        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.PROFILE, types_1.PopulateFor.WORKER]
+        serializable: [types_1.SerializeFor.ALL, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
+        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.ALL, types_1.PopulateFor.WORKER]
     }),
     __metadata("design:type", Boolean)
 ], WorkerJob.prototype, "autoRemove", void 0);
 __decorate([
     (0, core_1.prop)({
         parser: { resolver: (0, parsers_1.integerParser)() },
-        serializable: [types_1.SerializeFor.PROFILE, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
-        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.PROFILE, types_1.PopulateFor.WORKER]
+        serializable: [types_1.SerializeFor.ALL, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
+        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.ALL, types_1.PopulateFor.WORKER]
     }),
     __metadata("design:type", Number)
 ], WorkerJob.prototype, "lastDuration", void 0);
 __decorate([
     (0, core_1.prop)({
         parser: { resolver: (0, parsers_1.stringParser)() },
-        serializable: [types_1.SerializeFor.PROFILE, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
-        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.PROFILE, types_1.PopulateFor.WORKER]
+        serializable: [types_1.SerializeFor.ALL, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
+        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.ALL, types_1.PopulateFor.WORKER]
     }),
     __metadata("design:type", String)
 ], WorkerJob.prototype, "lastError", void 0);
 __decorate([
     (0, core_1.prop)({
         parser: { resolver: (0, parsers_1.dateParser)() },
-        serializable: [types_1.SerializeFor.PROFILE, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
-        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.PROFILE, types_1.PopulateFor.WORKER]
+        serializable: [types_1.SerializeFor.ALL, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
+        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.ALL, types_1.PopulateFor.WORKER]
     }),
     __metadata("design:type", Date)
 ], WorkerJob.prototype, "lastCompleted", void 0);
 __decorate([
     (0, core_1.prop)({
         parser: { resolver: (0, parsers_1.dateParser)() },
-        serializable: [types_1.SerializeFor.PROFILE, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
-        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.PROFILE, types_1.PopulateFor.WORKER]
+        serializable: [types_1.SerializeFor.ALL, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.WORKER],
+        populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.ALL, types_1.PopulateFor.WORKER]
     }),
     __metadata("design:type", Date)
 ], WorkerJob.prototype, "lastFailed", void 0);

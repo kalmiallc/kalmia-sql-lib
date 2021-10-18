@@ -31,7 +31,7 @@ export abstract class BaseModel extends Model<any> {
   @prop({
     parser: { resolver: integerParser() },
     populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.PROFILE, SerializeFor.ADMIN]
+    serializable: [SerializeFor.ALL, SerializeFor.ADMIN]
   })
   public id: number;
 
@@ -41,7 +41,7 @@ export abstract class BaseModel extends Model<any> {
   @prop({
     parser: { resolver: dateParser() },
     populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.ADMIN, SerializeFor.PROFILE]
+    serializable: [SerializeFor.ADMIN, SerializeFor.ALL]
   })
   public _createTime: Date;
 
@@ -51,7 +51,7 @@ export abstract class BaseModel extends Model<any> {
   @prop({
     parser: { resolver: integerParser() },
     populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.ADMIN, SerializeFor.INSERT_DB, SerializeFor.PROFILE]
+    serializable: [SerializeFor.ADMIN, SerializeFor.INSERT_DB, SerializeFor.ALL]
   })
   public _createUser: number;
 
@@ -61,7 +61,7 @@ export abstract class BaseModel extends Model<any> {
   @prop({
     parser: { resolver: dateParser() },
     populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.ADMIN, SerializeFor.PROFILE]
+    serializable: [SerializeFor.ADMIN, SerializeFor.ALL]
   })
   public _updateTime: Date;
 
@@ -71,7 +71,7 @@ export abstract class BaseModel extends Model<any> {
   @prop({
     parser: { resolver: integerParser() },
     populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.ADMIN, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.PROFILE]
+    serializable: [SerializeFor.ADMIN, SerializeFor.INSERT_DB, SerializeFor.UPDATE_DB, SerializeFor.ALL]
   })
   public _updateUser: number;
 
@@ -81,7 +81,7 @@ export abstract class BaseModel extends Model<any> {
   @prop({
     parser: { resolver: integerParser() },
     populatable: [PopulateFor.DB],
-    serializable: [SerializeFor.PROFILE, SerializeFor.ADMIN, SerializeFor.UPDATE_DB, SerializeFor.INSERT_DB],
+    serializable: [SerializeFor.ALL, SerializeFor.ADMIN, SerializeFor.UPDATE_DB, SerializeFor.INSERT_DB],
     emptyValue: () => DbModelStatus.ACTIVE,
     defaultValue: () => DbModelStatus.ACTIVE
   })
