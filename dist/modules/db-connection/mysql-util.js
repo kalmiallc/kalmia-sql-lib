@@ -66,8 +66,8 @@ class MySqlUtil {
             throw Error('MySql Db Connection not provided');
         }
         const query = `CALL ${procedure}(${Object.keys(data).length ? Array(Object.keys(data).length).fill('?').join(',') : ''});`;
-        kalmia_common_lib_1.AppLogger.debug('mysql-util.ts', 'call', 'DB ', query);
-        kalmia_common_lib_1.AppLogger.debug('mysql-util.ts', 'call', 'DB ', this.mapValues(data, true).join(';'));
+        kalmia_common_lib_1.AppLogger.trace('mysql-util.ts', 'call', 'DB ', query);
+        kalmia_common_lib_1.AppLogger.trace('mysql-util.ts', 'call', 'DB ', this.mapValues(data, true).join(';'));
         const result = await connection.query(query, this.mapValues(data));
         if (isSingleTrans) {
             connection.release();
@@ -99,8 +99,8 @@ class MySqlUtil {
      */
     async callDirect(procedure, data, options = {}) {
         const query = `CALL ${procedure}(${Object.keys(data).length ? Array(Object.keys(data).length).fill('?').join(',') : ''});`;
-        kalmia_common_lib_1.AppLogger.debug('mysql-util.ts', 'call', 'DB ', query);
-        kalmia_common_lib_1.AppLogger.debug('mysql-util.ts', 'call', 'DB ', this.mapValues(data, true).join(';'));
+        kalmia_common_lib_1.AppLogger.trace('mysql-util.ts', 'call', 'DB ', query);
+        kalmia_common_lib_1.AppLogger.trace('mysql-util.ts', 'call', 'DB ', this.mapValues(data, true).join(';'));
         const result = await this._dbConnectionPool.query(query, this.mapValues(data));
         for (const resultSet of result[0]) {
             if (resultSet.length && resultSet[0].ErrorCode > 0) {
@@ -132,7 +132,7 @@ class MySqlUtil {
             throw Error('MySql Db Connection not provided');
         }
         await conn.beginTransaction();
-        kalmia_common_lib_1.AppLogger.debug('mysql-util.ts', 'start', 'DB ', 'BEGIN TRANSACTION');
+        kalmia_common_lib_1.AppLogger.trace('mysql-util.ts', 'start', 'DB ', 'BEGIN TRANSACTION');
         return conn;
     }
     async commit(connection = this._currentPooledConnection) {
@@ -142,7 +142,7 @@ class MySqlUtil {
         }
         await connection.commit();
         connection.release();
-        kalmia_common_lib_1.AppLogger.debug('mysql-util.ts', 'commit', 'DB ', 'COMMIT TRANSACTION');
+        kalmia_common_lib_1.AppLogger.trace('mysql-util.ts', 'commit', 'DB ', 'COMMIT TRANSACTION');
     }
     async rollback(connection = this._currentPooledConnection) {
         // await this.db.query('ROLLBACK; SET SESSION autocommit = 1;');
@@ -151,7 +151,7 @@ class MySqlUtil {
         }
         await connection.rollback();
         connection.release();
-        kalmia_common_lib_1.AppLogger.debug('mysql-util.ts', 'rollback', 'DB ', 'ROLLBACK TRANSACTION');
+        kalmia_common_lib_1.AppLogger.trace('mysql-util.ts', 'rollback', 'DB ', 'ROLLBACK TRANSACTION');
     }
     /**
      * Translate properties to array of property values for procedure call
@@ -222,8 +222,8 @@ class MySqlUtil {
                 query = query.replace(re, '?');
             }
         }
-        kalmia_common_lib_1.AppLogger.debug('mysql-util.ts', 'paramExecute', 'DB ', query);
-        kalmia_common_lib_1.AppLogger.debug('mysql-util.ts', 'paramExecute', 'DB ', this.mapValues(sqlParamValues, true).join(';'));
+        kalmia_common_lib_1.AppLogger.trace('mysql-util.ts', 'paramExecute', 'DB ', query);
+        kalmia_common_lib_1.AppLogger.trace('mysql-util.ts', 'paramExecute', 'DB ', this.mapValues(sqlParamValues, true).join(';'));
         let result;
         // const time = process.hrtime();
         try {
@@ -282,8 +282,8 @@ class MySqlUtil {
                 query = query.replace(re, '?');
             }
         }
-        kalmia_common_lib_1.AppLogger.debug('mysql-util.ts', 'paramExecute', 'DB ', query);
-        kalmia_common_lib_1.AppLogger.debug('mysql-util.ts', 'paramExecute', 'DB ', this.mapValues(sqlParamValues, true).join(';'));
+        kalmia_common_lib_1.AppLogger.trace('mysql-util.ts', 'paramExecute', 'DB ', query);
+        kalmia_common_lib_1.AppLogger.trace('mysql-util.ts', 'paramExecute', 'DB ', this.mapValues(sqlParamValues, true).join(';'));
         let result;
         // const time = process.hrtime();
         try {

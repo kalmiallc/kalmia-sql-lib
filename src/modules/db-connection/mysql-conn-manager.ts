@@ -73,7 +73,7 @@ export class MySqlConnManager {
       this._connectionDetails[databaseIdentifier] = this.populateDetails(config);
       this._connections[databaseIdentifier] = await this.getMySqlPoolConnection(config);
     }
-    AppLogger.debug(
+    AppLogger.trace(
       'mysql-conn-manager.ts',
       'getConnection',
       'Returning pool connection from db manager for',
@@ -96,7 +96,7 @@ export class MySqlConnManager {
       this._connectionDetails[databaseIdentifier] = this.populateDetails(config);
       this._connections[databaseIdentifier] = await this.getMySqlNoPoolConnection(config);
     }
-    AppLogger.debug(
+    AppLogger.trace(
       'mysql-conn-manager.ts',
       'getConnection',
       'Returning no pool connection from db manager for',
@@ -219,7 +219,7 @@ export class MySqlConnManager {
 
   private async getMySqlNoPoolConnection(config: mysqlSync.ConnectionOptions): Promise<mysql.Connection> {
     const { user, port, host, database, password } = this.setDbCredentials(config);
-    AppLogger.debug('mysql-conn-manager.ts', 'getMySqlNoPoolConnection', '[DBM] SQL Connection details:', env.APP_ENV, user, port, host, database);
+    AppLogger.trace('mysql-conn-manager.ts', 'getMySqlNoPoolConnection', '[DBM] SQL Connection details:', env.APP_ENV, user, port, host, database);
 
     let conn;
     try {
@@ -249,7 +249,7 @@ export class MySqlConnManager {
   private async getMySqlPoolConnection(config: mysql.ConnectionOptions = {}): Promise<mysql.Pool> {
     const { user, port, host, database, password } = this.setDbCredentials(config);
 
-    AppLogger.debug('mysql-conn-manager.ts', 'getMySqlLocalPoolConnection', '[DBM] SQL Connection details:', env.APP_ENV, user, port, host, database);
+    AppLogger.trace('mysql-conn-manager.ts', 'getMySqlLocalPoolConnection', '[DBM] SQL Connection details:', env.APP_ENV, user, port, host, database);
 
     let conn;
     try {
@@ -280,7 +280,7 @@ export class MySqlConnManager {
       conn.on('connection', function (connection) {
         connection.execute(`set session wait_timeout=${env.MYSQL_WAIT_TIMEOUT}`);
         const timeout = connection.execute('SELECT @@wait_timeout');
-        AppLogger.debug(
+        AppLogger.trace(
           'mysql-conn-manager.ts',
           'testMySqlPoolConnection',
           'Connection wait timeout set to',
