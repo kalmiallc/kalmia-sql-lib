@@ -126,12 +126,12 @@ class MySqlConnManager {
      */
     async end(databaseIdentifier = types_1.DbConnectionType.PRIMARY) {
         if (this._connectionsSync[databaseIdentifier]) {
-            kalmia_common_lib_1.AppLogger.info('mysql-conn-manager.ts', 'end', 'Ending connection mysql sync pool for', databaseIdentifier, kalmia_common_lib_1.AppLogger.stringifyObjectForLog(this._connectionSyncDetails[databaseIdentifier]));
+            kalmia_common_lib_1.AppLogger.trace('mysql-conn-manager.ts', 'end', 'Ending connection mysql sync pool for', databaseIdentifier, kalmia_common_lib_1.AppLogger.stringifyObjectForLog(this._connectionSyncDetails[databaseIdentifier]));
             this._connectionsSync[databaseIdentifier].end();
             this._connectionsSync[databaseIdentifier] = null;
         }
         if (this._connections[databaseIdentifier]) {
-            kalmia_common_lib_1.AppLogger.info('mysql-conn-manager.ts', 'end', 'Ending connection mysql for', databaseIdentifier, kalmia_common_lib_1.AppLogger.stringifyObjectForLog(this._connectionDetails[databaseIdentifier]));
+            kalmia_common_lib_1.AppLogger.trace('mysql-conn-manager.ts', 'end', 'Ending connection mysql for', databaseIdentifier, kalmia_common_lib_1.AppLogger.stringifyObjectForLog(this._connectionDetails[databaseIdentifier]));
             await this._connections[databaseIdentifier].end();
             this._connections[databaseIdentifier] = null;
             this._connectionDetails[databaseIdentifier] = null;

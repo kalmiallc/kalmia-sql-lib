@@ -148,7 +148,7 @@ export class MySqlConnManager {
    */
   public async end(databaseIdentifier: string = DbConnectionType.PRIMARY): Promise<any> {
     if (this._connectionsSync[databaseIdentifier]) {
-      AppLogger.info(
+      AppLogger.trace(
         'mysql-conn-manager.ts',
         'end',
         'Ending connection mysql sync pool for',
@@ -159,7 +159,7 @@ export class MySqlConnManager {
       this._connectionsSync[databaseIdentifier] = null;
     }
     if (this._connections[databaseIdentifier]) {
-      AppLogger.info(
+      AppLogger.trace(
         'mysql-conn-manager.ts',
         'end',
         'Ending connection mysql for',
