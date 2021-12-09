@@ -1,5 +1,6 @@
 import { AppLogger } from 'kalmia-common-lib';
 import * as SqlString from 'sqlstring';
+import { MySqlUtil } from './mysql-util';
 
 // eslint-disable-next-line no-shadow
 export enum WhereQueryComparator {
@@ -142,7 +143,7 @@ export const buildSearchParameter = (searchString, fields: string[]) => {
 };
 
 export const selectAndCountQuery = async (
-  db: any,
+  db: MySqlUtil,
   queryObj: SqlQueryObject,
   params: any,
   countByField: string
@@ -186,7 +187,7 @@ export const selectAndCountQuery = async (
 };
 
 export const unionSelectAndCountQuery = async (
-  db: any,
+  db: MySqlUtil,
   queryObj: any,
   params: any,
   countByField: string
