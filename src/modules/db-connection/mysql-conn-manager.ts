@@ -73,7 +73,7 @@ export class MySqlConnManager {
       this._connectionDetails[databaseIdentifier] = this.populateDetails(config);
       this._connections[databaseIdentifier] = await this.getMySqlPoolConnection(config);
     }
-    AppLogger.trace(
+    AppLogger.db(
       'mysql-conn-manager.ts',
       'getConnection',
       'Returning pool connection from db manager for',
@@ -96,7 +96,7 @@ export class MySqlConnManager {
       this._connectionDetails[databaseIdentifier] = this.populateDetails(config);
       this._connections[databaseIdentifier] = await this.getMySqlNoPoolConnection(config);
     }
-    AppLogger.trace(
+    AppLogger.db(
       'mysql-conn-manager.ts',
       'getConnection',
       'Returning no pool connection from db manager for',
@@ -123,7 +123,7 @@ export class MySqlConnManager {
    * @param config (optional) settings that can override the env settings.
    * @returns Sync connection
    */
-  public getConnectionSync(databaseIdentifier: string = DbConnectionType.PRIMARY, config: mysql.ConnectionOptions = {}): mysqlSync.Pool {
+  public getConnectionSync(databaseIdentifier: string = DbConnectionType.PRIMARY): mysqlSync.Pool {
     if (!this._connectionsSync[databaseIdentifier]) {
       this._connectionSyncDetails[databaseIdentifier] = this.populateDetails();
       this._connectionsSync[databaseIdentifier] = this.getMySqlConnectionSync();
@@ -148,7 +148,7 @@ export class MySqlConnManager {
    */
   public async end(databaseIdentifier: string = DbConnectionType.PRIMARY): Promise<any> {
     if (this._connectionsSync[databaseIdentifier]) {
-      AppLogger.trace(
+      AppLogger.db(
         'mysql-conn-manager.ts',
         'end',
         'Ending connection mysql sync pool for',
@@ -159,7 +159,7 @@ export class MySqlConnManager {
       this._connectionsSync[databaseIdentifier] = null;
     }
     if (this._connections[databaseIdentifier]) {
-      AppLogger.trace(
+      AppLogger.db(
         'mysql-conn-manager.ts',
         'end',
         'Ending connection mysql for',
@@ -219,7 +219,7 @@ export class MySqlConnManager {
 
   private async getMySqlNoPoolConnection(config: mysqlSync.ConnectionOptions): Promise<mysql.Connection> {
     const { user, port, host, database, password } = this.setDbCredentials(config);
-    AppLogger.trace('mysql-conn-manager.ts', 'getMySqlNoPoolConnection', '[DBM] SQL Connection details:', env.APP_ENV, user, port, host, database);
+    AppLogger.db('mysql-conn-manager.ts', 'getMySqlNoPoolConnection', '[DBM] SQL Connection details:', env.APP_ENV, user, port, host, database);
 
     let conn;
     try {
@@ -249,7 +249,7 @@ export class MySqlConnManager {
   private async getMySqlPoolConnection(config: mysql.ConnectionOptions = {}): Promise<mysql.Pool> {
     const { user, port, host, database, password } = this.setDbCredentials(config);
 
-    AppLogger.trace('mysql-conn-manager.ts', 'getMySqlLocalPoolConnection', '[DBM] SQL Connection details:', env.APP_ENV, user, port, host, database);
+    AppLogger.db('mysql-conn-manager.ts', 'getMySqlLocalPoolConnection', '[DBM] SQL Connection details:', env.APP_ENV, user, port, host, database);
 
     let conn;
     try {

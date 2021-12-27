@@ -249,8 +249,3 @@ async function dropDatabase() {
     {}
   );
 }
-
-async function cleanDatabase() {
-  await dropDatabase();
-  await setupDatabase();
-}

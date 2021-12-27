@@ -231,8 +231,4 @@ async function dropDatabase() {
     DROP TABLE IF EXISTS \`${testTableName}\`;
   `, {});
 }
-async function cleanDatabase() {
-    await dropDatabase();
-    await setupDatabase();
-}
 //# sourceMappingURL=base.model.test.js.map

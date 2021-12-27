@@ -80,8 +80,8 @@ export class MySqlUtil {
 
     const query = `CALL ${procedure}(${Object.keys(data).length ? Array(Object.keys(data).length).fill('?').join(',') : ''});`;
 
-    AppLogger.trace('mysql-util.ts', 'call', 'DB ', query);
-    AppLogger.trace('mysql-util.ts', 'call', 'DB ', this.mapValues(data, true).join(';'));
+    AppLogger.db('mysql-util.ts', 'call', 'DB ', query);
+    AppLogger.db('mysql-util.ts', 'call', 'DB ', this.mapValues(data, true).join(';'));
 
     const result = await connection.query(query, this.mapValues(data));
 
@@ -117,8 +117,8 @@ export class MySqlUtil {
   public async callDirect(procedure: string, data: any, options: { multiSet?: boolean } = {}): Promise<any> {
     const query = `CALL ${procedure}(${Object.keys(data).length ? Array(Object.keys(data).length).fill('?').join(',') : ''});`;
 
-    AppLogger.trace('mysql-util.ts', 'call', 'DB ', query);
-    AppLogger.trace('mysql-util.ts', 'call', 'DB ', this.mapValues(data, true).join(';'));
+    AppLogger.db('mysql-util.ts', 'callDirect', 'DB ', query);
+    AppLogger.db('mysql-util.ts', 'callDirect', 'DB ', this.mapValues(data, true).join(';'));
 
     const result = await this._dbConnectionPool.query(query, this.mapValues(data));
 
@@ -153,7 +153,7 @@ export class MySqlUtil {
       throw Error('MySql Db Connection not provided');
     }
     await conn.beginTransaction();
-    AppLogger.trace('mysql-util.ts', 'start', 'DB ', 'BEGIN TRANSACTION');
+    AppLogger.db('mysql-util.ts', 'start', 'DB ', 'BEGIN TRANSACTION');
     return conn;
   }
 
@@ -164,7 +164,7 @@ export class MySqlUtil {
     }
     await connection.commit();
     connection.release();
-    AppLogger.trace('mysql-util.ts', 'commit', 'DB ', 'COMMIT TRANSACTION');
+    AppLogger.db('mysql-util.ts', 'commit', 'DB ', 'COMMIT TRANSACTION');
   }
 
   public async rollback(connection: PoolConnection = this._currentPooledConnection): Promise<void> {
@@ -174,7 +174,7 @@ export class MySqlUtil {
     }
     await connection.rollback();
     connection.release();
-    AppLogger.trace('mysql-util.ts', 'rollback', 'DB ', 'ROLLBACK TRANSACTION');
+    AppLogger.db('mysql-util.ts', 'rollback', 'DB ', 'ROLLBACK TRANSACTION');
   }
 
   /**
@@ -252,8 +252,8 @@ export class MySqlUtil {
       }
     }
 
-    AppLogger.trace('mysql-util.ts', 'paramExecute', 'DB ', query);
-    AppLogger.trace('mysql-util.ts', 'paramExecute', 'DB ', this.mapValues(sqlParamValues, true).join(';'));
+    AppLogger.db('mysql-util.ts', 'paramExecute', 'DB ', query);
+    AppLogger.db('mysql-util.ts', 'paramExecute', 'DB ', this.mapValues(sqlParamValues, true).join(';'));
 
     let result;
     // const time = process.hrtime();
@@ -319,8 +319,8 @@ export class MySqlUtil {
       }
     }
 
-    AppLogger.trace('mysql-util.ts', 'paramExecute', 'DB ', query);
-    AppLogger.trace('mysql-util.ts', 'paramExecute', 'DB ', this.mapValues(sqlParamValues, true).join(';'));
+    AppLogger.db('mysql-util.ts', 'paramExecute', 'DB ', query);
+    AppLogger.db('mysql-util.ts', 'paramExecute', 'DB ', this.mapValues(sqlParamValues, true).join(';'));
 
     let result;
     // const time = process.hrtime();

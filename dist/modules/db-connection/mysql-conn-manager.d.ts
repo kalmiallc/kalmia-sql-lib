@@ -41,7 +41,7 @@ export declare class MySqlConnManager {
      * @param config (optional) settings that can override the env settings.
      * @returns Sync connection
      */
-    getConnectionSync(databaseIdentifier?: string, config?: mysql.ConnectionOptions): mysqlSync.Pool;
+    getConnectionSync(databaseIdentifier?: string): mysqlSync.Pool;
     /**
      * Gets connection details for provided identifier
      *

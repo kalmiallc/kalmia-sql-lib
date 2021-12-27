@@ -1,3 +1,4 @@
+import { MySqlUtil } from './mysql-util';
 export declare enum WhereQueryComparator {
     EQUAL = 0,
     LESS_THAN = 1,
@@ -48,11 +49,11 @@ export declare const getQueryParams: (defaultParameters: any, tableAlias: string
     };
 };
 export declare const buildSearchParameter: (searchString: any, fields: string[]) => string;
-export declare const selectAndCountQuery: (db: any, queryObj: SqlQueryObject, params: any, countByField: string) => Promise<{
+export declare const selectAndCountQuery: (db: MySqlUtil, queryObj: SqlQueryObject, params: any, countByField: string) => Promise<{
     items: any[];
     total: number;
 }>;
-export declare const unionSelectAndCountQuery: (db: any, queryObj: any, params: any, countByField: string) => Promise<{
+export declare const unionSelectAndCountQuery: (db: MySqlUtil, queryObj: any, params: any, countByField: string) => Promise<{
     items: any[];
     total: number;
 }>;
