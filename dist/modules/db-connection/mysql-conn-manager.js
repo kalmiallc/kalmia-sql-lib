@@ -168,7 +168,7 @@ class MySqlConnManager {
                 host: config.host || env_1.env.MYSQL_HOST_TEST,
                 port: config.port || env_1.env.MYSQL_PORT_TEST,
                 user: config.user || env_1.env.MYSQL_USER_TEST,
-                poolSize: config.connectionLimit || env_1.env.MYSQL_POOL_SIZE_TEST
+                poolSize: (config === null || config === void 0 ? void 0 : config.connectionLimit) || env_1.env.MYSQL_POOL_SIZE_TEST
             };
         }
         return {
@@ -176,7 +176,7 @@ class MySqlConnManager {
             host: config.host || env_1.env.MYSQL_HOST,
             port: config.port || env_1.env.MYSQL_PORT,
             user: config.user || env_1.env.MYSQL_USER,
-            poolSize: config.connectionLimit || env_1.env.MYSQL_POOL_SIZE
+            poolSize: (config === null || config === void 0 ? void 0 : config.connectionLimit) || env_1.env.MYSQL_POOL_SIZE
         };
     }
     async getMySqlNoPoolConnection(config) {
@@ -207,7 +207,7 @@ class MySqlConnManager {
                 port,
                 database,
                 password,
-                user, waitForConnections: true, connectTimeout: env_1.env.MYSQL_CONNECTION_TIMEOUT, decimalNumbers: true, connectionLimit: config.connectionLimit || env_1.env.MYSQL_POOL_SIZE, queueLimit: 100, timezone: env_1.env.MYSQL_TIMEZONE }));
+                user, waitForConnections: true, connectTimeout: env_1.env.MYSQL_CONNECTION_TIMEOUT, decimalNumbers: true, connectionLimit: (config === null || config === void 0 ? void 0 : config.connectionLimit) || env_1.env.MYSQL_POOL_SIZE, queueLimit: 100, timezone: env_1.env.MYSQL_TIMEZONE }));
             await MySqlConnManager.testMySqlPoolConnection(conn);
             kalmia_common_lib_1.AppLogger.info('mysql-conn-manager.ts', 'getMySqlLocalPoolConnection', `[DBM] Successfully created MySQL pool for  ${host}:${port} | DatabaseName: ${database}`);
             // state listeners
@@ -261,7 +261,7 @@ class MySqlConnManager {
             database,
             debug: env_1.env.MYSQL_DEBUG,
             timezone: env_1.env.MYSQL_TIMEZONE,
-            connectionLimit: config.connectionLimit || env_1.env.MYSQL_POOL_SIZE
+            connectionLimit: (config === null || config === void 0 ? void 0 : config.connectionLimit) || env_1.env.MYSQL_POOL_SIZE
         };
         const pool = mysqlSync.createPool(poolConfig);
         kalmia_common_lib_1.AppLogger.info('mysql-conn-manager.ts', 'getMySqlConnectionSync', `[DBM] Successfully created sync type MySQL pool for  ${host}:${port} | DatabaseName: ${database}`);

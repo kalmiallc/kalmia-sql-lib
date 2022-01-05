@@ -204,7 +204,7 @@ export class MySqlConnManager {
         host: config.host || env.MYSQL_HOST_TEST,
         port: config.port || env.MYSQL_PORT_TEST,
         user: config.user || env.MYSQL_USER_TEST,
-        poolSize: config.connectionLimit || env.MYSQL_POOL_SIZE_TEST
+        poolSize: config?.connectionLimit || env.MYSQL_POOL_SIZE_TEST
       };
     }
 
@@ -213,7 +213,7 @@ export class MySqlConnManager {
       host: config.host || env.MYSQL_HOST,
       port: config.port || env.MYSQL_PORT,
       user: config.user || env.MYSQL_USER,
-      poolSize: config.connectionLimit || env.MYSQL_POOL_SIZE
+      poolSize: config?.connectionLimit || env.MYSQL_POOL_SIZE
     };
   }
 
@@ -265,7 +265,7 @@ export class MySqlConnManager {
         waitForConnections: true,
         connectTimeout: env.MYSQL_CONNECTION_TIMEOUT,
         decimalNumbers: true,
-        connectionLimit: config.connectionLimit || env.MYSQL_POOL_SIZE,
+        connectionLimit: config?.connectionLimit || env.MYSQL_POOL_SIZE,
         queueLimit: 100,
         timezone: env.MYSQL_TIMEZONE
       });
@@ -336,7 +336,7 @@ export class MySqlConnManager {
       database,
       debug: env.MYSQL_DEBUG,
       timezone: env.MYSQL_TIMEZONE,
-      connectionLimit: config.connectionLimit || env.MYSQL_POOL_SIZE
+      connectionLimit: config?.connectionLimit || env.MYSQL_POOL_SIZE
     };
     const pool = mysqlSync.createPool(poolConfig);
     AppLogger.info(
