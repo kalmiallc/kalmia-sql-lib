@@ -231,6 +231,8 @@ export class MySqlConnManager {
         password,
         user,
         connectTimeout: env.MYSQL_CONNECTION_TIMEOUT,
+        debug: env.MYSQL_DEBUG,
+        timezone: env.MYSQL_TIMEZONE,
         decimalNumbers: true
       });
       await MySqlConnManager.testMySqlNoPoolConnection(conn);
@@ -264,7 +266,8 @@ export class MySqlConnManager {
         connectTimeout: env.MYSQL_CONNECTION_TIMEOUT,
         decimalNumbers: true,
         connectionLimit: config.connectionLimit || env.MYSQL_POOL_SIZE,
-        queueLimit: 100
+        queueLimit: 100,
+        timezone: env.MYSQL_TIMEZONE
       });
       await MySqlConnManager.testMySqlPoolConnection(conn);
       AppLogger.info(
@@ -331,8 +334,9 @@ export class MySqlConnManager {
       user,
       password,
       database,
-      // debug: true,
-      connectionLimit: 10
+      debug: env.MYSQL_DEBUG,
+      timezone: env.MYSQL_TIMEZONE,
+      connectionLimit: config.connectionLimit || env.MYSQL_POOL_SIZE
     };
     const pool = mysqlSync.createPool(poolConfig);
     AppLogger.info(

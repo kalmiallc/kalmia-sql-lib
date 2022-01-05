@@ -11,6 +11,8 @@ export interface IMySqlEnv {
     MYSQL_POOL_SIZE: number;
     MYSQL_CONNECTION_TIMEOUT: number;
     MYSQL_WAIT_TIMEOUT: number;
+    MYSQL_TIMEZONE: string;
+    MYSQL_DEBUG: boolean;
     MYSQL_HOST_TEST: string;
     MYSQL_PORT_TEST: number;
     MYSQL_DB_TEST: string;

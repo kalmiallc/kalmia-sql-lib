@@ -40,6 +40,14 @@ exports.env = Object.assign(Object.assign({}, kalmia_common_lib_1.env), {
      */
     MYSQL_WAIT_TIMEOUT: parseInt(process.env['MYSQL_WAIT_TIMEOUT']) || 320, 
     /**
+     * MySql timezone -- https://github.com/mysqljs/mysql#connection-options
+     */
+    MYSQL_TIMEZONE: process.env['MYSQL_TIMEZONE'] || 'Z', 
+    /**
+     * Enable mysql debug
+     */
+    MYSQL_DEBUG: Boolean(process.env['MYSQL_DEBUG']) || false, 
+    /**
      * Mysql test host.
      */
     MYSQL_HOST_TEST: process.env['MYSQL_HOST_TEST'] || 'localhost', 

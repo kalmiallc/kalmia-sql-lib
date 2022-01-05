@@ -188,7 +188,7 @@ class MySqlConnManager {
                 port,
                 database,
                 password,
-                user, connectTimeout: env_1.env.MYSQL_CONNECTION_TIMEOUT, decimalNumbers: true }));
+                user, connectTimeout: env_1.env.MYSQL_CONNECTION_TIMEOUT, debug: env_1.env.MYSQL_DEBUG, timezone: env_1.env.MYSQL_TIMEZONE, decimalNumbers: true }));
             await MySqlConnManager.testMySqlNoPoolConnection(conn);
             kalmia_common_lib_1.AppLogger.info('mysql-conn-manager.ts', 'getMySqlNoPoolConnection', `[DBM] Successfully created MySQL connection for ${host}:${port} | DatabaseName: ${database}`);
             return conn;
@@ -207,7 +207,7 @@ class MySqlConnManager {
                 port,
                 database,
                 password,
-                user, waitForConnections: true, connectTimeout: env_1.env.MYSQL_CONNECTION_TIMEOUT, decimalNumbers: true, connectionLimit: config.connectionLimit || env_1.env.MYSQL_POOL_SIZE, queueLimit: 100 }));
+                user, waitForConnections: true, connectTimeout: env_1.env.MYSQL_CONNECTION_TIMEOUT, decimalNumbers: true, connectionLimit: config.connectionLimit || env_1.env.MYSQL_POOL_SIZE, queueLimit: 100, timezone: env_1.env.MYSQL_TIMEZONE }));
             await MySqlConnManager.testMySqlPoolConnection(conn);
             kalmia_common_lib_1.AppLogger.info('mysql-conn-manager.ts', 'getMySqlLocalPoolConnection', `[DBM] Successfully created MySQL pool for  ${host}:${port} | DatabaseName: ${database}`);
             // state listeners
@@ -259,8 +259,9 @@ class MySqlConnManager {
             user,
             password,
             database,
-            // debug: true,
-            connectionLimit: 10
+            debug: env_1.env.MYSQL_DEBUG,
+            timezone: env_1.env.MYSQL_TIMEZONE,
+            connectionLimit: config.connectionLimit || env_1.env.MYSQL_POOL_SIZE
         };
         const pool = mysqlSync.createPool(poolConfig);
         kalmia_common_lib_1.AppLogger.info('mysql-conn-manager.ts', 'getMySqlConnectionSync', `[DBM] Successfully created sync type MySQL pool for  ${host}:${port} | DatabaseName: ${database}`);

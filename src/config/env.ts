@@ -14,6 +14,8 @@ export interface IMySqlEnv {
   MYSQL_POOL_SIZE: number;
   MYSQL_CONNECTION_TIMEOUT: number;
   MYSQL_WAIT_TIMEOUT: number;
+  MYSQL_TIMEZONE: string; // local or Z (default)
+  MYSQL_DEBUG: boolean;
 
   MYSQL_HOST_TEST: string;
   MYSQL_PORT_TEST: number;
@@ -69,6 +71,18 @@ export const env: IMySqlEnv & ICommonEnv = {
    */
 
   MYSQL_WAIT_TIMEOUT: parseInt(process.env['MYSQL_WAIT_TIMEOUT']) || 320,
+
+  /**
+   * MySql timezone -- https://github.com/mysqljs/mysql#connection-options
+   */
+
+  MYSQL_TIMEZONE: process.env['MYSQL_TIMEZONE'] || 'Z',
+
+  /**
+   * Enable mysql debug
+   */
+
+  MYSQL_DEBUG: Boolean(process.env['MYSQL_DEBUG']) || false,
 
   /**
    * Mysql test host.
