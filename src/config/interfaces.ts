@@ -7,4 +7,9 @@ export interface IConnectionDetails {
   database: string;
   poolSize?: number;
   user?: string;
+  ssl?: {
+    ca?: string | string[];
+    key?: string;
+    cert?: string;
+  };
 }

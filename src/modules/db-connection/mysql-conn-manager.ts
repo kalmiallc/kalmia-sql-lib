@@ -6,9 +6,11 @@
  * All the connection data needed is handled from the environment variables. These are defined in {@link ./../../config/env}
  *
  */
+import * as fs from 'fs';
 import { ApplicationEnv, AppLogger } from 'kalmia-common-lib';
 import * as mysqlSync from 'mysql2';
 import * as mysql from 'mysql2/promise';
+import * as path from 'path';
 import { IConnectionDetails } from '../../config/interfaces';
 import { DbConnectionType } from '../../config/types';
 import { env } from './../../config/env';
@@ -20,7 +22,7 @@ export class MySqlConnManager {
   private _connectionDetails: { [identifier: string]: IConnectionDetails } = {};
   private _connectionSyncDetails: { [identifier: string]: IConnectionDetails } = {};
 
-  private constructor() {}
+  private constructor() { }
 
   /**
    * Gets MySqlConnectionManager instance
@@ -204,7 +206,8 @@ export class MySqlConnManager {
         host: config.host || env.MYSQL_HOST_TEST,
         port: config.port || env.MYSQL_PORT_TEST,
         user: config.user || env.MYSQL_USER_TEST,
-        poolSize: config?.connectionLimit || env.MYSQL_POOL_SIZE_TEST
+        poolSize: config.connectionLimit || env.MYSQL_POOL_SIZE_TEST
+        // ssl: this.getSslParams()
       };
     }
 
@@ -213,12 +216,25 @@ export class MySqlConnManager {
       host: config.host || env.MYSQL_HOST,
       port: config.port || env.MYSQL_PORT,
       user: config.user || env.MYSQL_USER,
-      poolSize: config?.connectionLimit || env.MYSQL_POOL_SIZE
+      poolSize: config?.connectionLimit || env.MYSQL_POOL_SIZE,
+      ssl: this.getSslParams()
     };
   }
 
+  private getSslParams() {
+    if (!env.MYSQL_SSL_CA_FILE) {
+      return undefined;
+    } else {
+      return {
+        ca: fs.readFileSync(path.resolve(process.cwd(), env.MYSQL_SSL_CA_FILE)).toString(),
+        key: env.MYSQL_SSL_KEY_FILE ? fs.readFileSync(path.resolve(process.cwd(), env.MYSQL_SSL_KEY_FILE)).toString() : undefined,
+        cert: env.MYSQL_SSL_CERT_FILE ? fs.readFileSync(path.resolve(process.cwd(), env.MYSQL_SSL_CERT_FILE)).toString() : undefined
+      };
+    }
+  }
+
   private async getMySqlNoPoolConnection(config: mysqlSync.ConnectionOptions): Promise<mysql.Connection> {
-    const { user, port, host, database, password } = this.setDbCredentials(config);
+    const { user, port, host, database, password, ssl } = this.setDbCredentials(config);
     AppLogger.db('mysql-conn-manager.ts', 'getMySqlNoPoolConnection', '[DBM] SQL Connection details:', env.APP_ENV, user, port, host, database);
 
     let conn;
@@ -233,7 +249,8 @@ export class MySqlConnManager {
         connectTimeout: env.MYSQL_CONNECTION_TIMEOUT,
         debug: env.MYSQL_DEBUG,
         timezone: env.MYSQL_TIMEZONE,
-        decimalNumbers: true
+        decimalNumbers: true,
+        ssl
       });
       await MySqlConnManager.testMySqlNoPoolConnection(conn);
       AppLogger.info(
@@ -249,7 +266,7 @@ export class MySqlConnManager {
   }
 
   private async getMySqlPoolConnection(config: mysql.ConnectionOptions = {}): Promise<mysql.Pool> {
-    const { user, port, host, database, password } = this.setDbCredentials(config);
+    const { user, port, host, database, password, ssl } = this.setDbCredentials(config);
 
     AppLogger.db('mysql-conn-manager.ts', 'getMySqlLocalPoolConnection', '[DBM] SQL Connection details:', env.APP_ENV, user, port, host, database);
 
@@ -267,7 +284,8 @@ export class MySqlConnManager {
         decimalNumbers: true,
         connectionLimit: config?.connectionLimit || env.MYSQL_POOL_SIZE,
         queueLimit: 100,
-        timezone: env.MYSQL_TIMEZONE
+        timezone: env.MYSQL_TIMEZONE,
+        ssl
       });
       await MySqlConnManager.testMySqlPoolConnection(conn);
       AppLogger.info(
@@ -313,6 +331,7 @@ export class MySqlConnManager {
     let database = config.database || env.MYSQL_DB;
     let user = config.user || env.MYSQL_USER;
     let password = config.password || env.MYSQL_PASSWORD;
+    let ssl = this.getSslParams();
 
     // connect to test DB is APP_ENV variable is set to testing.
     if (env.APP_ENV === ApplicationEnv.TEST) {
@@ -321,12 +340,13 @@ export class MySqlConnManager {
       database = config.database || env.MYSQL_DB_TEST;
       user = config.user || env.MYSQL_USER_TEST;
       password = config.password || env.MYSQL_PASSWORD_TEST;
+      ssl = undefined;
     }
-    return { user, port, host, database, password, config };
+    return { user, port, host, database, password, config, ssl };
   }
 
   private getMySqlConnectionSync(config?: mysqlSync.ConnectionOptions): mysqlSync.Pool {
-    const { user, port, host, database, password } = this.setDbCredentials(config);
+    const { user, port, host, database, password, ssl } = this.setDbCredentials(config);
 
     const poolConfig: mysqlSync.ConnectionOptions = {
       host,
@@ -336,7 +356,8 @@ export class MySqlConnManager {
       database,
       debug: env.MYSQL_DEBUG,
       timezone: env.MYSQL_TIMEZONE,
-      connectionLimit: config?.connectionLimit || env.MYSQL_POOL_SIZE
+      connectionLimit: config?.connectionLimit || env.MYSQL_POOL_SIZE,
+      ssl
     };
     const pool = mysqlSync.createPool(poolConfig);
     AppLogger.info(

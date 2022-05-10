@@ -23,6 +23,9 @@ export interface IMySqlEnv {
   MYSQL_USER_TEST: string;
   MYSQL_PASSWORD_TEST: string;
   MYSQL_POOL_SIZE_TEST: number;
+  MYSQL_SSL_CA_FILE: string;
+  MYSQL_SSL_KEY_FILE: string;
+  MYSQL_SSL_CERT_FILE: string;
 }
 
 /**
@@ -112,5 +115,11 @@ export const env: IMySqlEnv & ICommonEnv = {
   /**
    * Mysql test connection pool size.
    */
-  MYSQL_POOL_SIZE_TEST: parseInt(process.env['MYSQL_POOL_SIZE_TEST']) == 0 ? 0 : 5
+  MYSQL_POOL_SIZE_TEST: parseInt(process.env['MYSQL_POOL_SIZE_TEST']) == 0 ? 0 : 5,
+  /**
+   * Mysql SSL file paths
+   */
+  MYSQL_SSL_CA_FILE: process.env['MYSQL_SSL_CA_FILE'],
+  MYSQL_SSL_KEY_FILE: process.env['MYSQL_SSL_KEY_FILE'],
+  MYSQL_SSL_CERT_FILE: process.env['MYSQL_SSL_CERT_FILE']
 };
