@@ -19,6 +19,9 @@ export interface IMySqlEnv {
     MYSQL_USER_TEST: string;
     MYSQL_PASSWORD_TEST: string;
     MYSQL_POOL_SIZE_TEST: number;
+    MYSQL_SSL_CA_FILE: string;
+    MYSQL_SSL_KEY_FILE: string;
+    MYSQL_SSL_CERT_FILE: string;
 }
 export declare const env: IMySqlEnv & ICommonEnv;
 //# sourceMappingURL=env.d.ts.map

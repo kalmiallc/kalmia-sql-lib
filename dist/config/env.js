@@ -70,5 +70,9 @@ exports.env = Object.assign(Object.assign({}, kalmia_common_lib_1.env), {
     /**
      * Mysql test connection pool size.
      */
-    MYSQL_POOL_SIZE_TEST: parseInt(process.env['MYSQL_POOL_SIZE_TEST']) == 0 ? 0 : 5 });
+    MYSQL_POOL_SIZE_TEST: parseInt(process.env['MYSQL_POOL_SIZE_TEST']) == 0 ? 0 : 5, 
+    /**
+     * Mysql SSL file paths
+     */
+    MYSQL_SSL_CA_FILE: process.env['MYSQL_SSL_CA_FILE'], MYSQL_SSL_KEY_FILE: process.env['MYSQL_SSL_KEY_FILE'], MYSQL_SSL_CERT_FILE: process.env['MYSQL_SSL_CERT_FILE'] });
 //# sourceMappingURL=env.js.map

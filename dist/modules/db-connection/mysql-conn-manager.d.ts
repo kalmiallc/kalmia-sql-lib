@@ -62,6 +62,7 @@ export declare class MySqlConnManager {
      */
     ensureAliveSql(databaseIdentifier?: string, conn?: mysql.PoolConnection): Promise<void>;
     private populateDetails;
+    private getSslParams;
     private getMySqlNoPoolConnection;
     private getMySqlPoolConnection;
     private setDbCredentials;
