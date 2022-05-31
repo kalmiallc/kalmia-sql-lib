@@ -86,5 +86,14 @@ export declare class MySqlUtil {
      *
      */
     paramExecuteDirect(query: string, values?: unknown): Promise<any[]>;
+    /**
+     * Helper for lambda functions. This will kill all the stalled connections in the pool.
+     *
+     * @param timeout defines how long shall the connection wait until it is killed
+     * @param dbUser user under which we kill connections
+     * @param conn - connection. If not provided, the default connection (from the MySqlUtil constructor) will be used.
+     * @returns number of killed connections.
+     */
+    killZombieConnections(timeout: any, dbUser: any, conn?: mysql.Pool): Promise<number>;
 }
 //# sourceMappingURL=mysql-util.d.ts.map

@@ -297,6 +297,34 @@ class MySqlUtil {
         }
         return result[0];
     }
+    /**
+     * Helper for lambda functions. This will kill all the stalled connections in the pool.
+     *
+     * @param timeout defines how long shall the connection wait until it is killed
+     * @param dbUser user under which we kill connections
+     * @param conn - connection. If not provided, the default connection (from the MySqlUtil constructor) will be used.
+     * @returns number of killed connections.
+     */
+    async killZombieConnections(timeout, dbUser, conn = this._dbConnectionPool) {
+        let killedZombies = 0;
+        // Hunt for zombies (just the sleeping ones that this user owns)
+        const zombies = await conn.execute(`SELECT ID,time FROM information_schema.processlist
+    WHERE command = 'Sleep' AND time >= ? AND user = ?
+    ORDER BY time DESC`, [!isNaN(timeout) ? timeout : 60 * 15, dbUser]);
+        const array = zombies[0];
+        // Kill zombies
+        for (let i = 0; i < array.length; i++) {
+            try {
+                await conn.query('KILL ?', array[i].ID);
+                killedZombies++;
+            }
+            catch (e) {
+                kalmia_common_lib_1.AppLogger.error('mysql-util.ts', 'killZombieConnections', 'DB ', 'Error killing zombie connection: ', e);
+            }
+        } // end for
+        kalmia_common_lib_1.AppLogger.db('mysql-util.ts', 'killZombieConnections', 'DB ', `Killed zombies ${killedZombies}, for user ${dbUser} and timeout ${timeout}`);
+        return killedZombies;
+    }
 }
 exports.MySqlUtil = MySqlUtil;
 //# sourceMappingURL=mysql-util.js.map
