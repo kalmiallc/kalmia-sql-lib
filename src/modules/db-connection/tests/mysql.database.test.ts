@@ -64,7 +64,7 @@ describe('MySQL coon pool', () => {
   it('Should escape param', async () => {
     await insertObject();
     const attack = "' UNION all SELECT @@version, NULL, NULL--'";
-    const SQL = `SELECT * FROM oro.sql_lib_user Where email like @attack`;
+    const SQL = `SELECT * FROM sql_lib_user Where email like @attack`;
     const data = await sqlUtil.paramExecute(SQL, { attack });
     expect(data.length).toBe(0);
 

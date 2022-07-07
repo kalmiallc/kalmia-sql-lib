@@ -9,7 +9,7 @@
     "index": "ts-node src/index.ts",
     "lint": "eslint -c .eslintrc.js --ext .ts ./src",
     "lintfix": "tsc & eslint --fix -c .eslintrc.js --ext .ts ./src",
-    "test": "npm run lintFix && jest --detectOpenHandles --forceExit",
+    "test": "npm run lintfix && jest --runInBand --detectOpenHandles --forceExit",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage"
   },

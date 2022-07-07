@@ -22,7 +22,7 @@ export class MySqlConnManager {
   private _connectionDetails: { [identifier: string]: IConnectionDetails } = {};
   private _connectionSyncDetails: { [identifier: string]: IConnectionDetails } = {};
 
-  private constructor() { }
+  private constructor() {}
 
   /**
    * Gets MySqlConnectionManager instance

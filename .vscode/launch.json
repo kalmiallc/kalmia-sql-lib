@@ -9,7 +9,7 @@
       "request": "launch",
       "name": "Jest Test All",
       "program": "${workspaceFolder}/node_modules/jest/bin/jest.js",
-      "args": ["--config=${workspaceFolder}/jest.config.ts",],
+      "args": ["--config=${workspaceFolder}/jest.config.ts","--detectOpenHandles", "--forceExit", "--runInBand"],
       "env": {
         "APP_ENV": "testing"
       },
@@ -21,7 +21,7 @@
       "request": "launch",
       "name": "Jest Test Current file",
       "program": "${workspaceFolder}/node_modules/jest/bin/jest.js",
-      "args": ["--runInBand", "--config=${workspaceFolder}/jest.config.ts", "--detectOpenHandles", "${fileBasename}" ],
+      "args": ["--runInBand", "--config=${workspaceFolder}/jest.config.ts", "--detectOpenHandles", "--forceExit", "--runInBand", "${fileBasename}" ],
       "env": {
         "APP_ENV": "testing"
       },
