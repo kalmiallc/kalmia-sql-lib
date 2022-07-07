@@ -217,8 +217,8 @@ class TestUser extends base_model_1.BaseModel {
     }
 }
 __decorate([
-    core_1.prop({
-        parser: { resolver: parsers_1.stringParser() },
+    (0, core_1.prop)({
+        parser: { resolver: (0, parsers_1.stringParser)() },
         populatable: [types_1.PopulateFor.DB, types_1.PopulateFor.ALL],
         serializable: [types_1.SerializeFor.ALL, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB]
     }),

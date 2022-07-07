@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.buildWhereCondition = exports.unionSelectAndCountQuery = exports.selectAndCountQuery = exports.buildSearchParameter = exports.getQueryParams = exports.WhereQueryComparator = void 0;
 const kalmia_common_lib_1 = require("kalmia-common-lib");
 const SqlString = require("sqlstring");
-const env_1 = require("src/config/env");
+const env_1 = require("../../config/env");
 // eslint-disable-next-line no-shadow
 var WhereQueryComparator;
 (function (WhereQueryComparator) {

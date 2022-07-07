@@ -1,6 +1,6 @@
 import { AppLogger } from 'kalmia-common-lib';
 import * as SqlString from 'sqlstring';
-import { env } from 'src/config/env';
+import { env } from '../../config/env';
 import { MySqlUtil } from './mysql-util';
 
 // eslint-disable-next-line no-shadow
