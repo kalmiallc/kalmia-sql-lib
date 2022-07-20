@@ -1,6 +1,5 @@
 import { DbModelStatus, WorkerDbTables } from '../../../config/types';
 
-
 export const upgrade = async (queryFn: (query: string, values?: any[]) => Promise<any[]>): Promise<void> => {
   await queryFn(`
   CREATE TABLE IF NOT EXISTS \`${WorkerDbTables.WORKER_JOB}\` (

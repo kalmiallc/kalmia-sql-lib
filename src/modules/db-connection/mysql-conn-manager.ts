@@ -80,7 +80,10 @@ export class MySqlConnManager {
       'getConnection',
       'Returning pool connection from db manager for',
       databaseIdentifier,
-      AppLogger.stringifyObjectForLog(this._connectionDetails[databaseIdentifier])
+      AppLogger.stringifyObjectForLog({
+        ...this._connectionDetails[databaseIdentifier],
+        ssl: this._connectionDetails[databaseIdentifier].ssl ? '***' : undefined
+      })
     );
     return this._connections[databaseIdentifier] as mysql.Pool;
   }
@@ -103,7 +106,10 @@ export class MySqlConnManager {
       'getConnection',
       'Returning no pool connection from db manager for',
       databaseIdentifier,
-      AppLogger.stringifyObjectForLog(this._connectionDetails[databaseIdentifier])
+      AppLogger.stringifyObjectForLog({
+        ...this._connectionDetails[databaseIdentifier],
+        ssl: this._connectionDetails[databaseIdentifier].ssl ? '***' : undefined
+      })
     );
     return this._connections[databaseIdentifier] as mysql.Connection;
   }
@@ -155,7 +161,10 @@ export class MySqlConnManager {
         'end',
         'Ending connection mysql sync pool for',
         databaseIdentifier,
-        AppLogger.stringifyObjectForLog(this._connectionSyncDetails[databaseIdentifier])
+        AppLogger.stringifyObjectForLog({
+          ...this._connectionDetails[databaseIdentifier],
+          ssl: this._connectionDetails[databaseIdentifier].ssl ? '***' : undefined
+        })
       );
       this._connectionsSync[databaseIdentifier].end();
       this._connectionsSync[databaseIdentifier] = null;
@@ -166,7 +175,10 @@ export class MySqlConnManager {
         'end',
         'Ending connection mysql for',
         databaseIdentifier,
-        AppLogger.stringifyObjectForLog(this._connectionDetails[databaseIdentifier])
+        AppLogger.stringifyObjectForLog({
+          ...this._connectionDetails[databaseIdentifier],
+          ssl: this._connectionDetails[databaseIdentifier].ssl ? '***' : undefined
+        })
       );
       await (this._connections[databaseIdentifier] as any).end();
       this._connections[databaseIdentifier] = null;
