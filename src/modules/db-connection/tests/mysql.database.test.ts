@@ -4,6 +4,7 @@
 import type * as mysql from 'mysql2/promise';
 import { Pool } from 'mysql2/promise';
 import { MySqlConnManager } from '../../db-connection/mysql-conn-manager';
+import { cleanDatabase, dropDatabase, setupDatabase } from '../../test-helpers/mysql-stage';
 import { env } from './../../../config/env';
 import { MySqlUtil } from './../../db-connection/mysql-util';
 
@@ -260,35 +261,3 @@ describe('MySQL no pool', () => {
     expect(count.length).toBe(2);
   });
 });
-
-async function setupDatabase() {
-  const conn = (await MySqlConnManager.getInstance().getConnection()) as Pool;
-  const mysqlLoc = new MySqlUtil(conn);
-  await mysqlLoc.paramExecute(
-    `
-    CREATE TABLE IF NOT EXISTS \`sql_lib_user\` (
-      \`id\` INT NOT NULL,
-      \`email\` VARCHAR(255) NULL,
-      \`_username\` VARCHAR(255) NULL,
-      PRIMARY KEY (\`id\`),
-      UNIQUE INDEX \`email_UNIQUE\` (\`email\` ASC) VISIBLE);
-  `,
-    {}
-  );
-}
-
-async function dropDatabase() {
-  const conn = (await MySqlConnManager.getInstance().getConnection()) as Pool;
-  const mysqlLoc = new MySqlUtil(conn);
-  await mysqlLoc.paramExecute(
-    `
-    DROP TABLE IF EXISTS \`sql_lib_user\`;
-  `,
-    {}
-  );
-}
-
-async function cleanDatabase() {
-  await dropDatabase();
-  await setupDatabase();
-}

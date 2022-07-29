@@ -21,9 +21,11 @@ services:
   mysqldb:
     image: mysql
     command: --default-authentication-plugin=mysql_native_password
-    env_file: ./.env.test
     environment:
-      MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD_TEST
-      MYSQL_DATABASE: $MYSQL_DB_TEST
+      - MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD_TEST
+      - MYSQL_DATABASE=$MYSQL_DB_TEST
+      - MYSQL_PASSWORD=$MYSQL_PASSWORD_TEST
+      - MYSQL_HOST=0.0.0.0
+      - MYSQL_TCP_PORT=$MYSQL_PORT_TEST
     ports:
       - '$MYSQL_PORT_TEST:$MYSQL_PORT_TEST'
