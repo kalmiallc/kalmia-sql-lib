@@ -1,5 +1,6 @@
 import { AppLogger } from 'kalmia-common-lib';
 import * as SqlString from 'sqlstring';
+import { env } from '../../config/env';
 import { MySqlUtil } from './mysql-util';
 
 // eslint-disable-next-line no-shadow
@@ -57,7 +58,10 @@ const getOrderField = (name, tableAlias, map = {}) => {
  * @returns Object with parameters for database listing search.
  */
 export const getQueryParams = (defaultParameters: any, tableAlias: string, fieldMap: any, urlQuery: any) => {
-  const limit = urlQuery.limit === 'NO_LIMIT' ? null : parseInt(urlQuery.limit, 10) || 100;
+  let limit = urlQuery.limit === 'NO_LIMIT' ? env.MAX_PAGE_SIZE || null : parseInt(urlQuery.limit, 10) || env.MAX_PAGE_SIZE || 100;
+  if (env.MAX_PAGE_SIZE && limit > env.MAX_PAGE_SIZE) {
+    limit = env.MAX_PAGE_SIZE;
+  }
   const offset = ((parseInt(urlQuery.page, 10) || 1) - 1) * limit;
   const order = [];
   if (urlQuery.orderBy) {

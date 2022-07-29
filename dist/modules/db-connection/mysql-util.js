@@ -247,7 +247,7 @@ class MySqlUtil {
                     // regex
                     const re = new RegExp(`@${key}\\b`, 'gi');
                     if (word.match(re)) {
-                        if ((0, kalmia_common_lib_1.isPlainObject)(values[key])) {
+                        if (kalmia_common_lib_1.isPlainObject(values[key])) {
                             SqlString.escapeId(sqlParamValues.push(JSON.stringify(values[key])));
                         }
                         else {
@@ -307,7 +307,7 @@ class MySqlUtil {
                     // regex
                     const re = new RegExp(`@${key}\\b`, 'gi');
                     if (word.match(re)) {
-                        if ((0, kalmia_common_lib_1.isPlainObject)(values[key])) {
+                        if (kalmia_common_lib_1.isPlainObject(values[key])) {
                             SqlString.escapeId(sqlParamValues.push(JSON.stringify(values[key])));
                         }
                         else {

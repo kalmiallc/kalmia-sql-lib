@@ -26,6 +26,8 @@ export interface IMySqlEnv {
   MYSQL_SSL_CA_FILE: string;
   MYSQL_SSL_KEY_FILE: string;
   MYSQL_SSL_CERT_FILE: string;
+
+  MAX_PAGE_SIZE: number;
 }
 
 /**
@@ -121,5 +123,11 @@ export const env: IMySqlEnv & ICommonEnv = {
    */
   MYSQL_SSL_CA_FILE: process.env['MYSQL_SSL_CA_FILE'],
   MYSQL_SSL_KEY_FILE: process.env['MYSQL_SSL_KEY_FILE'],
-  MYSQL_SSL_CERT_FILE: process.env['MYSQL_SSL_CERT_FILE']
+  MYSQL_SSL_CERT_FILE: process.env['MYSQL_SSL_CERT_FILE'],
+
+  /**
+   * Limit list page sizes
+   * 0 = unlimited
+   */
+  MAX_PAGE_SIZE: parseInt(process.env['MAX_PAGE_SIZE']) || 0
 };

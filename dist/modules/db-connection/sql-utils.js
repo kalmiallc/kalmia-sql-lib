@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.buildWhereCondition = exports.unionSelectAndCountQuery = exports.selectAndCountQuery = exports.buildSearchParameter = exports.getQueryParams = exports.WhereQueryComparator = void 0;
 const kalmia_common_lib_1 = require("kalmia-common-lib");
 const SqlString = require("sqlstring");
+const env_1 = require("../../config/env");
 // eslint-disable-next-line no-shadow
 var WhereQueryComparator;
 (function (WhereQueryComparator) {
@@ -38,7 +39,10 @@ const getOrderField = (name, tableAlias, map = {}) => {
  * @returns Object with parameters for database listing search.
  */
 const getQueryParams = (defaultParameters, tableAlias, fieldMap, urlQuery) => {
-    const limit = urlQuery.limit === 'NO_LIMIT' ? null : parseInt(urlQuery.limit, 10) || 100;
+    let limit = urlQuery.limit === 'NO_LIMIT' ? env_1.env.MAX_PAGE_SIZE || null : parseInt(urlQuery.limit, 10) || env_1.env.MAX_PAGE_SIZE || 100;
+    if (env_1.env.MAX_PAGE_SIZE && limit > env_1.env.MAX_PAGE_SIZE) {
+        limit = env_1.env.MAX_PAGE_SIZE;
+    }
     const offset = ((parseInt(urlQuery.page, 10) || 1) - 1) * limit;
     const order = [];
     if (urlQuery.orderBy) {

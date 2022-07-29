@@ -17,7 +17,7 @@ module.exports = {
     'promise',
     'prettier',
   ],
-  ignorePatterns: ['/src/server/sep-conversion/sep-proto-static.d.ts', '/src/tests/samples/*'],
+  ignorePatterns: ['/src/server/sep-conversion/sep-proto-static.d.ts', '/src/tests/samples/*', '.eslintrc.js', 'dist/', 'node_modules/'],
   rules: {
     'security/detect-object-injection': 0,
     'promise/always-return': 0,

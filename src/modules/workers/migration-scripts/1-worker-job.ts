@@ -1,4 +1,4 @@
-import { DbModelStatus, WorkerDbTables } from 'src';
+import { DbModelStatus, WorkerDbTables } from '../../../config/types';
 
 export const upgrade = async (queryFn: (query: string, values?: any[]) => Promise<any[]>): Promise<void> => {
   await queryFn(`
