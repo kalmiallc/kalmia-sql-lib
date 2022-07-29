@@ -137,7 +137,7 @@ pipeline {
       stage('Test build') {
           steps {
               sh '''
-               AUTH_REPO_ACCESS_KEY="$(cat kalmia-auth-repo-access.key)" docker-compose -f docker-compose.test.yaml up --force-recreate --abort-on-container-exit --exit-code-from api
+               AUTH_REPO_ACCESS_KEY="$(cat kalmia-auth-repo-access.key)" docker-compose -f docker-compose.test.yaml up --force-recreate --abort-on-container-exit --exit-code-from sql-lib
               '''
           }
           post {
