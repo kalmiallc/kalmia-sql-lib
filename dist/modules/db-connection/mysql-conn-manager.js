@@ -128,12 +128,12 @@ class MySqlConnManager {
      */
     async end(databaseIdentifier = types_1.DbConnectionType.PRIMARY) {
         if (this._connectionsSync[databaseIdentifier]) {
-            kalmia_common_lib_1.AppLogger.db('mysql-conn-manager.ts', 'end', 'Ending connection mysql sync pool for', databaseIdentifier, kalmia_common_lib_1.AppLogger.stringifyObjectForLog(Object.assign(Object.assign({}, this._connectionDetails[databaseIdentifier]), { ssl: this._connectionDetails[databaseIdentifier].ssl ? '***' : undefined })));
+            kalmia_common_lib_1.AppLogger.db('mysql-conn-manager.ts', 'end', 'Ending connection mysql sync pool for', databaseIdentifier, kalmia_common_lib_1.AppLogger.stringifyObjectForLog(Object.assign({}, this._connectionDetails[databaseIdentifier])));
             this._connectionsSync[databaseIdentifier].end();
             this._connectionsSync[databaseIdentifier] = null;
         }
         if (this._connections[databaseIdentifier]) {
-            kalmia_common_lib_1.AppLogger.db('mysql-conn-manager.ts', 'end', 'Ending connection mysql for', databaseIdentifier, kalmia_common_lib_1.AppLogger.stringifyObjectForLog(Object.assign(Object.assign({}, this._connectionDetails[databaseIdentifier]), { ssl: this._connectionDetails[databaseIdentifier].ssl ? '***' : undefined })));
+            kalmia_common_lib_1.AppLogger.db('mysql-conn-manager.ts', 'end', 'Ending connection mysql for', databaseIdentifier, kalmia_common_lib_1.AppLogger.stringifyObjectForLog(Object.assign({}, this._connectionDetails[databaseIdentifier])));
             await this._connections[databaseIdentifier].end();
             this._connections[databaseIdentifier] = null;
             this._connectionDetails[databaseIdentifier] = null;
