@@ -162,8 +162,7 @@ export class MySqlConnManager {
         'Ending connection mysql sync pool for',
         databaseIdentifier,
         AppLogger.stringifyObjectForLog({
-          ...this._connectionDetails[databaseIdentifier],
-          ssl: this._connectionDetails[databaseIdentifier].ssl ? '***' : undefined
+          ...this._connectionDetails[databaseIdentifier]
         })
       );
       this._connectionsSync[databaseIdentifier].end();
@@ -176,8 +175,7 @@ export class MySqlConnManager {
         'Ending connection mysql for',
         databaseIdentifier,
         AppLogger.stringifyObjectForLog({
-          ...this._connectionDetails[databaseIdentifier],
-          ssl: this._connectionDetails[databaseIdentifier].ssl ? '***' : undefined
+          ...this._connectionDetails[databaseIdentifier]
         })
       );
       await (this._connections[databaseIdentifier] as any).end();
