@@ -1,6 +1,9 @@
 # Kalmia SQL lib
 This package contains common sql functions ans connection manager.
 
+This package must be build, and the dist folder is committed. It is done this way because of the NPM build problems. 
+To release a new version, npm build must be done (don't forget to update the version in the package.json)
+
 
 All documentation is MD based and resides in the docs directory.
 
