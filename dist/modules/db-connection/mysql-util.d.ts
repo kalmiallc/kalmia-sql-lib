@@ -8,6 +8,28 @@ export declare class MySqlUtil {
     private _currentPooledConnection;
     constructor(dbConnection?: Pool);
     /**
+     * This method will initialize connection from the connection pool. It will use connection manager and initialize primary connection as connection poll.
+     * It will also open single connection for from the pool ans set it as the active connection if the parameter is set to true;
+     *
+     * @param [setPoledInstance] if true, the connection will be polled from the pool and set as the active connection
+     * @returns {Promise<MySqlUtil>} returns instance of MySqlUtil
+     */
+    static init(setPoledInstance?: boolean): Promise<MySqlUtil>;
+    /**
+     * End all active connections from using the connection manager.
+     */
+    static end(): Promise<void>;
+    /**
+     * End all active connections. Also close active instance of connection form the pool.
+     */
+    end(): Promise<void>;
+    /**
+     * Returns the connection pool from the instance.
+     *
+     * @returns {Pool}
+     */
+    getConnectionPool(): Pool;
+    /**
      * Set active connection (pool connection)
      */
     setActiveConnection(ac: PoolConnection): void;

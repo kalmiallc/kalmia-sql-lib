@@ -4,7 +4,7 @@ import { MySqlUtil } from '../db-connection/mysql-util';
 /**
  * Testing MySQL stage class.
  */
-export declare class MySqlStage {
+declare class MySqlStage {
     private static instance;
     connManager: MySqlConnManager;
     dbConn: Pool | Connection;
@@ -20,4 +20,8 @@ export declare class MySqlStage {
      */
     close(): Promise<void>;
 }
+declare function setupDatabase(): Promise<void>;
+declare function dropDatabase(): Promise<void>;
+declare function cleanDatabase(): Promise<void>;
+export { MySqlStage, setupDatabase, dropDatabase, cleanDatabase };
 //# sourceMappingURL=mysql-stage.d.ts.map

@@ -7,7 +7,7 @@ import { MySqlUtil } from '../db-connection/mysql-util';
 /**
  * Testing MySQL stage class.
  */
-export class MySqlStage {
+class MySqlStage {
   private static instance: MySqlStage;
   public connManager: MySqlConnManager;
   public dbConn: Pool | Connection;
@@ -41,3 +41,37 @@ export class MySqlStage {
     await this.connManager.end();
   }
 }
+
+async function setupDatabase() {
+  const conn = (await MySqlConnManager.getInstance().getConnection()) as Pool;
+  const mysqlLoc = new MySqlUtil(conn);
+  await mysqlLoc.paramExecute(
+    `
+    CREATE TABLE IF NOT EXISTS \`sql_lib_user\` (
+      \`id\` INT NOT NULL,
+      \`email\` VARCHAR(255) NULL,
+      \`_username\` VARCHAR(255) NULL,
+      PRIMARY KEY (\`id\`),
+      UNIQUE INDEX \`email_UNIQUE\` (\`email\` ASC) VISIBLE);
+  `,
+    {}
+  );
+}
+
+async function dropDatabase() {
+  const conn = (await MySqlConnManager.getInstance().getConnection()) as Pool;
+  const mysqlLoc = new MySqlUtil(conn);
+  await mysqlLoc.paramExecute(
+    `
+    DROP TABLE IF EXISTS \`sql_lib_user\`;
+  `,
+    {}
+  );
+}
+
+async function cleanDatabase() {
+  await dropDatabase();
+  await setupDatabase();
+}
+
+export { MySqlStage, setupDatabase, dropDatabase, cleanDatabase };

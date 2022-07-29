@@ -2,6 +2,7 @@ import { AppLogger, isPlainObject } from 'kalmia-common-lib';
 import * as mysql from 'mysql2/promise';
 import { Pool, PoolConnection } from 'mysql2/promise';
 import * as SqlString from 'sqlstring';
+import { MySqlConnManager } from './mysql-conn-manager';
 
 /**
  * MySQL helper. This helper is designed for usage of SQL connection pool.
@@ -13,6 +14,49 @@ export class MySqlUtil {
   constructor(dbConnection?: Pool) {
     this._dbConnectionPool = dbConnection;
     return this;
+  }
+
+  /**
+   * This method will initialize connection from the connection pool. It will use connection manager and initialize primary connection as connection poll.
+   * It will also open single connection for from the pool ans set it as the active connection if the parameter is set to true;
+   *
+   * @param [setPoledInstance] if true, the connection will be polled from the pool and set as the active connection
+   * @returns {Promise<MySqlUtil>} returns instance of MySqlUtil
+   */
+  public static async init(setPoledInstance = false): Promise<MySqlUtil> {
+    const conn = await MySqlConnManager.getInstance().getConnection();
+    const instance = new MySqlUtil(conn);
+    if (setPoledInstance) {
+      const singleConnectionFromPool = await instance._dbConnectionPool.getConnection();
+      instance.setActiveConnection(singleConnectionFromPool);
+    }
+    return instance;
+  }
+
+  /**
+   * End all active connections from using the connection manager.
+   */
+  public static async end(): Promise<void> {
+    await MySqlConnManager.getInstance().end();
+  }
+
+  /**
+   * End all active connections. Also close active instance of connection form the pool.
+   */
+  public async end(): Promise<void> {
+    await MySqlConnManager.getInstance().end();
+    if (this._currentPooledConnection) {
+      await this._currentPooledConnection.release();
+    }
+  }
+
+  /**
+   * Returns the connection pool from the instance.
+   *
+   * @returns {Pool}
+   */
+  public getConnectionPool(): Pool {
+    return this._dbConnectionPool;
   }
 
   /**

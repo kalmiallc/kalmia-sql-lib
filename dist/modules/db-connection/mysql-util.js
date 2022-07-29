@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MySqlUtil = void 0;
 const kalmia_common_lib_1 = require("kalmia-common-lib");
 const SqlString = require("sqlstring");
+const mysql_conn_manager_1 = require("./mysql-conn-manager");
 /**
  * MySQL helper. This helper is designed for usage of SQL connection pool.
  */
@@ -10,6 +11,45 @@ class MySqlUtil {
     constructor(dbConnection) {
         this._dbConnectionPool = dbConnection;
         return this;
+    }
+    /**
+     * This method will initialize connection from the connection pool. It will use connection manager and initialize primary connection as connection poll.
+     * It will also open single connection for from the pool ans set it as the active connection if the parameter is set to true;
+     *
+     * @param [setPoledInstance] if true, the connection will be polled from the pool and set as the active connection
+     * @returns {Promise<MySqlUtil>} returns instance of MySqlUtil
+     */
+    static async init(setPoledInstance = false) {
+        const conn = await mysql_conn_manager_1.MySqlConnManager.getInstance().getConnection();
+        const instance = new MySqlUtil(conn);
+        if (setPoledInstance) {
+            const singleConnectionFromPool = await instance._dbConnectionPool.getConnection();
+            instance.setActiveConnection(singleConnectionFromPool);
+        }
+        return instance;
+    }
+    /**
+     * End all active connections from using the connection manager.
+     */
+    static async end() {
+        await mysql_conn_manager_1.MySqlConnManager.getInstance().end();
+    }
+    /**
+     * End all active connections. Also close active instance of connection form the pool.
+     */
+    async end() {
+        await mysql_conn_manager_1.MySqlConnManager.getInstance().end();
+        if (this._currentPooledConnection) {
+            await this._currentPooledConnection.release();
+        }
+    }
+    /**
+     * Returns the connection pool from the instance.
+     *
+     * @returns {Pool}
+     */
+    getConnectionPool() {
+        return this._dbConnectionPool;
     }
     /**
      * Set active connection (pool connection)
