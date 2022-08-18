@@ -24,23 +24,22 @@ describe('DB Logger tests', () => {
 
   afterAll(async () => {
     await MigrationHelper.downgradeDatabase();
+    await DbLogger.end();
+    await MySqlConnManager.getInstance().end();
   });
   afterEach(async () => {
     const inst = await MySqlUtil.init();
     await inst.getConnectionPool().query(`DELETE FROM ${env.DB_LOGGER_TABLE}`);
-    await MySqlConnManager.getInstance().end();
   });
   it('Logger info message', async () => {
-    await DbLogger.init();
     const testMessage = 'Test message';
     const testMessage2 = 'Test message 2';
     DbLogger.info('TestMethod', 'Logger.test.ts', testMessage, testMessage2);
     // add some wait as we are not sure when the logger will be written
     await new Promise((resolve) => setTimeout(resolve, 1000));
-
     const inst = await MySqlUtil.init();
     const data = await inst.paramExecuteDirect(`SELECT * FROM ${env.DB_LOGGER_TABLE}`);
-    AppLogger.test('TestMethod', 'Logger.test.ts', AppLogger.stringifyObjectForLog(data[0]));
+    DbLogger.test('TestMethod', 'Logger.test.ts', AppLogger.stringifyObjectForLog(data[0]));
     expect(data[0].severity).toBe('info');
     expect(data[0].ts).toBeTruthy();
     expect(data[0].data).toBeTruthy();
@@ -48,9 +47,10 @@ describe('DB Logger tests', () => {
   });
 
   it('Logger different severities', async () => {
-    await DbLogger.init();
+    env.DB_LOGGER_LOG_TO_CONSOLE = 1;
     DbLogger.error('TestMethod', 'Logger.test.ts', 'Error level log');
     DbLogger.warn('TestMethod', 'Logger.test.ts', 'Warn level log');
+    env.DB_LOGGER_LOG_TO_CONSOLE = 0;
     DbLogger.info('TestMethod', 'Logger.test.ts', 'Info level log');
     DbLogger.debug('TestMethod', 'Logger.test.ts', 'Debug level log');
     DbLogger.trace('TestMethod', 'Logger.test.ts', 'Trace level log');
@@ -58,10 +58,9 @@ describe('DB Logger tests', () => {
     DbLogger.db('TestMethod', 'Logger.test.ts', 'Db level log');
     // add some wait as we are not sure when the logger will be written
     await new Promise((resolve) => setTimeout(resolve, 3000));
-
     const inst = await MySqlUtil.init();
     const data = await inst.paramExecuteDirect(`SELECT * FROM ${env.DB_LOGGER_TABLE}`);
-    AppLogger.test('TestMethod', 'Logger.test.ts', AppLogger.stringifyObjectForLog(data[0]));
+    DbLogger.test('TestMethod', 'Logger.test.ts', AppLogger.stringifyObjectForLog(data[0]));
     expect(data.length).toBe(7);
     expect(data[0].severity).toBe('error');
     expect(data[0].ts).toBeTruthy();

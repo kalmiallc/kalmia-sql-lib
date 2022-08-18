@@ -26,6 +26,7 @@ export interface IMySqlEnv {
     DB_LOGGER_TABLE: string;
     DB_LOGGER_REQUEST_TABLE: string;
     DB_LOGGER_WORKER_TABLE: string;
+    DB_LOGGER_LOG_TO_CONSOLE: number;
     DB_LOGGER_REQUEST_RETENTION: number;
     DB_LOGGER_WORKER_RETENTION: number;
     DB_LOGGER_RETENTION: number;

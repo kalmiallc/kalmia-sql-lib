@@ -32,6 +32,7 @@ export interface IMySqlEnv {
   DB_LOGGER_TABLE: string;
   DB_LOGGER_REQUEST_TABLE: string;
   DB_LOGGER_WORKER_TABLE: string;
+  DB_LOGGER_LOG_TO_CONSOLE: number;
 
   DB_LOGGER_REQUEST_RETENTION: number;
   DB_LOGGER_WORKER_RETENTION: number;
@@ -148,5 +149,6 @@ export const env: IMySqlEnv & ICommonEnv = {
   DB_LOGGER_WORKER_TABLE: process.env['DB_LOGGER_WORKER_TABLE'] || 'db_logger_worker',
   DB_LOGGER_REQUEST_RETENTION: parseInt(process.env['DB_LOGGER_REQUEST_RETENTION']) || 60,
   DB_LOGGER_WORKER_RETENTION: parseInt(process.env['DB_LOGGER_WORKER_RETENTION']) || 60,
-  DB_LOGGER_RETENTION: parseInt(process.env['DB_LOGGER_RETENTION']) || 60
+  DB_LOGGER_RETENTION: parseInt(process.env['DB_LOGGER_RETENTION']) || 60,
+  DB_LOGGER_LOG_TO_CONSOLE: parseInt(process.env['DB_LOGGER_LOG_TO_CONSOLE']) || 1
 };
