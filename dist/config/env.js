@@ -79,5 +79,9 @@ exports.env = Object.assign(Object.assign({}, kalmia_common_lib_1.env), {
      * Limit list page sizes
      * 0 = unlimited
      */
-    MAX_PAGE_SIZE: parseInt(process.env['MAX_PAGE_SIZE']) || 0 });
+    MAX_PAGE_SIZE: parseInt(process.env['MAX_PAGE_SIZE']) || 0, 
+    /**
+     * Table under which to log DB logs
+     * */
+    DB_LOGGER_TABLE: process.env['DB_LOGGER_TABLE'] || 'db_logger', DB_LOGGER_REQUEST_TABLE: process.env['DB_LOGGER_REQUEST_TABLE'] || 'db_logger_request', DB_LOGGER_WORKER_TABLE: process.env['DB_LOGGER_WORKER_TABLE'] || 'db_logger_worker', DB_LOGGER_REQUEST_RETENTION: parseInt(process.env['DB_LOGGER_REQUEST_RETENTION']) || 60, DB_LOGGER_WORKER_RETENTION: parseInt(process.env['DB_LOGGER_WORKER_RETENTION']) || 60, DB_LOGGER_RETENTION: parseInt(process.env['DB_LOGGER_RETENTION']) || 60 });
 //# sourceMappingURL=env.js.map

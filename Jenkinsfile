@@ -57,7 +57,7 @@ pipeline {
   }
 
   environment {
-    IMAGE = "kalmia-sql-li"
+    IMAGE = "kalmia-sql-lib"
     RELEASE = "test-run"
   }
 

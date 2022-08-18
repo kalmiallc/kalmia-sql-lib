@@ -23,6 +23,12 @@ export interface IMySqlEnv {
     MYSQL_SSL_KEY_FILE: string;
     MYSQL_SSL_CERT_FILE: string;
     MAX_PAGE_SIZE: number;
+    DB_LOGGER_TABLE: string;
+    DB_LOGGER_REQUEST_TABLE: string;
+    DB_LOGGER_WORKER_TABLE: string;
+    DB_LOGGER_REQUEST_RETENTION: number;
+    DB_LOGGER_WORKER_RETENTION: number;
+    DB_LOGGER_RETENTION: number;
 }
 export declare const env: IMySqlEnv & ICommonEnv;
 //# sourceMappingURL=env.d.ts.map

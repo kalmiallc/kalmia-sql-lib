@@ -6,6 +6,7 @@ import { MySqlConnManager } from './mysql-conn-manager';
 
 /**
  * MySQL helper. This helper is designed for usage of SQL connection pool.
+ * Methods with direct -- use direct connection pooling, no need to get instances from the connection pool.
  */
 export class MySqlUtil {
   private _dbConnectionPool: Pool;
@@ -152,7 +153,7 @@ export class MySqlUtil {
   }
 
   /**
-   * Call stored procedure on database
+   * Call stored procedure on database. This method uses automatic connection picking from the connection pool.
    *
    * @param procedure procedure name
    * @param data Object with call parameters

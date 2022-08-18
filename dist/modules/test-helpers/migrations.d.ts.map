@@ -1,0 +1,1 @@
+{"version":3,"file":"migrations.d.ts","sourceRoot":"","sources":["../../../src/modules/test-helpers/migrations.ts"],"names":[],"mappings":"AAGA,qBAAa,eAAe;IAC1B;;;;OAIG;IAEH,OAAO,CAAC,MAAM,CAAC,UAAU,CAAoF;IAE7G,MAAM,CAAC,eAAe,WAAiB,MAAM,KAAe,QAAQ,IAAI,CAAC,CAevE;IAEF;;;;OAIG;IACH,MAAM,CAAC,iBAAiB,WAAiB,MAAM,KAAQ,QAAQ,IAAI,CAAC,CAclE;CACH"}

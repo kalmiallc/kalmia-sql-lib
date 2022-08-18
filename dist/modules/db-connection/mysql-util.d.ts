@@ -2,6 +2,7 @@ import * as mysql from 'mysql2/promise';
 import { Pool, PoolConnection } from 'mysql2/promise';
 /**
  * MySQL helper. This helper is designed for usage of SQL connection pool.
+ * Methods with direct -- use direct connection pooling, no need to get instances from the connection pool.
  */
 export declare class MySqlUtil {
     private _dbConnectionPool;
@@ -63,7 +64,7 @@ export declare class MySqlUtil {
         multiSet?: boolean;
     }): Promise<any>;
     /**
-     * Call stored procedure on database
+     * Call stored procedure on database. This method uses automatic connection picking from the connection pool.
      *
      * @param procedure procedure name
      * @param data Object with call parameters

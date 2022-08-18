@@ -28,6 +28,14 @@ export interface IMySqlEnv {
   MYSQL_SSL_CERT_FILE: string;
 
   MAX_PAGE_SIZE: number;
+
+  DB_LOGGER_TABLE: string;
+  DB_LOGGER_REQUEST_TABLE: string;
+  DB_LOGGER_WORKER_TABLE: string;
+
+  DB_LOGGER_REQUEST_RETENTION: number;
+  DB_LOGGER_WORKER_RETENTION: number;
+  DB_LOGGER_RETENTION: number;
 }
 
 /**
@@ -129,5 +137,16 @@ export const env: IMySqlEnv & ICommonEnv = {
    * Limit list page sizes
    * 0 = unlimited
    */
-  MAX_PAGE_SIZE: parseInt(process.env['MAX_PAGE_SIZE']) || 0
+  MAX_PAGE_SIZE: parseInt(process.env['MAX_PAGE_SIZE']) || 0,
+
+  /**
+   * Table under which to log DB logs
+   * */
+
+  DB_LOGGER_TABLE: process.env['DB_LOGGER_TABLE'] || 'db_logger',
+  DB_LOGGER_REQUEST_TABLE: process.env['DB_LOGGER_REQUEST_TABLE'] || 'db_logger_request',
+  DB_LOGGER_WORKER_TABLE: process.env['DB_LOGGER_WORKER_TABLE'] || 'db_logger_worker',
+  DB_LOGGER_REQUEST_RETENTION: parseInt(process.env['DB_LOGGER_REQUEST_RETENTION']) || 60,
+  DB_LOGGER_WORKER_RETENTION: parseInt(process.env['DB_LOGGER_WORKER_RETENTION']) || 60,
+  DB_LOGGER_RETENTION: parseInt(process.env['DB_LOGGER_RETENTION']) || 60
 };
