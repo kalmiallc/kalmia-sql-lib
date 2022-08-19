@@ -1,6 +1,6 @@
 import { env, IMySqlEnv } from './config/env';
 import { IConnectionDetails } from './config/interfaces';
-import { DbConnectionType, DbModelStatus, PopulateFor, SerializeFor, WorkerDbTables } from './config/types';
+import { DbConnectionType, DbModelStatus, PopulateFor, SerializeFor, WorkerDbTables, WorkerLogStatus } from './config/types';
 import { ActionOptions, BaseModel } from './modules/common/base.model';
 import { foreignKeyExistence, uniqueFieldValidator, uniqueFieldWithIdValidator } from './modules/common/validators';
 import { MySqlConnManager } from './modules/db-connection/mysql-conn-manager';
@@ -14,7 +14,7 @@ import {
   unionSelectAndCountQuery,
   WhereQueryComparator
 } from './modules/db-connection/sql-utils';
-import { DbLogger } from './modules/db-logger/db-logger';
+import { DbLogger, RequestLogData } from './modules/db-logger/db-logger';
 import { MigrationOptions, Migrations } from './modules/migrations/migrations';
 import { MigrationHelper } from './modules/test-helpers/migrations';
 import { MySqlStage } from './modules/test-helpers/mysql-stage';
@@ -49,5 +49,7 @@ export {
   WorkerLog,
   WorkerDbTables,
   MigrationHelper,
-  DbLogger
+  DbLogger,
+  RequestLogData,
+  WorkerLogStatus
 };
