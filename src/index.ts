@@ -14,6 +14,7 @@ import {
   unionSelectAndCountQuery,
   WhereQueryComparator
 } from './modules/db-connection/sql-utils';
+import { DbLogger } from './modules/db-logger/db-logger';
 import { MigrationOptions, Migrations } from './modules/migrations/migrations';
 import { MigrationHelper } from './modules/test-helpers/migrations';
 import { MySqlStage } from './modules/test-helpers/mysql-stage';
@@ -47,5 +48,6 @@ export {
   WorkerJob,
   WorkerLog,
   WorkerDbTables,
-  MigrationHelper
+  MigrationHelper,
+  DbLogger
 };

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MigrationHelper = exports.WorkerDbTables = exports.WorkerLog = exports.WorkerJob = exports.MySqlStage = exports.env = exports.foreignKeyExistence = exports.uniqueFieldValidator = exports.uniqueFieldWithIdValidator = exports.DbModelStatus = exports.DbConnectionType = exports.SerializeFor = exports.PopulateFor = exports.buildWhereCondition = exports.unionSelectAndCountQuery = exports.selectAndCountQuery = exports.buildSearchParameter = exports.getQueryParams = exports.WhereQueryComparator = exports.Migrations = exports.BaseModel = exports.MySqlUtil = exports.MySqlConnManager = void 0;
+exports.DbLogger = exports.MigrationHelper = exports.WorkerDbTables = exports.WorkerLog = exports.WorkerJob = exports.MySqlStage = exports.env = exports.foreignKeyExistence = exports.uniqueFieldValidator = exports.uniqueFieldWithIdValidator = exports.DbModelStatus = exports.DbConnectionType = exports.SerializeFor = exports.PopulateFor = exports.buildWhereCondition = exports.unionSelectAndCountQuery = exports.selectAndCountQuery = exports.buildSearchParameter = exports.getQueryParams = exports.WhereQueryComparator = exports.Migrations = exports.BaseModel = exports.MySqlUtil = exports.MySqlConnManager = void 0;
 const env_1 = require("./config/env");
 Object.defineProperty(exports, "env", { enumerable: true, get: function () { return env_1.env; } });
 const types_1 = require("./config/types");
@@ -26,6 +26,8 @@ Object.defineProperty(exports, "getQueryParams", { enumerable: true, get: functi
 Object.defineProperty(exports, "selectAndCountQuery", { enumerable: true, get: function () { return sql_utils_1.selectAndCountQuery; } });
 Object.defineProperty(exports, "unionSelectAndCountQuery", { enumerable: true, get: function () { return sql_utils_1.unionSelectAndCountQuery; } });
 Object.defineProperty(exports, "WhereQueryComparator", { enumerable: true, get: function () { return sql_utils_1.WhereQueryComparator; } });
+const db_logger_1 = require("./modules/db-logger/db-logger");
+Object.defineProperty(exports, "DbLogger", { enumerable: true, get: function () { return db_logger_1.DbLogger; } });
 const migrations_1 = require("./modules/migrations/migrations");
 Object.defineProperty(exports, "Migrations", { enumerable: true, get: function () { return migrations_1.Migrations; } });
 const migrations_2 = require("./modules/test-helpers/migrations");
