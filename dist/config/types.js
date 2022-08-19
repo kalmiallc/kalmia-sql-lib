@@ -1,7 +1,7 @@
 "use strict";
 /* eslint-disable no-shadow */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WorkerDbTables = exports.DbModelStatus = exports.DbConnectionType = exports.SerializeFor = exports.PopulateFor = void 0;
+exports.WorkerLogStatus = exports.WorkerDbTables = exports.DbModelStatus = exports.DbConnectionType = exports.SerializeFor = exports.PopulateFor = void 0;
 /**
  * Model population strategies.
  */
@@ -47,4 +47,13 @@ var WorkerDbTables;
     WorkerDbTables["WORKER_JOB"] = "workerJob";
     WorkerDbTables["WORKER_LOG"] = "workerLog";
 })(WorkerDbTables = exports.WorkerDbTables || (exports.WorkerDbTables = {}));
+var WorkerLogStatus;
+(function (WorkerLogStatus) {
+    WorkerLogStatus["DEBUG"] = "debug";
+    WorkerLogStatus["START"] = "start";
+    WorkerLogStatus["INFO"] = "info";
+    WorkerLogStatus["WARNING"] = "warning";
+    WorkerLogStatus["SUCCESS"] = "success";
+    WorkerLogStatus["ERROR"] = "error";
+})(WorkerLogStatus = exports.WorkerLogStatus || (exports.WorkerLogStatus = {}));
 //# sourceMappingURL=types.js.map

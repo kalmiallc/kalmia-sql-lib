@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import { AppLogger } from 'kalmia-common-lib';
 import { env } from '../../config/env';
+import { WorkerLogStatus } from '../../config/types';
 import { MySqlUtil } from '../db-connection/mysql-util';
 
 /**
  * DbLogger logger logs to DB. The proper table must be created in the DB. Check the migration script.
+ * Logger uses sync function and will not guarantee actual writes to DB. Fails are logeed to console.
  * The table name is defined in the env.DB_LOGGER_TABLE.
  * The table must have the following columns:
  * - id - INT NOT NULL AUTO_INCREMENT
@@ -15,11 +17,17 @@ import { MySqlUtil } from '../db-connection/mysql-util';
  * - data - TEXT NULL
  *
  * Logger will also log to console. Console logging can be disabled if env.CONSOLE_LOGGER is set to false.
+ *
+ * Logger also supports worker logs. Worker logs are logged to separate table.
+ * Logger also supports request logs. Request logs are logged to separate table.
+ *
+ * Check migration script for worker logs and request logs DB tables.
+ *
  */
 export interface RequestLogData {
   host: string;
   ip: string;
-  statusCode: string;
+  statusCode: number;
   method: string;
   url: string;
   endpoint: string;
@@ -27,7 +35,8 @@ export interface RequestLogData {
   origin: string;
   xForwardedFor: string;
   body: string;
-  responseTime: Date;
+  responseTime: number;
+  data?: any;
 }
 
 export class DbLogger {
@@ -38,6 +47,9 @@ export class DbLogger {
 
   private constructor() {}
 
+  /**
+   * Ends the connection to DB.
+   */
   public static async end() {
     await DbLogger.sqlInst.end();
   }
@@ -53,6 +65,9 @@ export class DbLogger {
 
   public static async checkIfDbLoggerInitialized(): Promise<void> {
     if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
+      await DbLogger.init();
+    }
+    if (DbLogger.sqlInst.getConnectionPool().pool._closed) {
       await DbLogger.init();
     }
     if (!DbLogger.loggerOK) {
@@ -74,7 +89,7 @@ export class DbLogger {
       await DbLogger.init();
     }
     if (!DbLogger.requestLoggerOK) {
-      await DbLogger.checkIfLogDbExists(env.DB_LOGGER_WORKER_TABLE);
+      await DbLogger.checkIfLogDbExists(env.DB_LOGGER_REQUEST_TABLE);
     }
   }
 
@@ -85,7 +100,19 @@ export class DbLogger {
                               LIMIT 1;`);
     const isTable = tableData[0] as any;
     if (isTable.length > 0 && isTable[0].TABLE_NAME === table) {
-      DbLogger.loggerOK = true;
+      switch (table) {
+        case env.DB_LOGGER_TABLE:
+          DbLogger.loggerOK = true;
+          break;
+        case env.DB_LOGGER_WORKER_TABLE:
+          DbLogger.workerLoggerOK = true;
+          break;
+        case env.DB_LOGGER_REQUEST_TABLE:
+          DbLogger.requestLoggerOK = true;
+          break;
+        default:
+          break;
+      }
       AppLogger.info('DbLogger', 'DbLogger.ts', 'DB logger initialized for table: ' + table);
     } else {
       AppLogger.warn('DbLogger', 'DbLogger.ts', 'Error initializing db logger, logger table not exists:' + table);
@@ -94,9 +121,8 @@ export class DbLogger {
 
   public static async clearStandardLogs(): Promise<any> {
     try {
-      AppLogger.info('DbLogger', 'DbLogger.ts', `clearStandardLogs - running for retention: ${env.DB_LOGGER_TABLE}`);
-      DbLogger.sqlInst.paramExecuteDirect(`DELETE FROM \`${env.DB_LOGGER_TABLE}\` WHERE DATEDIFF(NOW(), ts) > ${env.DB_LOGGER_RETENTION};`);
-      DbLogger.sqlInst.paramExecuteDirect(`DELETE FROM \`${env.DB_LOGGER_TABLE}\` WHERE DATEDIFF(NOW(), _createTime) > ${env.DB_LOGGER_RETENTION};`);
+      AppLogger.info('DbLogger', 'DbLogger.ts', `clearStandardLogs - running for retention: ${env.DB_LOGGER_RETENTION}`);
+      await DbLogger.sqlInst.paramExecuteDirect(`DELETE FROM \`${env.DB_LOGGER_TABLE}\` WHERE DATEDIFF(NOW(), ts) >= ${env.DB_LOGGER_RETENTION};`);
     } catch (error) {
       AppLogger.error('DbLogger', 'DbLogger.ts', 'Error clearStandardLogs the logger: ', env.DB_LOGGER_TABLE);
     }
@@ -104,12 +130,9 @@ export class DbLogger {
 
   public static async clearWorkerLogs(): Promise<any> {
     try {
-      AppLogger.info('DbLogger', 'DbLogger.ts', `clearWorkerLogs - running for retention: ${env.DB_LOGGER_WORKER_TABLE}`);
-      DbLogger.sqlInst.paramExecuteDirect(
-        `DELETE FROM \`${env.DB_LOGGER_WORKER_TABLE}\` WHERE DATEDIFF(NOW(), ts) > ${env.DB_LOGGER_WORKER_RETENTION};`
-      );
-      DbLogger.sqlInst.paramExecuteDirect(
-        `DELETE FROM \`${env.DB_LOGGER_WORKER_TABLE}\` WHERE DATEDIFF(NOW(), _createTime) > ${env.DB_LOGGER_WORKER_RETENTION};`
+      AppLogger.info('DbLogger', 'DbLogger.ts', `clearWorkerLogs - running for retention: ${env.DB_LOGGER_WORKER_RETENTION}`);
+      await DbLogger.sqlInst.paramExecuteDirect(
+        `DELETE FROM \`${env.DB_LOGGER_WORKER_TABLE}\` WHERE DATEDIFF(NOW(), ts) >= ${env.DB_LOGGER_WORKER_RETENTION};`
       );
     } catch (error) {
       AppLogger.error('DbLogger', 'DbLogger.ts', 'Error clearWorkerLogs the logger: ', env.DB_LOGGER_WORKER_TABLE);
@@ -118,12 +141,9 @@ export class DbLogger {
 
   public static async clearRequestLogs(): Promise<any> {
     try {
-      AppLogger.info('DbLogger', 'DbLogger.ts', `clearRequestLogs - running for retention: ${env.DB_LOGGER_REQUEST_TABLE}`);
-      DbLogger.sqlInst.paramExecuteDirect(
-        `DELETE FROM \`${env.DB_LOGGER_REQUEST_TABLE}\` WHERE DATEDIFF(NOW(), ts) > ${env.DB_LOGGER_REQUEST_RETENTION};`
-      );
-      DbLogger.sqlInst.paramExecuteDirect(
-        `DELETE FROM \`${env.DB_LOGGER_REQUEST_TABLE}\` WHERE DATEDIFF(NOW(), _createTime) > ${env.DB_LOGGER_REQUEST_RETENTION};`
+      AppLogger.info('DbLogger', 'DbLogger.ts', `clearRequestLogs - running for retention: ${env.DB_LOGGER_REQUEST_RETENTION}`);
+      await DbLogger.sqlInst.paramExecuteDirect(
+        `DELETE FROM \`${env.DB_LOGGER_REQUEST_TABLE}\` WHERE DATEDIFF(NOW(), _createTime) >= ${env.DB_LOGGER_REQUEST_RETENTION};`
       );
     } catch (error) {
       AppLogger.error('DbLogger', 'DbLogger.ts', 'Error clearing the clearRequestLogs logger: ', env.DB_LOGGER_REQUEST_TABLE);
@@ -145,9 +165,6 @@ export class DbLogger {
   }
 
   public static debug(fileName: string, methodName: string, ...args) {
-    if (!DbLogger.loggerOK) {
-      return;
-    }
     if (env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
       AppLogger.debug(fileName, methodName, args);
     }
@@ -182,6 +199,10 @@ export class DbLogger {
     void DbLogger.writeDbLog(fileName, fileName, 'db', args.join(' ')).catch();
   }
 
+  /**
+   * Async version for writing to db log.
+   */
+
   public static async writeDbLog(fileName = '', methodName = '', severity, data = '') {
     try {
       await DbLogger.checkIfDbLoggerInitialized();
@@ -200,35 +221,108 @@ export class DbLogger {
     }
   }
 
-  public static async writeWorkerLog(fileName = '', methodName = '', severity, data = '') {}
+  /**
+   * Write log to database
+   *
+   * @param status worker status
+   * @param message message
+   * @param worker worker name
+   * @param data any data in JSON
+   * @param err Error object
+   */
+  public static logWorker(status: WorkerLogStatus, worker: string, message: string, data?: any, err?: Error, uuid?: string) {
+    DbLogger.logWorkerAsync(status, worker, message, data, err, uuid).catch();
+  }
 
-  public static async writeRequestLog(data: RequestLogData) {
+  /**
+   * Write request to database log. Function is sync, and will not fail in case of an error. There is no control on the actual write.
+   *
+   * @param data RequestLogData
+   */
+
+  public static logRequest(data: RequestLogData) {
+    DbLogger.logRequestAsync(data).catch();
+  }
+
+  /**
+   * Async version of logRRequest
+   */
+
+  public static async logRequestAsync(inputData: RequestLogData) {
     try {
+      if (env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
+        AppLogger.info('Request Log', inputData.method, AppLogger.stringifyObjectForLog(inputData));
+      }
+
       await DbLogger.checkIfRequestLoggerInitialized();
       if (!DbLogger.requestLoggerOK) {
         return;
       }
+      if (inputData.data) {
+        if (typeof inputData.data !== 'object') {
+          inputData.data = { data: inputData.data };
+        }
+      } else {
+        inputData.data = {};
+      }
+
       await DbLogger.sqlInst.paramExecuteDirect(
         `
-      INSERT INTO ${env.DB_LOGGER_TABLE} (file, method, severity, data)
-      VALUES (@host, @ip, @statusCode, @method, @url, @endpoint, @userAgent, @origin, @xForwardedFor, @body, @responseTime)
+      INSERT INTO ${env.DB_LOGGER_REQUEST_TABLE} (host, ip, statusCode, method, url, endpoint, userAgent, origin, xForwardedFor, body, responseTime, data)
+      VALUES (@host, @ip, @statusCode, @method, @url, @endpoint, @userAgent, @origin, @xForwardedFor, @body, @responseTime, @data)
     `,
         {
-          host: data.host,
-          ip: data.ip,
-          statusCode: data.statusCode,
-          method: data.method,
-          url: data.url,
-          endpoint: data.endpoint,
-          userAgent: data.userAgent,
-          origin: data.origin,
-          xForwardedFor: data.xForwardedFor,
-          body: data.body,
-          responseTime: data.responseTime
+          host: inputData.host || '',
+          ip: inputData.ip || '',
+          statusCode: inputData.statusCode || 0,
+          method: inputData.method || '',
+          url: inputData.url || '',
+          endpoint: inputData.endpoint || '',
+          userAgent: inputData.userAgent || '',
+          origin: inputData.origin || '',
+          xForwardedFor: inputData.xForwardedFor || '',
+          body: inputData.body || '',
+          responseTime: inputData.responseTime || 0,
+          data: inputData.data
         }
       );
     } catch (error) {
       AppLogger.error('DbLogger', 'DbLogger.ts', 'Error writing to DB log: ', env.DB_LOGGER_TABLE);
+    }
+  }
+
+  /**
+   * Async version of logWorker
+   */
+
+  public static async logWorkerAsync(status: WorkerLogStatus, worker: string, message: string, data?: any, err?: Error, uuid?: string) {
+    try {
+      if (env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
+        AppLogger.info('Worker Log', worker, status, message, data, err);
+      }
+      await DbLogger.checkIfWorkerLoggerInitialized();
+      if (!DbLogger.workerLoggerOK) {
+        return;
+      }
+      let error = {};
+      if (err) {
+        status = WorkerLogStatus.ERROR;
+        error = { message: err.message, stack: err.stack };
+      }
+
+      if (typeof data !== 'object') {
+        data = { data };
+      }
+
+      await DbLogger.sqlInst.paramExecuteDirect(
+        `
+	      INSERT INTO ${env.DB_LOGGER_WORKER_TABLE} (status, worker, message, data, error, uuid)
+	      VALUES (@status, @worker, @message, @data, @error, @uuid)
+	    `,
+        { status, worker, message, data, error, uuid: uuid || '' }
+      );
+    } catch (error) {
+      AppLogger.error('DbLogger', 'DbLogger.ts', 'Error writing worker log to DB: ', error);
     }
   }
 }

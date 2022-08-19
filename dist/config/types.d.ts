@@ -38,4 +38,12 @@ export declare enum WorkerDbTables {
     WORKER_JOB = "workerJob",
     WORKER_LOG = "workerLog"
 }
+export declare enum WorkerLogStatus {
+    DEBUG = "debug",
+    START = "start",
+    INFO = "info",
+    WARNING = "warning",
+    SUCCESS = "success",
+    ERROR = "error"
+}
 //# sourceMappingURL=types.d.ts.map

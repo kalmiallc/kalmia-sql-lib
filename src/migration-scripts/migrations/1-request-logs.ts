@@ -1,5 +1,4 @@
 import { env } from '../../config/env';
-import { DbModelStatus } from '../../config/types';
 
 export async function upgrade(queryFn: (query: string, values?: any[]) => Promise<any[]>): Promise<void> {
   await queryFn(`
@@ -16,13 +15,9 @@ export async function upgrade(queryFn: (query: string, values?: any[]) => Promis
       \`origin\` VARCHAR(1000) NULL,
       \`xForwardedFor\` VARCHAR(1000) NULL,
       \`body\` TEXT NULL,
+      \`data\` JSON NULL,
       \`responseTime\` DECIMAL(12,2) NULL,
-      \`files\` VARCHAR(3000) NULL,
-      \`status\` INT NOT NULL DEFAULT '${DbModelStatus.ACTIVE}',
       \`_createTime\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      \`_createUser\` INT NULL,
-      \`_updateTime\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-      \`_updateUser\` INT NULL,
       PRIMARY KEY (\`id\`)
     );
   `);

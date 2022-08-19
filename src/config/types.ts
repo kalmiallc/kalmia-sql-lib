@@ -44,3 +44,12 @@ export enum WorkerDbTables {
   WORKER_JOB = 'workerJob',
   WORKER_LOG = 'workerLog'
 }
+
+export enum WorkerLogStatus {
+  DEBUG = 'debug',
+  START = 'start',
+  INFO = 'info',
+  WARNING = 'warning',
+  SUCCESS = 'success',
+  ERROR = 'error'
+}
