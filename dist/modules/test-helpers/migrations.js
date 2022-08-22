@@ -6,6 +6,12 @@ const kalmia_common_lib_1 = require("kalmia-common-lib");
 const path = require("path");
 const migrations_1 = require("../migrations/migrations");
 class MigrationHelper {
+    static setMigrationsPath(scriptPath) {
+        MigrationHelper.scriptPath = scriptPath;
+    }
+    static setSeedsPath(scriptPath) {
+        MigrationHelper.scriptPathSeed = scriptPath;
+    }
 }
 exports.MigrationHelper = MigrationHelper;
 _a = MigrationHelper;

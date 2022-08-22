@@ -12,6 +12,14 @@ export class MigrationHelper {
   private static scriptPath = path.join(__dirname, '..', '..', '..', 'src', 'migration-scripts', 'migrations');
   private static scriptPathSeed = path.join(__dirname, '..', '..', '..', 'src', 'migration-scripts', 'seeds');
 
+  static setMigrationsPath(scriptPath: string) {
+    MigrationHelper.scriptPath = scriptPath;
+  }
+
+  static setSeedsPath(scriptPath: string) {
+    MigrationHelper.scriptPathSeed = scriptPath;
+  }
+
   static upgradeDatabase = async (steps: number = undefined, silent = true, thePath = this.scriptPath): Promise<void> => {
     const migration = new Migrations();
     AppLogger.info('migrations.ts', 'Upgrade database', 'Running migrations for ' + thePath);

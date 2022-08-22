@@ -6,6 +6,8 @@ export declare class MigrationHelper {
      */
     private static scriptPath;
     private static scriptPathSeed;
+    static setMigrationsPath(scriptPath: string): void;
+    static setSeedsPath(scriptPath: string): void;
     static upgradeDatabase: (steps?: number, silent?: boolean, thePath?: string) => Promise<void>;
     /**
      * Runs 'steps' downgrade migrations.
