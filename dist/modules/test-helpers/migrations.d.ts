@@ -6,25 +6,25 @@ export declare class MigrationHelper {
      */
     private static scriptPath;
     private static scriptPathSeed;
-    static upgradeDatabase: (steps?: number, thePath?: string, silent?: boolean) => Promise<void>;
+    static upgradeDatabase: (steps?: number, silent?: boolean, thePath?: string) => Promise<void>;
     /**
      * Runs 'steps' downgrade migrations.
      *
      * @param steps How many migration steps to run. Defaults to all.
      */
-    static downgradeDatabase: (steps?: number, thePath?: string, silent?: boolean) => Promise<void>;
+    static downgradeDatabase: (steps?: number, silent?: boolean, thePath?: string) => Promise<void>;
     /**
      * Runs 'steps' new seed migrations.
      *
      * @param steps How many migration steps to run. Defaults to all.
      */
-    static seedDatabase: (steps?: number, thePath?: string, silent?: boolean) => Promise<void>;
+    static seedDatabase: (steps?: number, silent?: boolean, thePath?: string) => Promise<void>;
     /**
      * Runs 'steps' unseed migrations.
      *
      * @param steps How many migration steps to run. Defaults to all.
      */
-    static unseedDatabase: (steps: number, thePath?: string, silent?: boolean) => Promise<void>;
+    static unseedDatabase: (steps: number, silent?: boolean, thePath?: string) => Promise<void>;
     /**
      * Rebuilds database by downgrading everything and re-running migrations.
      */

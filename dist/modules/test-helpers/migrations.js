@@ -16,7 +16,7 @@ _a = MigrationHelper;
  */
 MigrationHelper.scriptPath = path.join(__dirname, '..', '..', '..', 'src', 'migration-scripts', 'migrations');
 MigrationHelper.scriptPathSeed = path.join(__dirname, '..', '..', '..', 'src', 'migration-scripts', 'seeds');
-MigrationHelper.upgradeDatabase = async (steps = undefined, thePath = _a.scriptPath, silent = true) => {
+MigrationHelper.upgradeDatabase = async (steps = undefined, silent = true, thePath = _a.scriptPath) => {
     const migration = new migrations_1.Migrations();
     kalmia_common_lib_1.AppLogger.info('migrations.ts', 'Upgrade database', 'Running migrations for ' + thePath);
     await migration.init({
@@ -35,7 +35,7 @@ MigrationHelper.upgradeDatabase = async (steps = undefined, thePath = _a.scriptP
  *
  * @param steps How many migration steps to run. Defaults to all.
  */
-MigrationHelper.downgradeDatabase = async (steps = -1, thePath = _a.scriptPath, silent = true) => {
+MigrationHelper.downgradeDatabase = async (steps = -1, silent = true, thePath = _a.scriptPath) => {
     const migration = new migrations_1.Migrations();
     await migration.init({
         tableName: 'migrations',
@@ -53,7 +53,7 @@ MigrationHelper.downgradeDatabase = async (steps = -1, thePath = _a.scriptPath, 
  *
  * @param steps How many migration steps to run. Defaults to all.
  */
-MigrationHelper.seedDatabase = async (steps = undefined, thePath = _a.scriptPathSeed, silent = true) => {
+MigrationHelper.seedDatabase = async (steps = undefined, silent = true, thePath = _a.scriptPathSeed) => {
     const migration = new migrations_1.Migrations();
     kalmia_common_lib_1.AppLogger.info('migrations.ts', 'Seeding database', 'Running migrations seed for ' + thePath);
     await migration.init({
@@ -68,7 +68,7 @@ MigrationHelper.seedDatabase = async (steps = undefined, thePath = _a.scriptPath
  *
  * @param steps How many migration steps to run. Defaults to all.
  */
-MigrationHelper.unseedDatabase = async (steps, thePath = _a.scriptPathSeed, silent = true) => {
+MigrationHelper.unseedDatabase = async (steps, silent = true, thePath = _a.scriptPathSeed) => {
     const migration = new migrations_1.Migrations();
     await migration.init({
         tableName: 'seeds',
