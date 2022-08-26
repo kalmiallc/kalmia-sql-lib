@@ -217,7 +217,7 @@ export class DbLogger {
         { fileName, methodName, severity, data }
       );
     } catch (error) {
-      AppLogger.error('DbLogger', 'DbLogger.ts', 'Error writing to DB log: ', env.DB_LOGGER_TABLE);
+      AppLogger.error('DbLogger', 'DbLogger.ts', 'Error writing to DB log: ', error);
     }
   }
 
@@ -287,7 +287,7 @@ export class DbLogger {
         }
       );
     } catch (error) {
-      AppLogger.error('DbLogger', 'DbLogger.ts', 'Error writing to DB log: ', env.DB_LOGGER_TABLE);
+      AppLogger.error('DbLogger', 'DbLogger.ts', 'Error writing to request DB log: ', error);
     }
   }
 
