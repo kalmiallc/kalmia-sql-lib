@@ -250,7 +250,7 @@ export class DbLogger {
 
   public static async logRequestAsync(inputData: RequestLogData) {
     try {
-      if (env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
+      if (env.DB_LOGGER_REQUEST_LOG_TO_CONSOLE === 1) {
         AppLogger.info('Request Log', inputData.method, AppLogger.stringifyObjectForLog(inputData));
       }
 
@@ -297,7 +297,7 @@ export class DbLogger {
 
   public static async logWorkerAsync(status: WorkerLogStatus, worker: string, message: string, data?: any, err?: Error, uuid?: string) {
     try {
-      if (env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
+      if (env.DB_LOGGER_WORKER_TO_CONSOLE === 1) {
         AppLogger.info('Worker Log', worker, status, message, data, err);
       }
       await DbLogger.checkIfWorkerLoggerInitialized();
