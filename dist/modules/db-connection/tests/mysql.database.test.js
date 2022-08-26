@@ -52,7 +52,7 @@ describe('MySQL coon pool', () => {
             email: `kalmia_test@example.com`,
             id: Math.floor(Math.random() * 1000000),
             json_field: [{ value: 4 }, { value: 6 }, { value: 10 }],
-            set_field: [4, 6, 10],
+            set_field: [4, 6, 10]
         });
         const response = await sqlUtil.paramExecute("SELECT * FROM `sql_lib_user` WHERE email = 'kalmia_test@example.com';");
         expect(response.length).toBe(1);
@@ -63,7 +63,7 @@ describe('MySQL coon pool', () => {
             })
         ]));
         expect((_c = response[0]) === null || _c === void 0 ? void 0 : _c.set_field.split(',').reduce((partialSum, value) => partialSum + Number(value), 0)).toBe(20);
-        expect((_d = response[0]) === null || _d === void 0 ? void 0 : _d.set_field.split(',')).toEqual(expect.arrayContaining(["4", "6", "10"]));
+        expect((_d = response[0]) === null || _d === void 0 ? void 0 : _d.set_field.split(',')).toEqual(expect.arrayContaining(['4', '6', '10']));
     });
     it('Query should fail', async () => {
         await insertObject();

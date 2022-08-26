@@ -67,7 +67,7 @@ describe('MySQL coon pool', () => {
         email: `kalmia_test@example.com`,
         id: Math.floor(Math.random() * 1_000_000),
         json_field: [{ value: 4 }, { value: 6 }, { value: 10 }],
-        set_field: [4, 6, 10],
+        set_field: [4, 6, 10]
       }
     );
 
@@ -82,9 +82,7 @@ describe('MySQL coon pool', () => {
       ])
     );
     expect(response[0]?.set_field.split(',').reduce((partialSum, value) => partialSum + Number(value), 0)).toBe(20);
-    expect(response[0]?.set_field.split(',')).toEqual(
-      expect.arrayContaining(["4", "6", "10"])
-    )
+    expect(response[0]?.set_field.split(',')).toEqual(expect.arrayContaining(['4', '6', '10']));
   });
 
   it('Query should fail', async () => {

@@ -97,6 +97,10 @@ export class DbLogger {
     if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
       await DbLogger.init();
     }
+    if (!DbLogger.sqlInst.getConnectionPool()) {
+      AppLogger.warn('DbLogger', 'DbLogger.ts', 'Error for logger existence check , no connection pool');
+      return;
+    }
     const tableData = await DbLogger.sqlInst.getConnectionPool().query(`SELECT * 
                               FROM information_schema.tables
                               WHERE table_name = '${table}'

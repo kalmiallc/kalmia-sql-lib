@@ -36,6 +36,52 @@ describe('DB Logger tests', () => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
   });
 
+  it('Log request', async () => {
+    DbLogger.logRequest({
+      method: 'GET',
+      host: 'myhost',
+      ip: '123.123.123',
+      statusCode: 200,
+      url: 'http://myhost/mypath',
+      endpoint: 'myEndpoint',
+      userAgent: 'myUserAgent',
+      origin: 'myOrigin',
+      xForwardedFor: 'myXForwardedFor',
+      body: 'myBody',
+      responseTime: 500
+    });
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    DbLogger.logRequest({
+      method: 'GET',
+      host: 'myhost',
+      ip: '123.123.123',
+      statusCode: 400,
+      url: 'http://myhost/mypath1',
+      endpoint: 'myEndpoint',
+      userAgent: 'myUserAgent',
+      origin: 'myOrigin',
+      xForwardedFor: 'myXForwardedFor',
+      body: 'myBody',
+      responseTime: 600,
+      data: { a: 1, b: 2 }
+    });
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const inst = await MySqlUtil.init();
+    const data = await inst.paramExecuteDirect(`SELECT * FROM ${env.DB_LOGGER_REQUEST_TABLE}`);
+    expect(data.length).toBe(2);
+    expect(data[0].method).toBe('GET');
+    expect(data[0].host).toBe('myhost');
+    expect(data[0].ip).toBe('123.123.123');
+    expect(data[1].statusCode).toBe(400);
+    expect(data[1].url).toBe('http://myhost/mypath1');
+    expect(data[1].endpoint).toBe('myEndpoint');
+    expect(data[1].origin).toBe('myOrigin');
+    expect(data[1].body).toBe('myBody');
+    expect(data[1].responseTime).toBe(600);
+    expect(data[0].responseTime).toBe(500);
+    expect(data[1].data).toEqual({ a: 1, b: 2 });
+  });
+
   it('Logger info message', async () => {
     const testMessage = 'Test message';
     const testMessage2 = 'Test message 2';
@@ -91,52 +137,6 @@ describe('DB Logger tests', () => {
     expect(data[1].data).toEqual({ a: 1, b: 2 });
     expect(data[2].error.message).toBe('Test error');
     expect(data[3].uuid).toBe('uuid21233uuid');
-  });
-
-  it('Log request', async () => {
-    DbLogger.logRequest({
-      method: 'GET',
-      host: 'myhost',
-      ip: '123.123.123',
-      statusCode: 200,
-      url: 'http://myhost/mypath',
-      endpoint: 'myEndpoint',
-      userAgent: 'myUserAgent',
-      origin: 'myOrigin',
-      xForwardedFor: 'myXForwardedFor',
-      body: 'myBody',
-      responseTime: 500
-    });
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    DbLogger.logRequest({
-      method: 'GET',
-      host: 'myhost',
-      ip: '123.123.123',
-      statusCode: 400,
-      url: 'http://myhost/mypath1',
-      endpoint: 'myEndpoint',
-      userAgent: 'myUserAgent',
-      origin: 'myOrigin',
-      xForwardedFor: 'myXForwardedFor',
-      body: 'myBody',
-      responseTime: 600,
-      data: { a: 1, b: 2 }
-    });
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    const inst = await MySqlUtil.init();
-    const data = await inst.paramExecuteDirect(`SELECT * FROM ${env.DB_LOGGER_REQUEST_TABLE}`);
-    expect(data.length).toBe(2);
-    expect(data[0].method).toBe('GET');
-    expect(data[0].host).toBe('myhost');
-    expect(data[0].ip).toBe('123.123.123');
-    expect(data[1].statusCode).toBe(400);
-    expect(data[1].url).toBe('http://myhost/mypath1');
-    expect(data[1].endpoint).toBe('myEndpoint');
-    expect(data[1].origin).toBe('myOrigin');
-    expect(data[1].body).toBe('myBody');
-    expect(data[1].responseTime).toBe(600);
-    expect(data[0].responseTime).toBe(500);
-    expect(data[1].data).toEqual({ a: 1, b: 2 });
   });
 });
 describe('DB Logger clear log tests', () => {
