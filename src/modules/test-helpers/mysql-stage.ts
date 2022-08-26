@@ -51,6 +51,8 @@ async function setupDatabase() {
       \`id\` INT NOT NULL,
       \`email\` VARCHAR(255) NULL,
       \`_username\` VARCHAR(255) NULL,
+      \`json_field\` JSON NULL,
+      \`set_field\` TEXT NULL,
       PRIMARY KEY (\`id\`),
       UNIQUE INDEX \`email_UNIQUE\` (\`email\` ASC) VISIBLE);
   `,

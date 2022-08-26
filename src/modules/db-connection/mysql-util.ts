@@ -274,7 +274,11 @@ export class MySqlUtil {
         for (const key of Object.keys(values)) {
           // transform array values to string
           if (Array.isArray(values[key])) {
-            values[key] = values[key].join(',') || null;
+            if (values[key].length && isPlainObject(values[key][0])) {
+              values[key] = JSON.stringify(values[key]);
+            } else {
+              values[key] = values[key].join(',') || null;
+            }
           }
 
           // regex
@@ -341,7 +345,11 @@ export class MySqlUtil {
         for (const key of Object.keys(values)) {
           // transform array values to string
           if (Array.isArray(values[key])) {
-            values[key] = values[key].join(',') || null;
+            if (values[key].length && isPlainObject(values[key][0])) {
+              values[key] = JSON.stringify(values[key]);
+            } else {
+              values[key] = values[key].join(',') || null;
+            }
           }
 
           // regex
