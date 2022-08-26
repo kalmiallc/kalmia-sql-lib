@@ -36,6 +36,35 @@ describe('MySQL coon pool', () => {
             })
         ]));
     });
+    it('Should be able to insert array and query it', async () => {
+        var _a, _b, _c, _d;
+        await sqlUtil.paramExecute(`INSERT INTO \`sql_lib_user\` (
+        email,
+        id,
+        json_field,
+        set_field
+      ) VALUES (
+        @email,
+        @id,
+        @json_field,
+        @set_field
+      )`, {
+            email: `kalmia_test@example.com`,
+            id: Math.floor(Math.random() * 1000000),
+            json_field: [{ value: 4 }, { value: 6 }, { value: 10 }],
+            set_field: [4, 6, 10],
+        });
+        const response = await sqlUtil.paramExecute("SELECT * FROM `sql_lib_user` WHERE email = 'kalmia_test@example.com';");
+        expect(response.length).toBe(1);
+        expect((_a = response[0]) === null || _a === void 0 ? void 0 : _a.json_field.reduce((partialSum, object) => partialSum + object.value, 0)).toBe(20);
+        expect((_b = response[0]) === null || _b === void 0 ? void 0 : _b.json_field).toEqual(expect.arrayContaining([
+            expect.objectContaining({
+                value: 4
+            })
+        ]));
+        expect((_c = response[0]) === null || _c === void 0 ? void 0 : _c.set_field.split(',').reduce((partialSum, value) => partialSum + Number(value), 0)).toBe(20);
+        expect((_d = response[0]) === null || _d === void 0 ? void 0 : _d.set_field.split(',')).toEqual(expect.arrayContaining(["4", "6", "10"]));
+    });
     it('Query should fail', async () => {
         await insertObject();
         await (0, mysql_stage_1.cleanDatabase)();

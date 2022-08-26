@@ -160,7 +160,7 @@ class DbLogger {
     `, { fileName, methodName, severity, data });
         }
         catch (error) {
-            kalmia_common_lib_1.AppLogger.error('DbLogger', 'DbLogger.ts', 'Error writing to DB log: ', env_1.env.DB_LOGGER_TABLE);
+            kalmia_common_lib_1.AppLogger.error('DbLogger', 'DbLogger.ts', 'Error writing to DB log: ', error);
         }
     }
     /**
@@ -188,7 +188,7 @@ class DbLogger {
      */
     static async logRequestAsync(inputData) {
         try {
-            if (env_1.env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
+            if (env_1.env.DB_LOGGER_REQUEST_LOG_TO_CONSOLE === 1) {
                 kalmia_common_lib_1.AppLogger.info('Request Log', inputData.method, kalmia_common_lib_1.AppLogger.stringifyObjectForLog(inputData));
             }
             await DbLogger.checkIfRequestLoggerInitialized();
@@ -222,7 +222,7 @@ class DbLogger {
             });
         }
         catch (error) {
-            kalmia_common_lib_1.AppLogger.error('DbLogger', 'DbLogger.ts', 'Error writing to DB log: ', env_1.env.DB_LOGGER_TABLE);
+            kalmia_common_lib_1.AppLogger.error('DbLogger', 'DbLogger.ts', 'Error writing to request DB log: ', error);
         }
     }
     /**
@@ -230,7 +230,7 @@ class DbLogger {
      */
     static async logWorkerAsync(status, worker, message, data, err, uuid) {
         try {
-            if (env_1.env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
+            if (env_1.env.DB_LOGGER_WORKER_TO_CONSOLE === 1) {
                 kalmia_common_lib_1.AppLogger.info('Worker Log', worker, status, message, data, err);
             }
             await DbLogger.checkIfWorkerLoggerInitialized();
