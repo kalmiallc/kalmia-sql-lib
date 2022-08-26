@@ -94,7 +94,9 @@ export class DbLogger {
   }
 
   public static async checkIfLogDbExists(table): Promise<void> {
-    const tableData = await DbLogger.sqlInst.getConnectionPool().query(`SELECT * 
+    const tableData = await (
+      await DbLogger.sqlInst.getConnectionPool()
+    ).query(`SELECT * 
                               FROM information_schema.tables
                               WHERE table_name = '${table}'
                               LIMIT 1;`);
