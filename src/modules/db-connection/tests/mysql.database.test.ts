@@ -50,6 +50,43 @@ describe('MySQL coon pool', () => {
     );
   });
 
+  it('Should be able to insert array and query it', async () => {
+    await sqlUtil.paramExecute(
+      `INSERT INTO \`sql_lib_user\` (
+        email,
+        id,
+        json_field,
+        set_field
+      ) VALUES (
+        @email,
+        @id,
+        @json_field,
+        @set_field
+      )`,
+      {
+        email: `kalmia_test@example.com`,
+        id: Math.floor(Math.random() * 1_000_000),
+        json_field: [{ value: 4 }, { value: 6 }, { value: 10 }],
+        set_field: [4, 6, 10],
+      }
+    );
+
+    const response = await sqlUtil.paramExecute("SELECT * FROM `sql_lib_user` WHERE email = 'kalmia_test@example.com';");
+    expect(response.length).toBe(1);
+    expect(response[0]?.json_field.reduce((partialSum, object) => partialSum + object.value, 0)).toBe(20);
+    expect(response[0]?.json_field).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          value: 4
+        })
+      ])
+    );
+    expect(response[0]?.set_field.split(',').reduce((partialSum, value) => partialSum + Number(value), 0)).toBe(20);
+    expect(response[0]?.set_field.split(',')).toEqual(
+      expect.arrayContaining(["4", "6", "10"])
+    )
+  });
+
   it('Query should fail', async () => {
     await insertObject();
     await cleanDatabase();
