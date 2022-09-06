@@ -52,3 +52,6 @@ For safe encoded connection CA certificates can be enough. Example for AWS RDS:
 ```ssh
   MYSQL_SSL_CA_FILE='./src/res/keys/aws-rds-global-bundle.pem'
 ```
+
+AWS instructions:
+https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.SSL.html
