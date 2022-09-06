@@ -3,6 +3,7 @@
  */
 export declare enum PopulateFor {
     ALL = "all",
+    PUBLIC = "public",
     DB = "db",
     ADMIN = "admin",
     WORKER = "worker"
@@ -12,6 +13,7 @@ export declare enum PopulateFor {
  */
 export declare enum SerializeFor {
     ALL = "ALL",
+    PUBLIC = "public",
     INSERT_DB = "insert_db",
     UPDATE_DB = "update_db",
     ADMIN = "admin",

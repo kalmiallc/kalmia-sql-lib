@@ -8,6 +8,7 @@ exports.WorkerLogStatus = exports.WorkerDbTables = exports.DbModelStatus = expor
 var PopulateFor;
 (function (PopulateFor) {
     PopulateFor["ALL"] = "all";
+    PopulateFor["PUBLIC"] = "public";
     PopulateFor["DB"] = "db";
     PopulateFor["ADMIN"] = "admin";
     PopulateFor["WORKER"] = "worker";
@@ -18,6 +19,7 @@ var PopulateFor;
 var SerializeFor;
 (function (SerializeFor) {
     SerializeFor["ALL"] = "ALL";
+    SerializeFor["PUBLIC"] = "public";
     SerializeFor["INSERT_DB"] = "insert_db";
     SerializeFor["UPDATE_DB"] = "update_db";
     SerializeFor["ADMIN"] = "admin";

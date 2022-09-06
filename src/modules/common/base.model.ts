@@ -149,7 +149,8 @@ export abstract class BaseModel extends Model<any> {
   }
 
   /**
-   * Saves model data in the database as a new row.
+   * Saves model data in the database as a new row. It will add only the
+   * fields that are marked as serializable for insert DB
    *
    * @param options Create options.
    * @returns this
@@ -217,7 +218,8 @@ export abstract class BaseModel extends Model<any> {
   }
 
   /**
-   * Updates model data in the database.
+   * Updates model data in the database.  It will add only the
+   * fields that are marked as serializable for update DB
    *
    * @param options Update options.
    * @returns this
@@ -280,7 +282,8 @@ export abstract class BaseModel extends Model<any> {
   }
 
   /**
-   * Populates model fields by id.
+   * Populates model fields by id.  It will only populate the
+   * fields that are marked as serializable for populate DB.
    *
    * @param id Model's database ID.
    */
