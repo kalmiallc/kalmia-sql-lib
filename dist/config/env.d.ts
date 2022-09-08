@@ -33,5 +33,8 @@ export interface IMySqlEnv {
     DB_LOGGER_WORKER_RETENTION: number;
     DB_LOGGER_RETENTION: number;
 }
+/**
+ * Load variables from .env.
+ */
 export declare const env: IMySqlEnv & ICommonEnv;
 //# sourceMappingURL=env.d.ts.map

@@ -2,12 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.env = void 0;
 /* eslint-disable radix */
-const dotenv = require("dotenv");
 const kalmia_common_lib_1 = require("kalmia-common-lib");
 /**
  * Load variables from .env.
  */
-dotenv.config();
+/// skip this -- only needed for testing, as this is lib.
+// dotenv.config();
 exports.env = Object.assign(Object.assign({}, kalmia_common_lib_1.env), { 
     /**
      * Mysql URL.

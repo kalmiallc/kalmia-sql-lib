@@ -1,5 +1,4 @@
 /* eslint-disable radix */
-import * as dotenv from 'dotenv';
 import { env as commonEnv, ICommonEnv } from 'kalmia-common-lib';
 
 /**
@@ -44,7 +43,8 @@ export interface IMySqlEnv {
 /**
  * Load variables from .env.
  */
-dotenv.config();
+/// skip this -- only needed for testing, as this is lib.
+// dotenv.config();
 
 export const env: IMySqlEnv & ICommonEnv = {
   ...commonEnv,
