@@ -38,6 +38,9 @@ class MySqlConnManager {
         }
         return MySqlConnManager.instance;
     }
+    static updateEnv(newEnv) {
+        Object.assign(env_1.env, newEnv);
+    }
     static async testMySqlPoolConnection(mySqlConnection) {
         try {
             const conn = await mySqlConnection.getConnection();

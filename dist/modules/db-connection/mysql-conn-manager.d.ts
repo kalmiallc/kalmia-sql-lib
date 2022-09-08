@@ -15,6 +15,7 @@ export declare class MySqlConnManager {
      * @returns MySqlConnectionManager instance
      */
     static getInstance(conn?: mysql.Pool | mysql.Connection): MySqlConnManager;
+    static updateEnv(newEnv: any): void;
     private static testMySqlPoolConnection;
     private static testMySqlNoPoolConnection;
     /**
