@@ -86,7 +86,7 @@ class DbLogger {
     static async clearStandardLogs() {
         try {
             kalmia_common_lib_1.AppLogger.info('DbLogger', 'DbLogger.ts', `clearStandardLogs - running for retention: ${env_1.env.DB_LOGGER_RETENTION}`);
-            await DbLogger.sqlInst.paramExecuteDirect(`DELETE FROM \`${env_1.env.DB_LOGGER_TABLE}\` WHERE DATEDIFF(NOW(), ts) >= ${env_1.env.DB_LOGGER_RETENTION};`);
+            await DbLogger.sqlInst.paramExecute(`DELETE FROM \`${env_1.env.DB_LOGGER_TABLE}\` WHERE DATEDIFF(NOW(), ts) >= ${env_1.env.DB_LOGGER_RETENTION};`);
         }
         catch (error) {
             kalmia_common_lib_1.AppLogger.error('DbLogger', 'DbLogger.ts', 'Error clearStandardLogs the logger: ', env_1.env.DB_LOGGER_TABLE);
@@ -95,7 +95,7 @@ class DbLogger {
     static async clearWorkerLogs() {
         try {
             kalmia_common_lib_1.AppLogger.info('DbLogger', 'DbLogger.ts', `clearWorkerLogs - running for retention: ${env_1.env.DB_LOGGER_WORKER_RETENTION}`);
-            await DbLogger.sqlInst.paramExecuteDirect(`DELETE FROM \`${env_1.env.DB_LOGGER_WORKER_TABLE}\` WHERE DATEDIFF(NOW(), ts) >= ${env_1.env.DB_LOGGER_WORKER_RETENTION};`);
+            await DbLogger.sqlInst.paramExecute(`DELETE FROM \`${env_1.env.DB_LOGGER_WORKER_TABLE}\` WHERE DATEDIFF(NOW(), ts) >= ${env_1.env.DB_LOGGER_WORKER_RETENTION};`);
         }
         catch (error) {
             kalmia_common_lib_1.AppLogger.error('DbLogger', 'DbLogger.ts', 'Error clearWorkerLogs the logger: ', env_1.env.DB_LOGGER_WORKER_TABLE);
@@ -104,7 +104,7 @@ class DbLogger {
     static async clearRequestLogs() {
         try {
             kalmia_common_lib_1.AppLogger.info('DbLogger', 'DbLogger.ts', `clearRequestLogs - running for retention: ${env_1.env.DB_LOGGER_REQUEST_RETENTION}`);
-            await DbLogger.sqlInst.paramExecuteDirect(`DELETE FROM \`${env_1.env.DB_LOGGER_REQUEST_TABLE}\` WHERE DATEDIFF(NOW(), _createTime) >= ${env_1.env.DB_LOGGER_REQUEST_RETENTION};`);
+            await DbLogger.sqlInst.paramExecute(`DELETE FROM \`${env_1.env.DB_LOGGER_REQUEST_TABLE}\` WHERE DATEDIFF(NOW(), _createTime) >= ${env_1.env.DB_LOGGER_REQUEST_RETENTION};`);
         }
         catch (error) {
             kalmia_common_lib_1.AppLogger.error('DbLogger', 'DbLogger.ts', 'Error clearing the clearRequestLogs logger: ', env_1.env.DB_LOGGER_REQUEST_TABLE);
@@ -161,7 +161,7 @@ class DbLogger {
             if (!DbLogger.loggerOK) {
                 return;
             }
-            await DbLogger.sqlInst.paramExecuteDirect(`
+            await DbLogger.sqlInst.paramExecute(`
       INSERT INTO ${env_1.env.DB_LOGGER_TABLE} (file, method, severity, data)
       VALUES (@fileName, @methodName, @severity, @data)
     `, { fileName, methodName, severity, data });
@@ -210,7 +210,7 @@ class DbLogger {
             else {
                 inputData.data = {};
             }
-            await DbLogger.sqlInst.paramExecuteDirect(`
+            await DbLogger.sqlInst.paramExecute(`
       INSERT INTO ${env_1.env.DB_LOGGER_REQUEST_TABLE} (host, ip, statusCode, method, url, endpoint, userAgent, origin, xForwardedFor, body, responseTime, data)
       VALUES (@host, @ip, @statusCode, @method, @url, @endpoint, @userAgent, @origin, @xForwardedFor, @body, @responseTime, @data)
     `, {
@@ -252,7 +252,7 @@ class DbLogger {
             if (typeof data !== 'object') {
                 data = { data };
             }
-            await DbLogger.sqlInst.paramExecuteDirect(`
+            await DbLogger.sqlInst.paramExecute(`
 	      INSERT INTO ${env_1.env.DB_LOGGER_WORKER_TABLE} (status, worker, message, data, error, uuid)
 	      VALUES (@status, @worker, @message, @data, @error, @uuid)
 	    `, { status, worker, message, data, error, uuid: uuid || '' });
