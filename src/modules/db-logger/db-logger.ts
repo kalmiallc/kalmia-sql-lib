@@ -161,49 +161,49 @@ export class DbLogger {
     if (env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
       AppLogger.info(fileName, methodName, args);
     }
-    void DbLogger.writeDbLog(fileName, fileName, 'info', args.join(' ')).catch();
+    void DbLogger.writeDbLog(fileName, methodName, 'info', args.join(' ')).catch();
   }
 
   public static warn(fileName: string, methodName: string, ...args) {
     if (env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
       AppLogger.warn(fileName, methodName, args);
     }
-    void DbLogger.writeDbLog(fileName, fileName, 'warn', args.join(' ')).catch();
+    void DbLogger.writeDbLog(fileName, methodName, 'warn', args.join(' ')).catch();
   }
 
   public static debug(fileName: string, methodName: string, ...args) {
     if (env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
       AppLogger.debug(fileName, methodName, args);
     }
-    void DbLogger.writeDbLog(fileName, fileName, 'debug', args.join(' ')).catch();
+    void DbLogger.writeDbLog(fileName, methodName, 'debug', args.join(' ')).catch();
   }
 
   public static trace(fileName: string, methodName: string, ...args) {
     if (env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
       AppLogger.trace(fileName, methodName, args);
     }
-    void DbLogger.writeDbLog(fileName, fileName, 'trace', args.join(' ')).catch();
+    void DbLogger.writeDbLog(fileName, methodName, 'trace', args.join(' ')).catch();
   }
 
   public static error(fileName: string, methodName: string, ...args) {
     if (env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
       AppLogger.error(fileName, methodName, args);
     }
-    void DbLogger.writeDbLog(fileName, fileName, 'error', args.join(' ')).catch();
+    void DbLogger.writeDbLog(fileName, methodName, 'error', args.join(' ')).catch();
   }
 
   public static test(fileName: string, methodName: string, ...args) {
     if (env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
       AppLogger.test(fileName, methodName, args);
     }
-    void DbLogger.writeDbLog(fileName, fileName, 'test', args.join(' ')).catch();
+    void DbLogger.writeDbLog(fileName, methodName, 'test', args.join(' ')).catch();
   }
 
   public static db(fileName: string, methodName: string, ...args) {
     if (env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
       AppLogger.db(fileName, methodName, args);
     }
-    void DbLogger.writeDbLog(fileName, fileName, 'db', args.join(' ')).catch();
+    void DbLogger.writeDbLog(fileName, methodName, 'db', args.join(' ')).catch();
   }
 
   /**

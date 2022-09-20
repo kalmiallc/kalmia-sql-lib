@@ -114,43 +114,43 @@ class DbLogger {
         if (env_1.env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
             kalmia_common_lib_1.AppLogger.info(fileName, methodName, args);
         }
-        void DbLogger.writeDbLog(fileName, fileName, 'info', args.join(' ')).catch();
+        void DbLogger.writeDbLog(fileName, methodName, 'info', args.join(' ')).catch();
     }
     static warn(fileName, methodName, ...args) {
         if (env_1.env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
             kalmia_common_lib_1.AppLogger.warn(fileName, methodName, args);
         }
-        void DbLogger.writeDbLog(fileName, fileName, 'warn', args.join(' ')).catch();
+        void DbLogger.writeDbLog(fileName, methodName, 'warn', args.join(' ')).catch();
     }
     static debug(fileName, methodName, ...args) {
         if (env_1.env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
             kalmia_common_lib_1.AppLogger.debug(fileName, methodName, args);
         }
-        void DbLogger.writeDbLog(fileName, fileName, 'debug', args.join(' ')).catch();
+        void DbLogger.writeDbLog(fileName, methodName, 'debug', args.join(' ')).catch();
     }
     static trace(fileName, methodName, ...args) {
         if (env_1.env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
             kalmia_common_lib_1.AppLogger.trace(fileName, methodName, args);
         }
-        void DbLogger.writeDbLog(fileName, fileName, 'trace', args.join(' ')).catch();
+        void DbLogger.writeDbLog(fileName, methodName, 'trace', args.join(' ')).catch();
     }
     static error(fileName, methodName, ...args) {
         if (env_1.env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
             kalmia_common_lib_1.AppLogger.error(fileName, methodName, args);
         }
-        void DbLogger.writeDbLog(fileName, fileName, 'error', args.join(' ')).catch();
+        void DbLogger.writeDbLog(fileName, methodName, 'error', args.join(' ')).catch();
     }
     static test(fileName, methodName, ...args) {
         if (env_1.env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
             kalmia_common_lib_1.AppLogger.test(fileName, methodName, args);
         }
-        void DbLogger.writeDbLog(fileName, fileName, 'test', args.join(' ')).catch();
+        void DbLogger.writeDbLog(fileName, methodName, 'test', args.join(' ')).catch();
     }
     static db(fileName, methodName, ...args) {
         if (env_1.env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
             kalmia_common_lib_1.AppLogger.db(fileName, methodName, args);
         }
-        void DbLogger.writeDbLog(fileName, fileName, 'db', args.join(' ')).catch();
+        void DbLogger.writeDbLog(fileName, methodName, 'db', args.join(' ')).catch();
     }
     /**
      * Async version for writing to db log.
