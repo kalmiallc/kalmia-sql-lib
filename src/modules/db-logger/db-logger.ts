@@ -129,7 +129,7 @@ export class DbLogger {
   public static async clearStandardLogs(): Promise<any> {
     try {
       AppLogger.info('DbLogger', 'DbLogger.ts', `clearStandardLogs - running for retention: ${env.DB_LOGGER_RETENTION}`);
-      await DbLogger.sqlInst.paramExecuteDirect(`DELETE FROM \`${env.DB_LOGGER_TABLE}\` WHERE DATEDIFF(NOW(), ts) >= ${env.DB_LOGGER_RETENTION};`);
+      await DbLogger.sqlInst.paramExecute(`DELETE FROM \`${env.DB_LOGGER_TABLE}\` WHERE DATEDIFF(NOW(), ts) >= ${env.DB_LOGGER_RETENTION};`);
     } catch (error) {
       AppLogger.error('DbLogger', 'DbLogger.ts', 'Error clearStandardLogs the logger: ', env.DB_LOGGER_TABLE);
     }
@@ -138,7 +138,7 @@ export class DbLogger {
   public static async clearWorkerLogs(): Promise<any> {
     try {
       AppLogger.info('DbLogger', 'DbLogger.ts', `clearWorkerLogs - running for retention: ${env.DB_LOGGER_WORKER_RETENTION}`);
-      await DbLogger.sqlInst.paramExecuteDirect(
+      await DbLogger.sqlInst.paramExecute(
         `DELETE FROM \`${env.DB_LOGGER_WORKER_TABLE}\` WHERE DATEDIFF(NOW(), ts) >= ${env.DB_LOGGER_WORKER_RETENTION};`
       );
     } catch (error) {
@@ -149,7 +149,7 @@ export class DbLogger {
   public static async clearRequestLogs(): Promise<any> {
     try {
       AppLogger.info('DbLogger', 'DbLogger.ts', `clearRequestLogs - running for retention: ${env.DB_LOGGER_REQUEST_RETENTION}`);
-      await DbLogger.sqlInst.paramExecuteDirect(
+      await DbLogger.sqlInst.paramExecute(
         `DELETE FROM \`${env.DB_LOGGER_REQUEST_TABLE}\` WHERE DATEDIFF(NOW(), _createTime) >= ${env.DB_LOGGER_REQUEST_RETENTION};`
       );
     } catch (error) {
@@ -216,7 +216,7 @@ export class DbLogger {
       if (!DbLogger.loggerOK) {
         return;
       }
-      await DbLogger.sqlInst.paramExecuteDirect(
+      await DbLogger.sqlInst.paramExecute(
         `
       INSERT INTO ${env.DB_LOGGER_TABLE} (file, method, severity, data)
       VALUES (@fileName, @methodName, @severity, @data)
@@ -273,7 +273,7 @@ export class DbLogger {
         inputData.data = {};
       }
 
-      await DbLogger.sqlInst.paramExecuteDirect(
+      await DbLogger.sqlInst.paramExecute(
         `
       INSERT INTO ${env.DB_LOGGER_REQUEST_TABLE} (host, ip, statusCode, method, url, endpoint, userAgent, origin, xForwardedFor, body, responseTime, data)
       VALUES (@host, @ip, @statusCode, @method, @url, @endpoint, @userAgent, @origin, @xForwardedFor, @body, @responseTime, @data)
@@ -321,7 +321,7 @@ export class DbLogger {
         data = { data };
       }
 
-      await DbLogger.sqlInst.paramExecuteDirect(
+      await DbLogger.sqlInst.paramExecute(
         `
 	      INSERT INTO ${env.DB_LOGGER_WORKER_TABLE} (status, worker, message, data, error, uuid)
 	      VALUES (@status, @worker, @message, @data, @error, @uuid)

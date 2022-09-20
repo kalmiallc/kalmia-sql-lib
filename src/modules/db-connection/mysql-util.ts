@@ -165,6 +165,10 @@ export class MySqlUtil {
     AppLogger.db('mysql-util.ts', 'callDirect', 'DB ', query);
     AppLogger.db('mysql-util.ts', 'callDirect', 'DB ', this.mapValues(data, true).join(';'));
 
+    if (!this._dbConnectionPool) {
+      await MySqlUtil.init();
+    }
+
     const result = await this._dbConnectionPool.query(query, this.mapValues(data));
 
     for (const resultSet of result[0] as mysql.RowDataPacket[][]) {
@@ -334,6 +338,10 @@ export class MySqlUtil {
    */
   public async paramExecuteDirect(query: string, values?: unknown): Promise<any[]> {
     const sqlParamValues = [];
+
+    if (!this._dbConnectionPool) {
+      await MySqlUtil.init();
+    }
 
     if (values) {
       // split query to array to find right order of variables

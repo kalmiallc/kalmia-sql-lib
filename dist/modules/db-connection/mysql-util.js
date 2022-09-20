@@ -142,6 +142,9 @@ class MySqlUtil {
         const query = `CALL ${procedure}(${Object.keys(data).length ? Array(Object.keys(data).length).fill('?').join(',') : ''});`;
         kalmia_common_lib_1.AppLogger.db('mysql-util.ts', 'callDirect', 'DB ', query);
         kalmia_common_lib_1.AppLogger.db('mysql-util.ts', 'callDirect', 'DB ', this.mapValues(data, true).join(';'));
+        if (!this._dbConnectionPool) {
+            await MySqlUtil.init();
+        }
         const result = await this._dbConnectionPool.query(query, this.mapValues(data));
         for (const resultSet of result[0]) {
             if (resultSet.length && resultSet[0].ErrorCode > 0) {
@@ -299,6 +302,9 @@ class MySqlUtil {
      */
     async paramExecuteDirect(query, values) {
         const sqlParamValues = [];
+        if (!this._dbConnectionPool) {
+            await MySqlUtil.init();
+        }
         if (values) {
             // split query to array to find right order of variables
             const queryArray = SqlString.escapeId(query)
