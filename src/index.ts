@@ -2,7 +2,12 @@ import { env, IMySqlEnv } from './config/env';
 import { IConnectionDetails } from './config/interfaces';
 import { DbConnectionType, DbModelStatus, PopulateFor, SerializeFor, WorkerDbTables, WorkerLogStatus } from './config/types';
 import { ActionOptions, BaseModel } from './modules/common/base.model';
-import { foreignKeyExistence, uniqueFieldValidator, uniqueFieldWithIdValidator } from './modules/common/validators';
+import {
+  foreignKeyExistence,
+  uniqueFieldValidator,
+  uniqueFieldWithIdValidator,
+  existingModelFieldUniquenessValidator
+} from './modules/common/validators';
 import { MySqlConnManager } from './modules/db-connection/mysql-conn-manager';
 import { MySqlUtil } from './modules/db-connection/mysql-util';
 import {
@@ -41,6 +46,7 @@ export {
   DbModelStatus,
   uniqueFieldWithIdValidator,
   uniqueFieldValidator,
+  existingModelFieldUniquenessValidator,
   foreignKeyExistence,
   IMySqlEnv as IEnv,
   env,

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WorkerLogStatus = exports.DbLogger = exports.MigrationHelper = exports.WorkerDbTables = exports.WorkerLog = exports.WorkerJob = exports.MySqlStage = exports.env = exports.foreignKeyExistence = exports.uniqueFieldValidator = exports.uniqueFieldWithIdValidator = exports.DbModelStatus = exports.DbConnectionType = exports.SerializeFor = exports.PopulateFor = exports.buildWhereCondition = exports.unionSelectAndCountQuery = exports.selectAndCountQuery = exports.buildSearchParameter = exports.getQueryParams = exports.WhereQueryComparator = exports.Migrations = exports.BaseModel = exports.MySqlUtil = exports.MySqlConnManager = void 0;
+exports.WorkerLogStatus = exports.DbLogger = exports.MigrationHelper = exports.WorkerDbTables = exports.WorkerLog = exports.WorkerJob = exports.MySqlStage = exports.env = exports.foreignKeyExistence = exports.existingModelFieldUniquenessValidator = exports.uniqueFieldValidator = exports.uniqueFieldWithIdValidator = exports.DbModelStatus = exports.DbConnectionType = exports.SerializeFor = exports.PopulateFor = exports.buildWhereCondition = exports.unionSelectAndCountQuery = exports.selectAndCountQuery = exports.buildSearchParameter = exports.getQueryParams = exports.WhereQueryComparator = exports.Migrations = exports.BaseModel = exports.MySqlUtil = exports.MySqlConnManager = void 0;
 const env_1 = require("./config/env");
 Object.defineProperty(exports, "env", { enumerable: true, get: function () { return env_1.env; } });
 const types_1 = require("./config/types");
@@ -16,6 +16,7 @@ const validators_1 = require("./modules/common/validators");
 Object.defineProperty(exports, "foreignKeyExistence", { enumerable: true, get: function () { return validators_1.foreignKeyExistence; } });
 Object.defineProperty(exports, "uniqueFieldValidator", { enumerable: true, get: function () { return validators_1.uniqueFieldValidator; } });
 Object.defineProperty(exports, "uniqueFieldWithIdValidator", { enumerable: true, get: function () { return validators_1.uniqueFieldWithIdValidator; } });
+Object.defineProperty(exports, "existingModelFieldUniquenessValidator", { enumerable: true, get: function () { return validators_1.existingModelFieldUniquenessValidator; } });
 const mysql_conn_manager_1 = require("./modules/db-connection/mysql-conn-manager");
 Object.defineProperty(exports, "MySqlConnManager", { enumerable: true, get: function () { return mysql_conn_manager_1.MySqlConnManager; } });
 const mysql_util_1 = require("./modules/db-connection/mysql-util");
