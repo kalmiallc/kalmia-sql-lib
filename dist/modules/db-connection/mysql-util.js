@@ -246,7 +246,7 @@ class MySqlUtil {
                 for (const key of Object.keys(values)) {
                     // transform array values to string
                     if (Array.isArray(values[key])) {
-                        if (values[key].length && (0, kalmia_common_lib_1.isPlainObject)(values[key][0])) {
+                        if (values[key].length && kalmia_common_lib_1.isPlainObject(values[key][0])) {
                             values[key] = JSON.stringify(values[key]);
                         }
                         else {
@@ -256,7 +256,7 @@ class MySqlUtil {
                     // regex
                     const re = new RegExp(`@${key}\\b`, 'gi');
                     if (word.match(re)) {
-                        if ((0, kalmia_common_lib_1.isPlainObject)(values[key])) {
+                        if (kalmia_common_lib_1.isPlainObject(values[key])) {
                             SqlString.escapeId(sqlParamValues.push(JSON.stringify(values[key])));
                         }
                         else {
@@ -314,7 +314,7 @@ class MySqlUtil {
                 for (const key of Object.keys(values)) {
                     // transform array values to string
                     if (Array.isArray(values[key])) {
-                        if (values[key].length && (0, kalmia_common_lib_1.isPlainObject)(values[key][0])) {
+                        if (values[key].length && kalmia_common_lib_1.isPlainObject(values[key][0])) {
                             values[key] = JSON.stringify(values[key]);
                         }
                         else {
@@ -324,7 +324,7 @@ class MySqlUtil {
                     // regex
                     const re = new RegExp(`@${key}\\b`, 'gi');
                     if (word.match(re)) {
-                        if ((0, kalmia_common_lib_1.isPlainObject)(values[key])) {
+                        if (kalmia_common_lib_1.isPlainObject(values[key])) {
                             SqlString.escapeId(sqlParamValues.push(JSON.stringify(values[key])));
                         }
                         else {

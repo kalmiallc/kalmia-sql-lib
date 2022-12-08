@@ -1,5 +1,4 @@
 "use strict";
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MigrationHelper = void 0;
 const kalmia_common_lib_1 = require("kalmia-common-lib");
@@ -14,7 +13,6 @@ class MigrationHelper {
     }
 }
 exports.MigrationHelper = MigrationHelper;
-_a = MigrationHelper;
 /**
  * Runs 'steps' new upgrade migrations.
  *
@@ -22,7 +20,7 @@ _a = MigrationHelper;
  */
 MigrationHelper.scriptPath = path.join(__dirname, '..', '..', '..', 'src', 'migration-scripts', 'migrations');
 MigrationHelper.scriptPathSeed = path.join(__dirname, '..', '..', '..', 'src', 'migration-scripts', 'seeds');
-MigrationHelper.upgradeDatabase = async (steps = undefined, silent = true, thePath = _a.scriptPath) => {
+MigrationHelper.upgradeDatabase = async (steps = undefined, silent = true, thePath = MigrationHelper.scriptPath) => {
     const migration = new migrations_1.Migrations();
     kalmia_common_lib_1.AppLogger.info('migrations.ts', 'Upgrade database', 'Running migrations for ' + thePath);
     await migration.init({
@@ -41,7 +39,7 @@ MigrationHelper.upgradeDatabase = async (steps = undefined, silent = true, thePa
  *
  * @param steps How many migration steps to run. Defaults to all.
  */
-MigrationHelper.downgradeDatabase = async (steps = -1, silent = true, thePath = _a.scriptPath) => {
+MigrationHelper.downgradeDatabase = async (steps = -1, silent = true, thePath = MigrationHelper.scriptPath) => {
     const migration = new migrations_1.Migrations();
     await migration.init({
         tableName: 'migrations',
@@ -59,7 +57,7 @@ MigrationHelper.downgradeDatabase = async (steps = -1, silent = true, thePath = 
  *
  * @param steps How many migration steps to run. Defaults to all.
  */
-MigrationHelper.seedDatabase = async (steps = undefined, silent = true, thePath = _a.scriptPathSeed) => {
+MigrationHelper.seedDatabase = async (steps = undefined, silent = true, thePath = MigrationHelper.scriptPathSeed) => {
     const migration = new migrations_1.Migrations();
     kalmia_common_lib_1.AppLogger.info('migrations.ts', 'Seeding database', 'Running migrations seed for ' + thePath);
     await migration.init({
@@ -74,7 +72,7 @@ MigrationHelper.seedDatabase = async (steps = undefined, silent = true, thePath 
  *
  * @param steps How many migration steps to run. Defaults to all.
  */
-MigrationHelper.unseedDatabase = async (steps, silent = true, thePath = _a.scriptPathSeed) => {
+MigrationHelper.unseedDatabase = async (steps, silent = true, thePath = MigrationHelper.scriptPathSeed) => {
     const migration = new migrations_1.Migrations();
     await migration.init({
         tableName: 'seeds',

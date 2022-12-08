@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.foreignKeyExistence = exports.uniqueFieldValidator = exports.uniqueFieldWithIdValidator = exports.presenceValidator = exports.numberSizeValidator = void 0;
+exports.existingModelFieldUniquenessValidator = exports.foreignKeyExistence = exports.uniqueFieldValidator = exports.uniqueFieldWithIdValidator = exports.presenceValidator = exports.numberSizeValidator = void 0;
 const validators_1 = require("@rawmodel/validators");
 Object.defineProperty(exports, "numberSizeValidator", { enumerable: true, get: function () { return validators_1.numberSizeValidator; } });
 Object.defineProperty(exports, "presenceValidator", { enumerable: true, get: function () { return validators_1.presenceValidator; } });
@@ -76,4 +76,28 @@ function foreignKeyExistence(tableName, idField = 'id', checkNull = false) {
     };
 }
 exports.foreignKeyExistence = foreignKeyExistence;
+/**
+ * Validates the uniqueness of the existing model field.
+ *
+ * @param fieldName Name of the field to validate.
+ * @returns boolean
+ */
+function existingModelFieldUniquenessValidator(tableName, fieldName, checkNull = false) {
+    return async function (value) {
+        if ((!checkNull && value === null) || value === undefined) {
+            return true;
+        }
+        const count = await new mysql_util_1.MySqlUtil((await this.db()))
+            .paramExecute(`
+      SELECT COUNT(*) as count FROM \`${tableName}\`
+      WHERE
+        \`${fieldName}\` = @value
+        AND status <> ${types_1.DbModelStatus.DELETED}
+        AND (@id IS NULL OR (@id IS NOT NULL AND id <> @id ))
+      `, { value, id: this.id || null })
+            .then((rows) => rows[0].count);
+        return count === 0;
+    };
+}
+exports.existingModelFieldUniquenessValidator = existingModelFieldUniquenessValidator;
 //# sourceMappingURL=validators.js.map

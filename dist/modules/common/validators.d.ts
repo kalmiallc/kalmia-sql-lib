@@ -32,4 +32,11 @@ export declare function uniqueFieldValidator(tableName: string, field: string, c
  * @returns boolean
  */
 export declare function foreignKeyExistence(tableName: string, idField?: string, checkNull?: boolean): (this: BaseModel | any, value: any) => Promise<boolean>;
+/**
+ * Validates the uniqueness of the existing model field.
+ *
+ * @param fieldName Name of the field to validate.
+ * @returns boolean
+ */
+export declare function existingModelFieldUniquenessValidator(tableName: string, fieldName: string, checkNull?: boolean): (this: BaseModel, value: any) => Promise<boolean>;
 //# sourceMappingURL=validators.d.ts.map

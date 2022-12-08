@@ -20,7 +20,7 @@ export class MigrationHelper {
     MigrationHelper.scriptPathSeed = scriptPath;
   }
 
-  static upgradeDatabase = async (steps: number = undefined, silent = true, thePath = this.scriptPath): Promise<void> => {
+  static upgradeDatabase = async (steps: number = undefined, silent = true, thePath = MigrationHelper.scriptPath): Promise<void> => {
     const migration = new Migrations();
     AppLogger.info('migrations.ts', 'Upgrade database', 'Running migrations for ' + thePath);
     await migration.init({
@@ -42,7 +42,7 @@ export class MigrationHelper {
    *
    * @param steps How many migration steps to run. Defaults to all.
    */
-  static downgradeDatabase = async (steps: number = -1, silent = true, thePath = this.scriptPath): Promise<void> => {
+  static downgradeDatabase = async (steps: number = -1, silent = true, thePath = MigrationHelper.scriptPath): Promise<void> => {
     const migration = new Migrations();
     await migration.init({
       tableName: 'migrations',
@@ -63,7 +63,7 @@ export class MigrationHelper {
    *
    * @param steps How many migration steps to run. Defaults to all.
    */
-  static seedDatabase = async (steps: number = undefined, silent = true, thePath = this.scriptPathSeed): Promise<void> => {
+  static seedDatabase = async (steps: number = undefined, silent = true, thePath = MigrationHelper.scriptPathSeed): Promise<void> => {
     const migration = new Migrations();
     AppLogger.info('migrations.ts', 'Seeding database', 'Running migrations seed for ' + thePath);
     await migration.init({
@@ -79,7 +79,7 @@ export class MigrationHelper {
    *
    * @param steps How many migration steps to run. Defaults to all.
    */
-  static unseedDatabase = async (steps: number, silent = true, thePath = this.scriptPathSeed): Promise<void> => {
+  static unseedDatabase = async (steps: number, silent = true, thePath = MigrationHelper.scriptPathSeed): Promise<void> => {
     const migration = new Migrations();
 
     await migration.init({

@@ -1,6 +1,7 @@
 import { numberSizeValidator, presenceValidator } from '@rawmodel/validators';
 import { DbModelStatus } from '../../config/types';
 import { MySqlConnManager } from '../db-connection/mysql-conn-manager';
+import { Pool } from 'mysql2/promise';
 import { MySqlUtil } from '../db-connection/mysql-util';
 import { BaseModel } from './base.model';
 
@@ -88,6 +89,33 @@ export function foreignKeyExistence(tableName: string, idField = 'id', checkNull
       )
       .then((rows: any) => Number(rows[0].Count));
 
+    return count === 0;
+  };
+}
+
+/**
+ * Validates the uniqueness of the existing model field.
+ *
+ * @param fieldName Name of the field to validate.
+ * @returns boolean
+ */
+export function existingModelFieldUniquenessValidator(tableName: string, fieldName: string, checkNull = false) {
+  return async function (this: BaseModel, value: any): Promise<boolean> {
+    if ((!checkNull && value === null) || value === undefined) {
+      return true;
+    }
+    const count = await new MySqlUtil((await this.db()) as Pool)
+      .paramExecute(
+        `
+      SELECT COUNT(*) as count FROM \`${tableName}\`
+      WHERE
+        \`${fieldName}\` = @value
+        AND status <> ${DbModelStatus.DELETED}
+        AND (@id IS NULL OR (@id IS NOT NULL AND id <> @id ))
+      `,
+        { value, id: this.id || null }
+      )
+      .then((rows) => rows[0].count);
     return count === 0;
   };
 }

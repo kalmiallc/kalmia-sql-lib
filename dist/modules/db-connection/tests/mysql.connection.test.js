@@ -9,10 +9,10 @@ describe('MySQL coon pool automatic', () => {
     beforeAll(async () => {
         conn = (await mysql_conn_manager_1.MySqlConnManager.getInstance().getConnection());
         sqlUtil = new mysql_util_1.MySqlUtil(conn);
-        await (0, mysql_stage_1.setupDatabase)();
+        await mysql_stage_1.setupDatabase();
     });
     afterAll(async () => {
-        await (0, mysql_stage_1.dropDatabase)();
+        await mysql_stage_1.dropDatabase();
         await mysql_conn_manager_1.MySqlConnManager.getInstance().end();
     });
     it('Query should find one', async () => {
@@ -36,7 +36,7 @@ describe('MySQL coon pool automatic', () => {
     });
     it('Query should fail', async () => {
         await insertObject();
-        await (0, mysql_stage_1.cleanDatabase)();
+        await mysql_stage_1.cleanDatabase();
         try {
             await sqlUtil.paramExecuteDirect("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;");
             expect(true).toBe(false);
