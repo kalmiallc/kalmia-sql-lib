@@ -1,5 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/* eslint-disable @typescript-eslint/quotes */
+/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable-next-line @typescript-eslint/quotes */
+const kalmia_common_lib_1 = require("kalmia-common-lib");
 const mysql_stage_1 = require("../../test-helpers/mysql-stage");
 const mysql_conn_manager_1 = require("../mysql-conn-manager");
 const mysql_util_1 = require("../mysql-util");
@@ -82,8 +86,11 @@ describe('MySQL coon pool automatic', () => {
 });
 describe('MySQL no pool', () => {
     let conn;
+    let connId = 0;
     beforeAll(async () => {
         conn = await mysql_conn_manager_1.MySqlConnManager.getInstance().getConnectionNoPool();
+        expect(mysql_conn_manager_1.MySqlConnManager.getInstance().getActiveConnections().length).toBe(1);
+        connId = mysql_conn_manager_1.MySqlConnManager.getInstance().getActiveConnections()[0].connectionId;
         await conn.execute(`
     CREATE TABLE IF NOT EXISTS \`sql_lib_user\` (
       \`id\` INT NOT NULL,
@@ -98,8 +105,11 @@ describe('MySQL no pool', () => {
     DROP TABLE IF EXISTS \`sql_lib_user\`;
   `);
         await mysql_conn_manager_1.MySqlConnManager.getInstance().end();
+        expect(mysql_conn_manager_1.MySqlConnManager.getInstance().getActiveConnections().length).toBe(0);
     });
     it('Query should find one', async () => {
+        expect(mysql_conn_manager_1.MySqlConnManager.getInstance().getActiveConnections()[0].connectionId).not.toBeNull();
+        expect(mysql_conn_manager_1.MySqlConnManager.getInstance().getActiveConnections()[0].connectionId).toBe(connId);
         await conn.execute(`INSERT INTO \`sql_lib_user\` (
         email,
         id
@@ -192,7 +202,17 @@ describe('MySql use init connection from pool with the transaction, and use pass
 describe('MySql use init connection from pool with the transaction, and use direct pass', () => {
     let util;
     beforeAll(async () => {
+        let connId;
+        mysql_conn_manager_1.MySqlConnManager.addConnOpenListener((conn) => {
+            kalmia_common_lib_1.AppLogger.test('mysql.connection.test', 'MySqlConnManager.addConnOpenListener - connection open', conn.threadId);
+            connId = conn.threadId;
+        });
+        mysql_conn_manager_1.MySqlConnManager.addConnCloseListener((conn) => {
+            kalmia_common_lib_1.AppLogger.test('mysql.connection.test', 'MySqlConnManager.addConnCloseListener - connection close', conn.threadId);
+            expect(conn.threadId).toBe(connId);
+        });
         util = await mysql_util_1.MySqlUtil.init(true);
+        expect(mysql_conn_manager_1.MySqlConnManager.getInstance().getActiveConnections().length).toBe(1);
         await util.paramExecute(`
     CREATE TABLE IF NOT EXISTS \`sql_lib_user\` (
       \`id\` INT NOT NULL,
@@ -203,14 +223,17 @@ describe('MySql use init connection from pool with the transaction, and use dire
   `);
     });
     afterAll(async () => {
+        var _a, _b;
         await util.paramExecute(`
     DROP TABLE IF EXISTS \`sql_lib_user\`;
   `);
         expect(util.getConnectionPool().pool._freeConnections.length).toBe(0);
         expect(util.getConnectionPool().pool._closed).toBe(false);
         const conn = util.getActiveConnection();
+        expect(mysql_conn_manager_1.MySqlConnManager.getInstance().getActiveConnections()[0].connectionId).toBe((_b = (_a = conn) === null || _a === void 0 ? void 0 : _a.connection) === null || _b === void 0 ? void 0 : _b.connectionId);
         await conn.release();
         expect(util.getConnectionPool().pool._freeConnections.length).toBe(1);
+        expect(mysql_conn_manager_1.MySqlConnManager.getInstance().getActiveConnections().length).toBe(0);
         await util.end();
         expect(util.getConnectionPool().pool._closed).toBe(true);
     });
