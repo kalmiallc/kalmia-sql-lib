@@ -3,6 +3,9 @@ import * as mysql from 'mysql2/promise';
 import { IConnectionDetails } from '../../config/interfaces';
 export declare class MySqlConnManager {
     private static instance;
+    private static _openConnections;
+    private static _poolConnCloseListeners;
+    private static _poolConnOpenListeners;
     private _connections;
     private _connectionsSync;
     private _connectionDetails;
@@ -16,20 +19,31 @@ export declare class MySqlConnManager {
      */
     static getInstance(conn?: mysql.Pool | mysql.Connection): MySqlConnManager;
     static updateEnv(newEnv: any): void;
+    static addConnOpenListener(listener: (conn: mysql.PoolConnection | mysql.Connection) => void): void;
+    static addConnCloseListener(listener: (conn: any) => void): void;
     private static testMySqlPoolConnection;
     private static testMySqlNoPoolConnection;
     /**
      * Provides database connection as pool assigned to identifier, defaulting to primary.
      *
      * @param databaseIdentifier (optional) identifier of database connection in question
+     * @param config (optional) connection config
      */
     getConnection(databaseIdentifier?: string, config?: mysql.ConnectionOptions): Promise<mysql.Pool>;
+    /** *
+     * Re-Initializes connection
+     *
+     * @param databaseIdentifier (optional) identifier of database connection in question
+     * @param config (optional) connection config
+     */
+    reinitializeConnection(databaseIdentifier?: string, config?: mysql.ConnectionOptions): Promise<mysql.Pool>;
     /**
      * Provides direct database connection (no pool) assigned to identifier, defaulting to primary.
      *
      * @param databaseIdentifier (optional) identifier of database connection in question
      */
     getConnectionNoPool(databaseIdentifier?: string, config?: mysql.ConnectionOptions): Promise<mysql.Connection>;
+    getActiveConnections(): any[];
     /**
      * Sets database connection to primary identifier. User should ensure primary connection is closed beforehand.
      *
@@ -43,6 +57,7 @@ export declare class MySqlConnManager {
      * @returns Sync connection
      */
     getConnectionSync(databaseIdentifier?: string): mysqlSync.Pool;
+    reinitializeConnectionSync(databaseIdentifier?: string): mysqlSync.Pool;
     /**
      * Gets connection details for provided identifier
      *
@@ -56,6 +71,7 @@ export declare class MySqlConnManager {
      * @param databaseIdentifier (optional) identifier of database connection in question
      */
     end(databaseIdentifier?: string): Promise<any>;
+    endSync(databaseIdentifier?: string): any;
     /**
      * Ensures open connection to DB
      *

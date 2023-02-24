@@ -17,6 +17,9 @@ import { env } from './../../config/env';
 
 export class MySqlConnManager {
   private static instance: MySqlConnManager;
+  private static _openConnections = [];
+  private static _poolConnCloseListeners = [];
+  private static _poolConnOpenListeners = [];
   private _connections: { [identifier: string]: mysql.Pool | mysql.Connection } = {};
   private _connectionsSync: { [identifier: string]: mysqlSync.Pool | mysqlSync.Connection } = {};
   private _connectionDetails: { [identifier: string]: IConnectionDetails } = {};
@@ -42,6 +45,14 @@ export class MySqlConnManager {
 
   public static updateEnv(newEnv: any) {
     Object.assign(env, newEnv);
+  }
+
+  public static addConnOpenListener(listener: (conn: mysql.PoolConnection | mysql.Connection) => void) {
+    MySqlConnManager._poolConnOpenListeners.push(listener);
+  }
+
+  public static addConnCloseListener(listener: (conn: any) => void) {
+    MySqlConnManager._poolConnCloseListeners.push(listener);
   }
 
   private static async testMySqlPoolConnection(mySqlConnection: mysql.Pool) {
@@ -73,6 +84,7 @@ export class MySqlConnManager {
    * Provides database connection as pool assigned to identifier, defaulting to primary.
    *
    * @param databaseIdentifier (optional) identifier of database connection in question
+   * @param config (optional) connection config
    */
   public async getConnection(databaseIdentifier: string = DbConnectionType.PRIMARY, config: mysql.ConnectionOptions = {}): Promise<mysql.Pool> {
     if (!this._connections[databaseIdentifier]) {
@@ -83,6 +95,32 @@ export class MySqlConnManager {
       'mysql-conn-manager.ts',
       'getConnection',
       'Returning pool connection from db manager for',
+      databaseIdentifier,
+      AppLogger.stringifyObjectForLog({
+        ...this._connectionDetails[databaseIdentifier],
+        ssl: this._connectionDetails[databaseIdentifier].ssl ? '***' : undefined
+      })
+    );
+    return this._connections[databaseIdentifier] as mysql.Pool;
+  }
+
+  /** *
+   * Re-Initializes connection
+   *
+   * @param databaseIdentifier (optional) identifier of database connection in question
+   * @param config (optional) connection config
+   */
+
+  public async reinitializeConnection(
+    databaseIdentifier: string = DbConnectionType.PRIMARY,
+    config: mysql.ConnectionOptions = {}
+  ): Promise<mysql.Pool> {
+    this._connectionDetails[databaseIdentifier] = this.populateDetails(config);
+    this._connections[databaseIdentifier] = await this.getMySqlPoolConnection(config);
+    AppLogger.db(
+      'mysql-conn-manager.ts',
+      'getConnection',
+      'Connection reinitialized',
       databaseIdentifier,
       AppLogger.stringifyObjectForLog({
         ...this._connectionDetails[databaseIdentifier],
@@ -118,6 +156,10 @@ export class MySqlConnManager {
     return this._connections[databaseIdentifier] as mysql.Connection;
   }
 
+  public getActiveConnections() {
+    return MySqlConnManager._openConnections;
+  }
+
   /**
    * Sets database connection to primary identifier. User should ensure primary connection is closed beforehand.
    *
@@ -143,6 +185,12 @@ export class MySqlConnManager {
     return this._connectionsSync[databaseIdentifier] as mysqlSync.Pool;
   }
 
+  public reinitializeConnectionSync(databaseIdentifier: string = DbConnectionType.PRIMARY): mysqlSync.Pool {
+    this._connectionSyncDetails[databaseIdentifier] = this.populateDetails();
+    this._connectionsSync[databaseIdentifier] = this.getMySqlConnectionSync();
+    return this._connectionsSync[databaseIdentifier] as mysqlSync.Pool;
+  }
+
   /**
    * Gets connection details for provided identifier
    *
@@ -159,19 +207,6 @@ export class MySqlConnManager {
    * @param databaseIdentifier (optional) identifier of database connection in question
    */
   public async end(databaseIdentifier: string = DbConnectionType.PRIMARY): Promise<any> {
-    if (this._connectionsSync[databaseIdentifier]) {
-      AppLogger.db(
-        'mysql-conn-manager.ts',
-        'end',
-        'Ending connection mysql sync pool for',
-        databaseIdentifier,
-        AppLogger.stringifyObjectForLog({
-          ...this._connectionDetails[databaseIdentifier]
-        })
-      );
-      this._connectionsSync[databaseIdentifier].end();
-      this._connectionsSync[databaseIdentifier] = null;
-    }
     if (this._connections[databaseIdentifier]) {
       AppLogger.db(
         'mysql-conn-manager.ts',
@@ -179,12 +214,30 @@ export class MySqlConnManager {
         'Ending connection mysql for',
         databaseIdentifier,
         AppLogger.stringifyObjectForLog({
-          ...this._connectionDetails[databaseIdentifier]
+          ...(this._connections[databaseIdentifier] as any).pool?.config?.connectionConfig,
+          ...(this._connections[databaseIdentifier] as any).config
         })
       );
       await (this._connections[databaseIdentifier] as any).end();
       this._connections[databaseIdentifier] = null;
       this._connectionDetails[databaseIdentifier] = null;
+      MySqlConnManager._openConnections = [];
+    }
+  }
+
+  public endSync(databaseIdentifier: string = DbConnectionType.PRIMARY): any {
+    if (this._connectionsSync[databaseIdentifier]) {
+      AppLogger.db(
+        'mysql-conn-manager.ts',
+        'end',
+        'Ending connection mysql sync pool for',
+        databaseIdentifier,
+        AppLogger.stringifyObjectForLog({
+          ...(this._connectionsSync[databaseIdentifier] as any)?.config?.connectionConfig
+        })
+      );
+      this._connectionsSync[databaseIdentifier].end();
+      this._connectionsSync[databaseIdentifier] = null;
     }
   }
 
@@ -272,6 +325,7 @@ export class MySqlConnManager {
         'getMySqlNoPoolConnection',
         `[DBM] Successfully created MySQL connection for ${host}:${port} | DatabaseName: ${database}`
       );
+      MySqlConnManager._openConnections.push(conn);
       return conn as mysql.Connection;
     } catch (e) {
       AppLogger.error('mysql-conn-manager.ts', 'getMySqlNoPoolConnection', '[DBM] Database connection failed.', e);
@@ -310,6 +364,12 @@ export class MySqlConnManager {
 
       // state listeners
       conn.on('acquire', function (connection) {
+        try {
+          MySqlConnManager._openConnections.push(connection);
+          MySqlConnManager._poolConnOpenListeners.forEach((listener) => listener(connection));
+        } catch (error) {
+          AppLogger.error('mysql-conn-manager.ts', 'getMySqlLocalPoolConnection', 'Error in adding connection', error);
+        }
         AppLogger.trace('mysql-conn-manager.ts', 'getMySqlLocalPoolConnection', `[DBM] Connection ${connection.threadId} acquired`);
       });
       conn.on('connection', function (connection) {
@@ -323,6 +383,15 @@ export class MySqlConnManager {
         );
       });
       conn.on('release', function (connection) {
+        MySqlConnManager._poolConnCloseListeners.forEach((listener) => listener(connection));
+        try {
+          const val = MySqlConnManager._openConnections.find((c: any) => c.threadId === connection.threadId);
+          if (val) {
+            MySqlConnManager._openConnections = MySqlConnManager._openConnections.filter((c: any) => c.threadId !== connection.threadId);
+          }
+        } catch (error) {
+          AppLogger.error('mysql-conn-manager.ts', 'getMySqlLocalPoolConnection', 'Error in removing connection', error);
+        }
         AppLogger.trace('mysql-conn-manager.ts', 'getMySqlLocalPoolConnection', `[DBM] Connection ${connection.threadId} release`);
       });
       conn.on('enqueue', function () {
