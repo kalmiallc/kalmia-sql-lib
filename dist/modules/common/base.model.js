@@ -303,48 +303,48 @@ class BaseModel extends core_1.Model {
     }
 }
 __decorate([
-    core_1.prop({
-        parser: { resolver: parsers_1.integerParser() },
+    (0, core_1.prop)({
+        parser: { resolver: (0, parsers_1.integerParser)() },
         populatable: [types_1.PopulateFor.DB],
         serializable: [types_1.SerializeFor.ALL, types_1.SerializeFor.ADMIN]
     }),
     __metadata("design:type", Number)
 ], BaseModel.prototype, "id", void 0);
 __decorate([
-    core_1.prop({
-        parser: { resolver: parsers_1.dateParser() },
+    (0, core_1.prop)({
+        parser: { resolver: (0, parsers_1.dateParser)() },
         populatable: [types_1.PopulateFor.DB],
         serializable: [types_1.SerializeFor.ADMIN, types_1.SerializeFor.ALL]
     }),
     __metadata("design:type", Date)
 ], BaseModel.prototype, "_createTime", void 0);
 __decorate([
-    core_1.prop({
-        parser: { resolver: parsers_1.integerParser() },
+    (0, core_1.prop)({
+        parser: { resolver: (0, parsers_1.integerParser)() },
         populatable: [types_1.PopulateFor.DB],
         serializable: [types_1.SerializeFor.ADMIN, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.ALL]
     }),
     __metadata("design:type", Number)
 ], BaseModel.prototype, "_createUser", void 0);
 __decorate([
-    core_1.prop({
-        parser: { resolver: parsers_1.dateParser() },
+    (0, core_1.prop)({
+        parser: { resolver: (0, parsers_1.dateParser)() },
         populatable: [types_1.PopulateFor.DB],
         serializable: [types_1.SerializeFor.ADMIN, types_1.SerializeFor.ALL]
     }),
     __metadata("design:type", Date)
 ], BaseModel.prototype, "_updateTime", void 0);
 __decorate([
-    core_1.prop({
-        parser: { resolver: parsers_1.integerParser() },
+    (0, core_1.prop)({
+        parser: { resolver: (0, parsers_1.integerParser)() },
         populatable: [types_1.PopulateFor.DB],
         serializable: [types_1.SerializeFor.ADMIN, types_1.SerializeFor.INSERT_DB, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.ALL]
     }),
     __metadata("design:type", Number)
 ], BaseModel.prototype, "_updateUser", void 0);
 __decorate([
-    core_1.prop({
-        parser: { resolver: parsers_1.integerParser() },
+    (0, core_1.prop)({
+        parser: { resolver: (0, parsers_1.integerParser)() },
         populatable: [types_1.PopulateFor.DB],
         serializable: [types_1.SerializeFor.ALL, types_1.SerializeFor.ADMIN, types_1.SerializeFor.UPDATE_DB, types_1.SerializeFor.INSERT_DB],
         emptyValue: () => types_1.DbModelStatus.ACTIVE,

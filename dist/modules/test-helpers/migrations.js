@@ -1,4 +1,5 @@
 "use strict";
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MigrationHelper = void 0;
 const kalmia_common_lib_1 = require("kalmia-common-lib");
@@ -13,6 +14,7 @@ class MigrationHelper {
     }
 }
 exports.MigrationHelper = MigrationHelper;
+_a = MigrationHelper;
 /**
  * Runs 'steps' new upgrade migrations.
  *
