@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable-next-line @typescript-eslint/quotes */
 import { AppLogger } from 'kalmia-common-lib';
-import type * as mysql from 'mysql2/promise';
+import * as mysql from 'mysql2/promise';
 import { Pool } from 'mysql2/promise';
 import { cleanDatabase, dropDatabase, setupDatabase } from '../../test-helpers/mysql-stage';
 import { MySqlConnManager } from '../mysql-conn-manager';
@@ -190,6 +190,52 @@ describe('MySql use init function', () => {
       { email: Math.floor(Math.random() * 10_000) + '@example.com', id: Math.floor(Math.random() * 1_000_000) }
     );
     const count = await util.paramExecute("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;");
+    expect(count.length).toBe(1);
+  });
+});
+
+describe('MySql use initAndStartTrans', () => {
+  let utilInt;
+
+  beforeAll(async () => {
+    utilInt = await MySqlUtil.initAndStartTrans();
+    await utilInt.sql.paramExecute(
+      `
+    CREATE TABLE IF NOT EXISTS \`sql_lib_user\` (
+      \`id\` INT NOT NULL,
+      \`email\` VARCHAR(255) NULL,
+      \`_username\` VARCHAR(255) NULL,
+      PRIMARY KEY (\`id\`),
+      UNIQUE INDEX \`email_UNIQUE\` (\`email\` ASC) VISIBLE);
+  `,
+      {},
+      utilInt.conn
+    );
+    await utilInt.conn.commit();
+  });
+
+  afterAll(async () => {
+    await utilInt.sql.paramExecute(
+      `
+    DROP TABLE IF EXISTS \`sql_lib_user\`;
+  `
+    );
+    expect(MySqlConnManager.getInstance().getActiveConnections().length).toBe(1);
+    utilInt.conn.release();
+    expect(MySqlConnManager.getInstance().getActiveConnections().length).toBe(0);
+    await MySqlUtil.end();
+    expect(MySqlConnManager.getInstance().getActiveConnections().length).toBe(0);
+  });
+
+  it('Query should find one', async () => {
+    await utilInt.sql.paramExecute(
+      `INSERT INTO \`sql_lib_user\` (
+        email,
+        id
+      ) VALUES (@email, @id)`,
+      { email: Math.floor(Math.random() * 10_000) + '@example.com', id: Math.floor(Math.random() * 1_000_000) }
+    );
+    const count = await utilInt.sql.paramExecute("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;");
     expect(count.length).toBe(1);
   });
 });

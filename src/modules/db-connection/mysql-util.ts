@@ -21,6 +21,9 @@ export class MySqlUtil {
    * This method will initialize connection from the connection pool. It will use connection manager and initialize primary connection as connection poll.
    * It will also open single connection for from the pool ans set it as the active connection if the parameter is set to true;
    *
+   * If set setPoledInstance is true, make sure that the active connection is released after usage.
+   * Use releaseActiveConnection() method to release the connection.
+   *
    * @param [setPoledInstance] if true, the connection will be polled from the pool and set as the active connection
    * @returns {Promise<MySqlUtil>} returns instance of MySqlUtil
    */
@@ -42,13 +45,33 @@ export class MySqlUtil {
   }
 
   /**
+   * Initializes connection from the connection pool and starts transaction.
+   *
+   * Make sure you close the connection after usage. Use releaseActiveConnection() method to release the connection or conn close.
+   *
+   * @returns {{ sql: MySqlUtil; conn: PoolConnection }} returns active connection from the pool, and instance of MySqlUtil
+   * @throws {Error} if active connection is not set
+   *
+   */
+  public static async initAndStartTrans(): Promise<{ sql: MySqlUtil; conn: PoolConnection }> {
+    const util = await MySqlUtil.init(true);
+    const conn = util.getActiveConnection();
+    if (!conn) {
+      throw Error('MySql Db Connection not provided');
+    }
+    await conn.beginTransaction();
+    AppLogger.db('mysql-util.ts', 'initAndStartTrans', 'DB ', 'Start transaction');
+    return { sql: util, conn };
+  }
+
+  /**
    * End all active connections. Also close active instance of connection form the pool.
    */
   public async end(): Promise<void> {
-    await MySqlConnManager.getInstance().end();
     if (this._currentPooledConnection) {
       await this._currentPooledConnection.release();
     }
+    await MySqlConnManager.getInstance().end();
   }
 
   /**

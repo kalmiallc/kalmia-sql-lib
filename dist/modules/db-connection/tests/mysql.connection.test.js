@@ -149,6 +149,39 @@ describe('MySql use init function', () => {
         expect(count.length).toBe(1);
     });
 });
+describe('MySql use initAndStartTrans', () => {
+    let utilInt;
+    beforeAll(async () => {
+        utilInt = await mysql_util_1.MySqlUtil.initAndStartTrans();
+        await utilInt.sql.paramExecute(`
+    CREATE TABLE IF NOT EXISTS \`sql_lib_user\` (
+      \`id\` INT NOT NULL,
+      \`email\` VARCHAR(255) NULL,
+      \`_username\` VARCHAR(255) NULL,
+      PRIMARY KEY (\`id\`),
+      UNIQUE INDEX \`email_UNIQUE\` (\`email\` ASC) VISIBLE);
+  `, {}, utilInt.conn);
+        await utilInt.conn.commit();
+    });
+    afterAll(async () => {
+        await utilInt.sql.paramExecute(`
+    DROP TABLE IF EXISTS \`sql_lib_user\`;
+  `);
+        expect(mysql_conn_manager_1.MySqlConnManager.getInstance().getActiveConnections().length).toBe(1);
+        utilInt.conn.release();
+        expect(mysql_conn_manager_1.MySqlConnManager.getInstance().getActiveConnections().length).toBe(0);
+        await mysql_util_1.MySqlUtil.end();
+        expect(mysql_conn_manager_1.MySqlConnManager.getInstance().getActiveConnections().length).toBe(0);
+    });
+    it('Query should find one', async () => {
+        await utilInt.sql.paramExecute(`INSERT INTO \`sql_lib_user\` (
+        email,
+        id
+      ) VALUES (@email, @id)`, { email: Math.floor(Math.random() * 10000) + '@example.com', id: Math.floor(Math.random() * 1000000) });
+        const count = await utilInt.sql.paramExecute("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;");
+        expect(count.length).toBe(1);
+    });
+});
 describe('MySql use init connection from pool with the transaction, and use pass the active connection', () => {
     let util;
     beforeAll(async () => {
