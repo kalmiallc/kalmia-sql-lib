@@ -8,6 +8,12 @@ To release a new version, npm build must be done (don't forget to update the ver
 npm run build
 ```
 
+## Public branch
+
+This library also contains public branch. The public branch is separated for the internal and resides in the github. 
+The public branch is a separate non-related branch. To commit changes to public branch, each commit must be cherry-picked.
+Don't use the merge-feature as it will also move some private keys to the public.
+
 
 All documentation is MD based and resides in the docs directory.
 
