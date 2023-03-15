@@ -9,7 +9,6 @@ This package contains common sql functions and connection manager. The following
 
 Examine tests for usage examples.
 
-This package must be build, and the dist folder is committed. It is done this way because of the NPM build problems.
 To release a new version, npm build must be done (don't forget to update the version in the package.json)
 
 ```
@@ -42,7 +41,7 @@ Directory structure for modules is as follows:
 | tests     | Module tests                    |
 | models    | Data models used in the module. |
 
-When coding, avoid global functions. All function, except explicit really global ones as `isPlainObject` should be wrapped in it's own class.
+When coding, avoid global functions. All functions except explicit really global ones as `isPlainObject` should be wrapped in it's own class.
 All commonly used functions shall be put into `common` module. The model base classes shall be put into the `model-base` module.
 
 For the methods which don't involve instance state, use static modifier.
