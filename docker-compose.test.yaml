@@ -1,0 +1,31 @@
+version: '3.5'
+services:
+  sql-lib:
+    image: kalmia-sql-lib
+    env_file: ./.env.test
+    build:
+      context: .
+      target: build
+      args:
+        - AUTH_REPO_ACCESS_KEY
+    command: npm run test
+    environment:
+      - APP_ENV=testing
+      - MYSQL_DB_TEST=$MYSQL_DB_TEST
+      - MYSQL_PORT_TEST=$MYSQL_PORT_TEST
+      - MYSQL_HOST_TEST=mysqldb
+      - MYSQL_USER_TEST=$MYSQL_USER_TEST
+      - LOG_TARGET=$LOG_TARGET
+    depends_on:
+      - mysqldb
+  mysqldb:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      - MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD_TEST
+      - MYSQL_DATABASE=$MYSQL_DB_TEST
+      - MYSQL_PASSWORD=$MYSQL_PASSWORD_TEST
+      - MYSQL_HOST=0.0.0.0
+      - MYSQL_TCP_PORT=$MYSQL_PORT_TEST
+    ports:
+      - '$MYSQL_PORT_TEST:$MYSQL_PORT_TEST'

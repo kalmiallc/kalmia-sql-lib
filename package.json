@@ -1,0 +1,75 @@
+{
+  "name": "kalmia-sql-lib",
+  "version": "1.2.8",
+  "description": "SQL lib for Kalmia projects",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "rimraf dist && tsc --build tsconfig.json",
+    "index": "ts-node src/index.ts",
+    "lint": "eslint -c .eslintrc.js --ext .ts ./src",
+    "lintfix": "tsc & eslint --fix -c .eslintrc.js --ext .ts ./src",
+    "test": "npm run lintfix && jest --runInBand --detectOpenHandles --forceExit",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage"
+  },
+  "files": [
+    "dist/**/*",
+    "src/**/*",
+    "README.md",
+    "docs/**/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itkalmia/kalmia-sql-lib.git"
+  },
+  "keywords": [
+    "sql",
+    "lib",
+    "library",
+    "seed",
+    "connection",
+    "manager"
+  ],
+  "author": "Kalmia d.o.o. <info@kalmia.si>",
+  "license": "UNLICENSED",
+  "homepage": "https://bitbucket.org/kalmiadevs/kalmia-sql-lib#readme",
+  "dependencies": {
+    "@rawmodel/core": "^3.3.4",
+    "@rawmodel/parsers": "^3.3.4",
+    "@rawmodel/validators": "^3.3.4",
+    "colors": "1.4.0",
+    "dotenv": "^10.0.0",
+    "kalmia-common-lib": "git+https://github.com/itkalmia/kalmia-common-lib",
+    "mysql2": "^2.3.0",
+    "rimraf": "^3.0.2",
+    "sqlstring": "^2.3.2",
+    "ts-mysql-migrate": "^1.0.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.0.0",
+    "@types/node": "^16.4.3",
+    "@typescript-eslint/eslint-plugin": "^4.28.5",
+    "@typescript-eslint/parser": "^4.28.5",
+    "eslint": "^7.31.0",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-jsdoc": "^36.1.1",
+    "eslint-plugin-no-async-foreach": "^0.1.1",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-promise": "^5.1.0",
+    "eslint-plugin-security": "^1.4.0",
+    "eslint-plugin-sonarjs": "^0.9.1",
+    "jest": "^27.0.6",
+    "ts-jest": "^27.0.4",
+    "ts-node": "^10.1.0",
+    "typescript": "^4.3.5"
+  },
+  "peerDependencies": {
+    "@rawmodel/core": "^3.3.4",
+    "@rawmodel/parsers": "^3.3.4",
+    "@rawmodel/validators": "^3.3.4",
+    "dotenv": "^10.0.0",
+    "mysql2": "^2.3.0"
+  }
+}
