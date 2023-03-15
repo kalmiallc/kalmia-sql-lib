@@ -1,5 +1,12 @@
 # Kalmia SQL lib
-This package contains common sql functions and connection manager.
+
+This package contains common sql functions and connection manager. The following modules are present:
+
+- common: Module contains base model and validators.
+- db-connection: Connection manager for handling the DB connection.
+- db-logger: Logger which writes logs to the DB.
+
+Examine tests for usage examples.
 
 This package must be build, and the dist folder is committed. It is done this way because of the NPM build problems.
 To release a new version, npm build must be done (don't forget to update the version in the package.json)
