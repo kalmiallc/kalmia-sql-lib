@@ -4,6 +4,7 @@ This package contains common sql functions and connection manager. The following
 
 - common: Module contains base model and validators.
 - db-connection: Connection manager for handling the DB connection.
+- mySqlUtil: Utility functions for easier mySql (MariaDB) interactions.
 - db-logger: Logger which writes logs to the DB.
 
 Examine tests for usage examples.
