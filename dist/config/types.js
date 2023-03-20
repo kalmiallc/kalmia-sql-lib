@@ -1,7 +1,7 @@
 "use strict";
 /* eslint-disable no-shadow */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WorkerLogStatus = exports.WorkerDbTables = exports.DbModelStatus = exports.DbConnectionType = exports.SerializeFor = exports.PopulateFor = void 0;
+exports.IsolationLevel = exports.WorkerLogStatus = exports.WorkerDbTables = exports.DbModelStatus = exports.DbConnectionType = exports.SerializeFor = exports.PopulateFor = void 0;
 /**
  * Model population strategies.
  */
@@ -58,4 +58,11 @@ var WorkerLogStatus;
     WorkerLogStatus["SUCCESS"] = "success";
     WorkerLogStatus["ERROR"] = "error";
 })(WorkerLogStatus = exports.WorkerLogStatus || (exports.WorkerLogStatus = {}));
+var IsolationLevel;
+(function (IsolationLevel) {
+    IsolationLevel["READ_UNCOMMITTED"] = "READ UNCOMMITTED";
+    IsolationLevel["READ_COMMITTED"] = "READ COMMITTED";
+    IsolationLevel["REPEATABLE_READ"] = "REPEATABLE READ";
+    IsolationLevel["READ_SERIALIZABLE"] = "READ SERIALIZABLE";
+})(IsolationLevel = exports.IsolationLevel || (exports.IsolationLevel = {}));
 //# sourceMappingURL=types.js.map

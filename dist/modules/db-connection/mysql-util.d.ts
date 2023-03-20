@@ -1,5 +1,6 @@
 import * as mysql from 'mysql2/promise';
 import { Pool, PoolConnection } from 'mysql2/promise';
+import { IsolationLevel } from '../../config/types';
 /**
  * MySQL helper. This helper is designed for usage of SQL connection pool.
  * Methods with direct -- use direct connection pooling, no need to get instances from the connection pool.
@@ -92,9 +93,10 @@ export declare class MySqlUtil {
     /**
      * This function takes a new connection form the poll and starts transaction.
      *
+     * @param isolationLevel Database isolation level for this transaction. Isolation level will only affect next query, execution, the it will be reset to default.
      * @returns connection from the pool.
      */
-    start(): Promise<PoolConnection>;
+    start(isolationLevel?: IsolationLevel): Promise<PoolConnection>;
     commit(connection?: PoolConnection): Promise<void>;
     rollback(connection?: PoolConnection): Promise<void>;
     /**
@@ -110,21 +112,23 @@ export declare class MySqlUtil {
      * and executes prepared statement. If there is no connection added to the parameter (or no current pooled connection present on the object)
      * then a new connection will be taken from the pool and released after.
      *
-     *
+     * @dev Throws an error if isolation level and connection are provided. Isolation cannot be changed inside a transaction.
      * @param query SQL query
      * @param values object with replacement values
      * @param connection PoolConnection reference - needed if query is part of transaction
+     * @param isolationLevel Database isolation level for this query. Isolation level will only affect next query, execution, the it will be reset to default.
      */
-    paramExecute(query: string, values?: unknown, connection?: PoolConnection): Promise<any[]>;
+    paramExecute(query: string, values?: unknown, connection?: PoolConnection, isolationLevel?: IsolationLevel): Promise<any[]>;
     /**
      * Function replaces sql query parameters with "@variable" notation with values from object {variable: replace_value}
      * This function uses automatic connection creation and release functionality of mysql lib.
      *
      * @param query SQL query
      * @param values object with replacement values
+     * @param isolationLevel Database isolation level for this query. Isolation level will only affect next query, execution, the it will be reset to default.
      *
      */
-    paramExecuteDirect(query: string, values?: unknown): Promise<any[]>;
+    paramExecuteDirect(query: string, values?: unknown, isolationLevel?: IsolationLevel): Promise<any[]>;
     /**
      * Helper for lambda functions. This will kill all the stalled connections in the pool.
      *
