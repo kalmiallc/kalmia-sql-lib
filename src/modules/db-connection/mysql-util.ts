@@ -216,7 +216,7 @@ export class MySqlUtil {
   /**
    * This function takes a new connection form the poll and starts transaction.
    *
-   * @param isolationLevel Database isolation level for this transaction.
+   * @param isolationLevel Database isolation level for this transaction. Isolation level will only affect next query, execution, the it will be reset to default.
    * @returns connection from the pool.
    */
 
@@ -283,7 +283,7 @@ export class MySqlUtil {
    * @param query SQL query
    * @param values object with replacement values
    * @param connection PoolConnection reference - needed if query is part of transaction
-   * @param isolationLevel Database isolation level for this query.
+   * @param isolationLevel Database isolation level for this query. Isolation level will only affect next query, execution, the it will be reset to default.
    */
   public async paramExecute(
     query: string,
@@ -378,7 +378,7 @@ export class MySqlUtil {
    *
    * @param query SQL query
    * @param values object with replacement values
-   * @param isolationLevel Database isolation level for this query.
+   * @param isolationLevel Database isolation level for this query. Isolation level will only affect next query, execution, the it will be reset to default.
    *
    */
   public async paramExecuteDirect(query: string, values?: unknown, isolationLevel?: IsolationLevel): Promise<any[]> {

@@ -48,4 +48,10 @@ export declare enum WorkerLogStatus {
     SUCCESS = "success",
     ERROR = "error"
 }
+export declare enum IsolationLevel {
+    READ_UNCOMMITTED = "READ UNCOMMITTED",
+    READ_COMMITTED = "READ COMMITTED",
+    REPEATABLE_READ = "REPEATABLE READ",
+    READ_SERIALIZABLE = "READ SERIALIZABLE"
+}
 //# sourceMappingURL=types.d.ts.map
