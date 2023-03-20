@@ -2,6 +2,7 @@ import { AppLogger, isPlainObject } from 'kalmia-common-lib';
 import * as mysql from 'mysql2/promise';
 import { Pool, PoolConnection } from 'mysql2/promise';
 import * as SqlString from 'sqlstring';
+import { IsolationLevel } from '../../config/types';
 import { MySqlConnManager } from './mysql-conn-manager';
 
 /**
@@ -215,14 +216,18 @@ export class MySqlUtil {
   /**
    * This function takes a new connection form the poll and starts transaction.
    *
+   * @param isolationLevel Database isolation level for this transaction.
    * @returns connection from the pool.
    */
 
-  public async start(): Promise<PoolConnection> {
+  public async start(isolationLevel?: IsolationLevel): Promise<PoolConnection> {
     // await this.db.query('SET SESSION autocommit = 0; START TRANSACTION;');
     const conn = await (this._dbConnectionPool as mysql.Pool).getConnection();
     if (!conn) {
       throw Error('MySql Db Connection not provided');
+    }
+    if (isolationLevel) {
+      await conn.execute(`SET TRANSACTION ISOLATION LEVEL ${isolationLevel}`, null);
     }
     await conn.beginTransaction();
     AppLogger.db('mysql-util.ts', 'start', 'DB ', 'BEGIN TRANSACTION');
@@ -274,12 +279,18 @@ export class MySqlUtil {
    * and executes prepared statement. If there is no connection added to the parameter (or no current pooled connection present on the object)
    * then a new connection will be taken from the pool and released after.
    *
-   *
+   * @dev Throws an error if isolation level and connection are provided. Isolation cannot be changed inside a transaction.
    * @param query SQL query
    * @param values object with replacement values
    * @param connection PoolConnection reference - needed if query is part of transaction
+   * @param isolationLevel Database isolation level for this query.
    */
-  public async paramExecute(query: string, values?: unknown, connection: PoolConnection = this._currentPooledConnection): Promise<any[]> {
+  public async paramExecute(
+    query: string,
+    values?: unknown,
+    connection: PoolConnection = this._currentPooledConnection,
+    isolationLevel?: IsolationLevel
+  ): Promise<any[]> {
     const sqlParamValues = [];
     let isSingleTrans = false;
 
@@ -287,6 +298,16 @@ export class MySqlUtil {
       isSingleTrans = true;
       connection = await this._dbConnectionPool.getConnection();
     }
+
+    // Set isolation level of query. Can only be changed if not a transaction.
+    if (isolationLevel) {
+      if (isSingleTrans) {
+        await connection.execute(`SET TRANSACTION ISOLATION LEVEL ${isolationLevel}`, null);
+      } else {
+        throw Error('Cannot change isolation level inside a transaction.');
+      }
+    }
+
     if (!connection) {
       throw Error('MySql Db Connection not provided');
     }
@@ -357,9 +378,10 @@ export class MySqlUtil {
    *
    * @param query SQL query
    * @param values object with replacement values
+   * @param isolationLevel Database isolation level for this query.
    *
    */
-  public async paramExecuteDirect(query: string, values?: unknown): Promise<any[]> {
+  public async paramExecuteDirect(query: string, values?: unknown, isolationLevel?: IsolationLevel): Promise<any[]> {
     const sqlParamValues = [];
 
     if (!this._dbConnectionPool) {
@@ -409,6 +431,9 @@ export class MySqlUtil {
     let result;
     // const time = process.hrtime();
     try {
+      if (isolationLevel) {
+        await this._dbConnectionPool.execute(`SET TRANSACTION ISOLATION LEVEL ${isolationLevel}`, null);
+      }
       result = await this._dbConnectionPool.execute(query, sqlParamValues);
     } catch (err) {
       AppLogger.error('mysql-util.ts', 'paramExecute', err);
