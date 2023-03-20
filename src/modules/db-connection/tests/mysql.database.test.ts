@@ -3,6 +3,7 @@
 /* eslint-disable-next-line @typescript-eslint/quotes */
 import type * as mysql from 'mysql2/promise';
 import { Pool } from 'mysql2/promise';
+import { IsolationLevel } from '../../../config/types';
 import { MySqlConnManager } from '../../db-connection/mysql-conn-manager';
 import { cleanDatabase, dropDatabase, setupDatabase } from '../../test-helpers/mysql-stage';
 import { env } from './../../../config/env';
@@ -294,5 +295,92 @@ describe('MySQL no pool', () => {
 
     const count = await conn.execute("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;");
     expect(count.length).toBe(2);
+  });
+});
+
+describe('Isolation level', () => {
+  let conn: mysql.Pool;
+  let sqlUtil: MySqlUtil;
+
+  beforeAll(async () => {
+    conn = (await MySqlConnManager.getInstance().getConnection()) as Pool;
+    sqlUtil = new MySqlUtil(conn);
+    await setupDatabase();
+  });
+
+  afterAll(async () => {
+    await dropDatabase();
+    await MySqlConnManager.getInstance().end();
+  });
+
+  it('Should query one with isolation level set', async () => {
+    await sqlUtil.paramExecuteDirect(
+      `INSERT INTO \`sql_lib_user\` (
+        email,
+        id
+      ) VALUES (
+        @email,
+        @id
+      )`,
+      {
+        email: `${Math.floor(Math.random() * 10_000)}@example.com`,
+        id: Math.floor(Math.random() * 1_000_000)
+      }
+    );
+
+    const count = await sqlUtil.paramExecuteDirect("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;", null, IsolationLevel.READ_UNCOMMITTED);
+    expect(count.length).toBe(1);
+    expect(count).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          COUNT: 1
+        })
+      ])
+    );
+  });
+
+  it('Should correctly query based on isolation level inside transaction ', async () => {
+    const connection = await sqlUtil.start(IsolationLevel.READ_COMMITTED);
+
+    await sqlUtil.paramExecute(
+      `INSERT INTO \`sql_lib_user\` (
+        email,
+        id
+      ) VALUES (@email, @id)`,
+      { email: Math.floor(Math.random() * 10_000) + '@example.com', id: Math.floor(Math.random() * 1_000_000) },
+      connection
+    );
+
+    const countStartDefaultIsolationLevel = await sqlUtil.paramExecute("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;");
+    expect(countStartDefaultIsolationLevel[0].COUNT).toBe(1);
+
+    const countStartUncommitedIsolationLevel = await sqlUtil.paramExecute(
+      "SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;",
+      null,
+      null,
+      IsolationLevel.READ_UNCOMMITTED
+    );
+    expect(countStartUncommitedIsolationLevel[0].COUNT).toBe(2);
+
+    await connection.commit();
+
+    const count = await sqlUtil.paramExecute("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;");
+    expect(count[0].COUNT).toBe(2);
+  });
+
+  it('Should throw if setting isolation level and connection in param execute', async () => {
+    const connection = await sqlUtil.start(IsolationLevel.READ_COMMITTED);
+
+    await expect(
+      sqlUtil.paramExecute(
+        `INSERT INTO \`sql_lib_user\` (
+        email,
+        id
+      ) VALUES (@email, @id)`,
+        { email: Math.floor(Math.random() * 10_000) + '@example.com', id: Math.floor(Math.random() * 1_000_000) },
+        connection,
+        IsolationLevel.READ_COMMITTED
+      )
+    ).rejects.toThrowError();
   });
 });
