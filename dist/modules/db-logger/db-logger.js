@@ -262,8 +262,8 @@ class DbLogger {
         }
     }
 }
-exports.DbLogger = DbLogger;
 DbLogger.loggerOK = false;
 DbLogger.workerLoggerOK = false;
 DbLogger.requestLoggerOK = false;
+exports.DbLogger = DbLogger;
 //# sourceMappingURL=db-logger.js.map

@@ -340,8 +340,8 @@ class MySqlConnManager {
         return pool;
     }
 }
-exports.MySqlConnManager = MySqlConnManager;
 MySqlConnManager._openConnections = [];
 MySqlConnManager._poolConnCloseListeners = [];
 MySqlConnManager._poolConnOpenListeners = [];
+exports.MySqlConnManager = MySqlConnManager;
 //# sourceMappingURL=mysql-conn-manager.js.map
