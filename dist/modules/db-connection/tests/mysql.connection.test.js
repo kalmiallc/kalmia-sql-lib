@@ -256,14 +256,14 @@ describe('MySql use init connection from pool with the transaction, and use dire
   `);
     });
     afterAll(async () => {
-        var _a, _b;
+        var _a;
         await util.paramExecute(`
     DROP TABLE IF EXISTS \`sql_lib_user\`;
   `);
         expect(util.getConnectionPool().pool._freeConnections.length).toBe(0);
         expect(util.getConnectionPool().pool._closed).toBe(false);
         const conn = util.getActiveConnection();
-        expect(mysql_conn_manager_1.MySqlConnManager.getInstance().getActiveConnections()[0].connectionId).toBe((_b = (_a = conn) === null || _a === void 0 ? void 0 : _a.connection) === null || _b === void 0 ? void 0 : _b.connectionId);
+        expect(mysql_conn_manager_1.MySqlConnManager.getInstance().getActiveConnections()[0].connectionId).toBe((_a = conn === null || conn === void 0 ? void 0 : conn.connection) === null || _a === void 0 ? void 0 : _a.connectionId);
         await conn.release();
         expect(util.getConnectionPool().pool._freeConnections.length).toBe(1);
         expect(mysql_conn_manager_1.MySqlConnManager.getInstance().getActiveConnections().length).toBe(0);
