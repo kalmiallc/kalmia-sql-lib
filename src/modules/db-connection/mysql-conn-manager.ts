@@ -428,10 +428,10 @@ export class MySqlConnManager {
     return { user, port, host, database, password, config, ssl };
   }
 
-  private getMySqlConnectionSync(config?: mysqlSync.ConnectionOptions): mysqlSync.Pool {
+  private getMySqlConnectionSync(config?: mysqlSync.PoolOptions): mysqlSync.Pool {
     const { user, port, host, database, password, ssl } = this.setDbCredentials(config);
 
-    const poolConfig: mysqlSync.ConnectionOptions = {
+    const poolConfig = {
       host,
       port,
       user,
