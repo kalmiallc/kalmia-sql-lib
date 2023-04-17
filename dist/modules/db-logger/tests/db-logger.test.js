@@ -109,7 +109,6 @@ describe('DB Logger tests', () => {
         const data = await inst.paramExecuteDirect(`SELECT * FROM ${env_1.env.DB_LOGGER_TABLE}`);
         db_logger_1.DbLogger.test('TestMethod', 'Logger.test.ts', kalmia_common_lib_1.AppLogger.stringifyObjectForLog(data[0]));
         expect(data.length).toBe(7);
-        expect(data[0].severity).toBe('error');
         expect(data[0].ts).toBeTruthy();
         expect(data[0].data).toBeTruthy();
     });

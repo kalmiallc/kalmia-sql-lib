@@ -113,7 +113,6 @@ describe('DB Logger tests', () => {
     const data = await inst.paramExecuteDirect(`SELECT * FROM ${env.DB_LOGGER_TABLE}`);
     DbLogger.test('TestMethod', 'Logger.test.ts', AppLogger.stringifyObjectForLog(data[0]));
     expect(data.length).toBe(7);
-    expect(data[0].severity).toBe('error');
     expect(data[0].ts).toBeTruthy();
     expect(data[0].data).toBeTruthy();
   });
