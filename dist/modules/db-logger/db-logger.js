@@ -17,7 +17,7 @@ class DbLogger {
     static async init() {
         try {
             if (!DbLogger.sqlInst) {
-                DbLogger.sqlInst = await mysql_util_1.MySqlUtil.init();
+                DbLogger.sqlInst = await mysql_util_1.MySqlUtil.init(true);
                 kalmia_common_lib_1.AppLogger.info('DbLogger', 'DbLogger.ts', 'Logger connection initialized');
             }
         }
