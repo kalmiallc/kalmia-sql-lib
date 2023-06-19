@@ -57,7 +57,7 @@ export class DbLogger {
   public static async init() {
     try {
       if (!DbLogger.sqlInst) {
-        DbLogger.sqlInst = await MySqlUtil.init();
+        DbLogger.sqlInst = await MySqlUtil.init(true);
         AppLogger.info('DbLogger', 'DbLogger.ts', 'Logger connection initialized');
       }
     } catch (error) {

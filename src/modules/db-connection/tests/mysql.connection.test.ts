@@ -61,6 +61,15 @@ describe('MySQL coon pool automatic', () => {
     }
   });
 
+  it('Reinitialize connection', async () => {
+    let connLoc = await MySqlConnManager.getInstance().getConnection();
+    await MySqlConnManager.getInstance().end();
+    connLoc = await MySqlConnManager.getInstance().getConnection();
+    const sU = new MySqlUtil(connLoc);
+    const dat = await sU.paramExecuteDirect("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;");
+    expect(dat.length).toBeGreaterThan(0);
+  });
+
   it('Query should use two connections', async () => {
     const secondConn = (await MySqlConnManager.getInstance().getConnection('secondary')) as Pool;
     const secondUtil = new MySqlUtil(secondConn);
