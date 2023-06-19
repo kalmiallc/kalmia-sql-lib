@@ -16,12 +16,19 @@ class DbLogger {
     }
     static async init() {
         try {
-            DbLogger.sqlInst = await mysql_util_1.MySqlUtil.init();
-            kalmia_common_lib_1.AppLogger.info('DbLogger', 'DbLogger.ts', 'Logger connection initialized');
+            if (!DbLogger.sqlInst) {
+                DbLogger.sqlInst = await mysql_util_1.MySqlUtil.init();
+                kalmia_common_lib_1.AppLogger.info('DbLogger', 'DbLogger.ts', 'Logger connection initialized');
+            }
         }
         catch (error) {
             kalmia_common_lib_1.AppLogger.error('DbLogger', 'DbLogger.ts', 'Error initializing db logger: ' + error);
         }
+    }
+    static async checkInstance() {
+        await DbLogger.checkIfDbLoggerInitialized();
+        await DbLogger.checkIfWorkerLoggerInitialized();
+        await DbLogger.checkIfRequestLoggerInitialized();
     }
     static async checkIfDbLoggerInitialized() {
         if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
@@ -52,7 +59,7 @@ class DbLogger {
     }
     static async checkIfLogDbExists(table) {
         if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
-            await DbLogger.init();
+            await DbLogger.checkInstance();
         }
         if (!DbLogger.sqlInst.getConnectionPool()) {
             kalmia_common_lib_1.AppLogger.warn('DbLogger', 'DbLogger.ts', 'Error for logger existence check , no connection pool');
@@ -85,6 +92,7 @@ class DbLogger {
     }
     static async clearStandardLogs() {
         try {
+            await DbLogger.checkInstance();
             kalmia_common_lib_1.AppLogger.info('DbLogger', 'DbLogger.ts', `clearStandardLogs - running for retention: ${env_1.env.DB_LOGGER_RETENTION}`);
             await DbLogger.sqlInst.paramExecute(`DELETE FROM \`${env_1.env.DB_LOGGER_TABLE}\` WHERE DATEDIFF(NOW(), ts) >= ${env_1.env.DB_LOGGER_RETENTION};`);
         }
@@ -94,6 +102,7 @@ class DbLogger {
     }
     static async clearWorkerLogs() {
         try {
+            await DbLogger.checkInstance();
             kalmia_common_lib_1.AppLogger.info('DbLogger', 'DbLogger.ts', `clearWorkerLogs - running for retention: ${env_1.env.DB_LOGGER_WORKER_RETENTION}`);
             await DbLogger.sqlInst.paramExecute(`DELETE FROM \`${env_1.env.DB_LOGGER_WORKER_TABLE}\` WHERE DATEDIFF(NOW(), ts) >= ${env_1.env.DB_LOGGER_WORKER_RETENTION};`);
         }
@@ -103,6 +112,7 @@ class DbLogger {
     }
     static async clearRequestLogs() {
         try {
+            await DbLogger.checkInstance();
             kalmia_common_lib_1.AppLogger.info('DbLogger', 'DbLogger.ts', `clearRequestLogs - running for retention: ${env_1.env.DB_LOGGER_REQUEST_RETENTION}`);
             await DbLogger.sqlInst.paramExecute(`DELETE FROM \`${env_1.env.DB_LOGGER_REQUEST_TABLE}\` WHERE DATEDIFF(NOW(), _createTime) >= ${env_1.env.DB_LOGGER_REQUEST_RETENTION};`);
         }
@@ -114,43 +124,57 @@ class DbLogger {
         if (env_1.env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
             kalmia_common_lib_1.AppLogger.info(fileName, methodName, args);
         }
-        void DbLogger.writeDbLog(fileName, methodName, 'info', args.join(' ')).catch();
+        DbLogger.checkInstance().then(() => {
+            void DbLogger.writeDbLog(fileName, methodName, 'info', args.join(' ')).catch();
+        });
     }
     static warn(fileName, methodName, ...args) {
         if (env_1.env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
             kalmia_common_lib_1.AppLogger.warn(fileName, methodName, args);
         }
-        void DbLogger.writeDbLog(fileName, methodName, 'warn', args.join(' ')).catch();
+        DbLogger.checkInstance().then(() => {
+            void DbLogger.writeDbLog(fileName, methodName, 'warn', args.join(' ')).catch();
+        });
     }
     static debug(fileName, methodName, ...args) {
         if (env_1.env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
             kalmia_common_lib_1.AppLogger.debug(fileName, methodName, args);
         }
-        void DbLogger.writeDbLog(fileName, methodName, 'debug', args.join(' ')).catch();
+        DbLogger.checkInstance().then(() => {
+            void DbLogger.writeDbLog(fileName, methodName, 'debug', args.join(' ')).catch();
+        });
     }
     static trace(fileName, methodName, ...args) {
         if (env_1.env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
             kalmia_common_lib_1.AppLogger.trace(fileName, methodName, args);
         }
-        void DbLogger.writeDbLog(fileName, methodName, 'trace', args.join(' ')).catch();
+        DbLogger.checkInstance().then(() => {
+            void DbLogger.writeDbLog(fileName, methodName, 'trace', args.join(' ')).catch();
+        });
     }
     static error(fileName, methodName, ...args) {
         if (env_1.env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
             kalmia_common_lib_1.AppLogger.error(fileName, methodName, args);
         }
-        void DbLogger.writeDbLog(fileName, methodName, 'error', args.join(' ')).catch();
+        DbLogger.checkInstance().then(() => {
+            void DbLogger.writeDbLog(fileName, methodName, 'error', args.join(' ')).catch();
+        });
     }
     static test(fileName, methodName, ...args) {
         if (env_1.env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
             kalmia_common_lib_1.AppLogger.test(fileName, methodName, args);
         }
-        void DbLogger.writeDbLog(fileName, methodName, 'test', args.join(' ')).catch();
+        DbLogger.checkInstance().then(() => {
+            void DbLogger.writeDbLog(fileName, methodName, 'test', args.join(' ')).catch();
+        });
     }
     static db(fileName, methodName, ...args) {
         if (env_1.env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
             kalmia_common_lib_1.AppLogger.db(fileName, methodName, args);
         }
-        void DbLogger.writeDbLog(fileName, methodName, 'db', args.join(' ')).catch();
+        DbLogger.checkInstance().then(() => {
+            void DbLogger.writeDbLog(fileName, methodName, 'db', args.join(' ')).catch();
+        });
     }
     /**
      * Async version for writing to db log.
@@ -180,7 +204,9 @@ class DbLogger {
      * @param err Error object
      */
     static logWorker(status, worker, message, data, err, uuid) {
-        DbLogger.logWorkerAsync(status, worker, message, data, err, uuid).catch();
+        DbLogger.checkIfWorkerLoggerInitialized().then(() => {
+            DbLogger.logWorkerAsync(status, worker, message, data, err, uuid).catch();
+        });
     }
     /**
      * Write request to database log. Function is sync, and will not fail in case of an error. There is no control on the actual write.
@@ -188,7 +214,9 @@ class DbLogger {
      * @param data RequestLogData
      */
     static logRequest(data) {
-        DbLogger.logRequestAsync(data).catch();
+        DbLogger.checkIfRequestLoggerInitialized().then(() => {
+            DbLogger.logRequestAsync(data).catch();
+        });
     }
     /**
      * Async version of logRRequest

@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const kalmia_common_lib_1 = require("kalmia-common-lib");
 const env_1 = require("../../../config/env");
 const types_1 = require("../../../config/types");
-const mysql_conn_manager_1 = require("../../db-connection/mysql-conn-manager");
 const migrations_1 = require("../../test-helpers/migrations");
 const db_logger_1 = require("../db-logger");
 const mysql_util_1 = require("./../../db-connection/mysql-util");
@@ -24,8 +23,6 @@ describe('DB Logger tests', () => {
     });
     afterAll(async () => {
         await migrations_1.MigrationHelper.downgradeDatabase();
-        await db_logger_1.DbLogger.end();
-        await mysql_conn_manager_1.MySqlConnManager.getInstance().end();
     });
     afterEach(async () => {
         const inst = await mysql_util_1.MySqlUtil.init();
@@ -146,8 +143,6 @@ describe('DB Logger clear log tests', () => {
     });
     afterAll(async () => {
         await migrations_1.MigrationHelper.downgradeDatabase();
-        await db_logger_1.DbLogger.end();
-        await mysql_conn_manager_1.MySqlConnManager.getInstance().end();
     });
     afterEach(async () => {
         const inst = await mysql_util_1.MySqlUtil.init();
@@ -167,6 +162,7 @@ describe('DB Logger clear log tests', () => {
         expect(data.length).toBe(4);
         env_1.env.DB_LOGGER_RETENTION = 0;
         await db_logger_1.DbLogger.clearStandardLogs();
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         const data2 = await inst.paramExecuteDirect(`SELECT * FROM ${env_1.env.DB_LOGGER_TABLE}`);
         expect(data2.length).toBe(0);
     });
@@ -180,6 +176,7 @@ describe('DB Logger clear log tests', () => {
         expect(data.length).toBe(3);
         env_1.env.DB_LOGGER_WORKER_RETENTION = 0;
         await db_logger_1.DbLogger.clearWorkerLogs();
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         const data2 = await inst.paramExecuteDirect(`SELECT * FROM ${env_1.env.DB_LOGGER_WORKER_TABLE}`);
         expect(data2.length).toBe(0);
     });
@@ -218,6 +215,7 @@ describe('DB Logger clear log tests', () => {
         expect(data.length).toBe(2);
         env_1.env.DB_LOGGER_REQUEST_RETENTION = 0;
         await db_logger_1.DbLogger.clearRequestLogs();
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         const data2 = await inst.paramExecuteDirect(`SELECT * FROM ${env_1.env.DB_LOGGER_REQUEST_TABLE}`);
         expect(data2.length).toBe(0);
     });

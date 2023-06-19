@@ -56,11 +56,19 @@ export class DbLogger {
 
   public static async init() {
     try {
-      DbLogger.sqlInst = await MySqlUtil.init();
-      AppLogger.info('DbLogger', 'DbLogger.ts', 'Logger connection initialized');
+      if (!DbLogger.sqlInst) {
+        DbLogger.sqlInst = await MySqlUtil.init();
+        AppLogger.info('DbLogger', 'DbLogger.ts', 'Logger connection initialized');
+      }
     } catch (error) {
       AppLogger.error('DbLogger', 'DbLogger.ts', 'Error initializing db logger: ' + error);
     }
+  }
+
+  public static async checkInstance() {
+    await DbLogger.checkIfDbLoggerInitialized();
+    await DbLogger.checkIfWorkerLoggerInitialized();
+    await DbLogger.checkIfRequestLoggerInitialized();
   }
 
   public static async checkIfDbLoggerInitialized(): Promise<void> {
@@ -95,7 +103,7 @@ export class DbLogger {
 
   public static async checkIfLogDbExists(table): Promise<void> {
     if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
-      await DbLogger.init();
+      await DbLogger.checkInstance();
     }
     if (!DbLogger.sqlInst.getConnectionPool()) {
       AppLogger.warn('DbLogger', 'DbLogger.ts', 'Error for logger existence check , no connection pool');
@@ -128,6 +136,7 @@ export class DbLogger {
 
   public static async clearStandardLogs(): Promise<any> {
     try {
+      await DbLogger.checkInstance();
       AppLogger.info('DbLogger', 'DbLogger.ts', `clearStandardLogs - running for retention: ${env.DB_LOGGER_RETENTION}`);
       await DbLogger.sqlInst.paramExecute(`DELETE FROM \`${env.DB_LOGGER_TABLE}\` WHERE DATEDIFF(NOW(), ts) >= ${env.DB_LOGGER_RETENTION};`);
     } catch (error) {
@@ -137,6 +146,7 @@ export class DbLogger {
 
   public static async clearWorkerLogs(): Promise<any> {
     try {
+      await DbLogger.checkInstance();
       AppLogger.info('DbLogger', 'DbLogger.ts', `clearWorkerLogs - running for retention: ${env.DB_LOGGER_WORKER_RETENTION}`);
       await DbLogger.sqlInst.paramExecute(
         `DELETE FROM \`${env.DB_LOGGER_WORKER_TABLE}\` WHERE DATEDIFF(NOW(), ts) >= ${env.DB_LOGGER_WORKER_RETENTION};`
@@ -148,6 +158,7 @@ export class DbLogger {
 
   public static async clearRequestLogs(): Promise<any> {
     try {
+      await DbLogger.checkInstance();
       AppLogger.info('DbLogger', 'DbLogger.ts', `clearRequestLogs - running for retention: ${env.DB_LOGGER_REQUEST_RETENTION}`);
       await DbLogger.sqlInst.paramExecute(
         `DELETE FROM \`${env.DB_LOGGER_REQUEST_TABLE}\` WHERE DATEDIFF(NOW(), _createTime) >= ${env.DB_LOGGER_REQUEST_RETENTION};`
@@ -161,49 +172,63 @@ export class DbLogger {
     if (env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
       AppLogger.info(fileName, methodName, args);
     }
-    void DbLogger.writeDbLog(fileName, methodName, 'info', args.join(' ')).catch();
+    DbLogger.checkInstance().then(() => {
+      void DbLogger.writeDbLog(fileName, methodName, 'info', args.join(' ')).catch();
+    });
   }
 
   public static warn(fileName: string, methodName: string, ...args) {
     if (env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
       AppLogger.warn(fileName, methodName, args);
     }
-    void DbLogger.writeDbLog(fileName, methodName, 'warn', args.join(' ')).catch();
+    DbLogger.checkInstance().then(() => {
+      void DbLogger.writeDbLog(fileName, methodName, 'warn', args.join(' ')).catch();
+    });
   }
 
   public static debug(fileName: string, methodName: string, ...args) {
     if (env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
       AppLogger.debug(fileName, methodName, args);
     }
-    void DbLogger.writeDbLog(fileName, methodName, 'debug', args.join(' ')).catch();
+    DbLogger.checkInstance().then(() => {
+      void DbLogger.writeDbLog(fileName, methodName, 'debug', args.join(' ')).catch();
+    });
   }
 
   public static trace(fileName: string, methodName: string, ...args) {
     if (env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
       AppLogger.trace(fileName, methodName, args);
     }
-    void DbLogger.writeDbLog(fileName, methodName, 'trace', args.join(' ')).catch();
+    DbLogger.checkInstance().then(() => {
+      void DbLogger.writeDbLog(fileName, methodName, 'trace', args.join(' ')).catch();
+    });
   }
 
   public static error(fileName: string, methodName: string, ...args) {
     if (env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
       AppLogger.error(fileName, methodName, args);
     }
-    void DbLogger.writeDbLog(fileName, methodName, 'error', args.join(' ')).catch();
+    DbLogger.checkInstance().then(() => {
+      void DbLogger.writeDbLog(fileName, methodName, 'error', args.join(' ')).catch();
+    });
   }
 
   public static test(fileName: string, methodName: string, ...args) {
     if (env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
       AppLogger.test(fileName, methodName, args);
     }
-    void DbLogger.writeDbLog(fileName, methodName, 'test', args.join(' ')).catch();
+    DbLogger.checkInstance().then(() => {
+      void DbLogger.writeDbLog(fileName, methodName, 'test', args.join(' ')).catch();
+    });
   }
 
   public static db(fileName: string, methodName: string, ...args) {
     if (env.DB_LOGGER_LOG_TO_CONSOLE === 1) {
       AppLogger.db(fileName, methodName, args);
     }
-    void DbLogger.writeDbLog(fileName, methodName, 'db', args.join(' ')).catch();
+    DbLogger.checkInstance().then(() => {
+      void DbLogger.writeDbLog(fileName, methodName, 'db', args.join(' ')).catch();
+    });
   }
 
   /**
@@ -238,7 +263,9 @@ export class DbLogger {
    * @param err Error object
    */
   public static logWorker(status: WorkerLogStatus, worker: string, message: string, data?: any, err?: Error, uuid?: string) {
-    DbLogger.logWorkerAsync(status, worker, message, data, err, uuid).catch();
+    DbLogger.checkIfWorkerLoggerInitialized().then(() => {
+      DbLogger.logWorkerAsync(status, worker, message, data, err, uuid).catch();
+    });
   }
 
   /**
@@ -248,7 +275,9 @@ export class DbLogger {
    */
 
   public static logRequest(data: RequestLogData) {
-    DbLogger.logRequestAsync(data).catch();
+    DbLogger.checkIfRequestLoggerInitialized().then(() => {
+      DbLogger.logRequestAsync(data).catch();
+    });
   }
 
   /**
