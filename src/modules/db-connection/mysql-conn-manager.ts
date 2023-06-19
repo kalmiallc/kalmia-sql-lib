@@ -87,20 +87,7 @@ export class MySqlConnManager {
    * @param config (optional) connection config
    */
   public async getConnection(databaseIdentifier: string = DbConnectionType.PRIMARY, config: mysql.ConnectionOptions = {}): Promise<mysql.Pool> {
-    if (!this._connections[databaseIdentifier]) {
-      this._connectionDetails[databaseIdentifier] = this.populateDetails(config);
-      this._connections[databaseIdentifier] = await this.getMySqlPoolConnection(config);
-    }
-    AppLogger.db(
-      'mysql-conn-manager.ts',
-      'getConnection',
-      'Returning pool connection from db manager for',
-      databaseIdentifier,
-      AppLogger.stringifyObjectForLog({
-        ...this._connectionDetails[databaseIdentifier],
-        ssl: this._connectionDetails[databaseIdentifier].ssl ? '***' : undefined
-      })
-    );
+    await this.reinitializeConnection(databaseIdentifier, config);
     return this._connections[databaseIdentifier] as mysql.Pool;
   }
 

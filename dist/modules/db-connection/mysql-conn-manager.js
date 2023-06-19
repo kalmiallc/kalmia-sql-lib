@@ -79,11 +79,7 @@ class MySqlConnManager {
      * @param config (optional) connection config
      */
     async getConnection(databaseIdentifier = types_1.DbConnectionType.PRIMARY, config = {}) {
-        if (!this._connections[databaseIdentifier]) {
-            this._connectionDetails[databaseIdentifier] = this.populateDetails(config);
-            this._connections[databaseIdentifier] = await this.getMySqlPoolConnection(config);
-        }
-        kalmia_common_lib_1.AppLogger.db('mysql-conn-manager.ts', 'getConnection', 'Returning pool connection from db manager for', databaseIdentifier, kalmia_common_lib_1.AppLogger.stringifyObjectForLog(Object.assign(Object.assign({}, this._connectionDetails[databaseIdentifier]), { ssl: this._connectionDetails[databaseIdentifier].ssl ? '***' : undefined })));
+        await this.reinitializeConnection(databaseIdentifier, config);
         return this._connections[databaseIdentifier];
     }
     /** *

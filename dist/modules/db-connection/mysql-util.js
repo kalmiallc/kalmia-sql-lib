@@ -120,10 +120,11 @@ class MySqlUtil {
      * @returns array of results from database
      */
     async call(procedure, data, connection = this._currentPooledConnection, options = {}) {
+        var _a;
         let isSingleTrans = false;
         if (!connection) {
             isSingleTrans = true;
-            connection = await this._dbConnectionPool.getConnection();
+            connection = await ((_a = this._dbConnectionPool) === null || _a === void 0 ? void 0 : _a.getConnection());
         }
         if (!connection) {
             throw Error('MySql Db Connection not provided');
@@ -193,8 +194,9 @@ class MySqlUtil {
      * @returns connection from the pool.
      */
     async start(isolationLevel) {
+        var _a;
         // await this.db.query('SET SESSION autocommit = 0; START TRANSACTION;');
-        const conn = await this._dbConnectionPool.getConnection();
+        const conn = await ((_a = this._dbConnectionPool) === null || _a === void 0 ? void 0 : _a.getConnection());
         if (!conn) {
             throw Error('MySql Db Connection not provided');
         }
@@ -255,11 +257,12 @@ class MySqlUtil {
      * @param isolationLevel Database isolation level for this query. Isolation level will only affect next query, execution, the it will be reset to default.
      */
     async paramExecute(query, values, connection = this._currentPooledConnection, isolationLevel) {
+        var _a;
         const sqlParamValues = [];
         let isSingleTrans = false;
         if (!connection) {
             isSingleTrans = true;
-            connection = await this._dbConnectionPool.getConnection();
+            connection = await ((_a = this._dbConnectionPool) === null || _a === void 0 ? void 0 : _a.getConnection());
         }
         // Set isolation level of query. Can only be changed if not a transaction.
         if (isolationLevel) {
