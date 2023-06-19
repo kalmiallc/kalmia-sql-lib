@@ -141,7 +141,7 @@ export class MySqlUtil {
     let isSingleTrans = false;
     if (!connection) {
       isSingleTrans = true;
-      connection = await this._dbConnectionPool.getConnection();
+      connection = await this._dbConnectionPool?.getConnection();
     }
     if (!connection) {
       throw Error('MySql Db Connection not provided');
@@ -222,7 +222,7 @@ export class MySqlUtil {
 
   public async start(isolationLevel?: IsolationLevel): Promise<PoolConnection> {
     // await this.db.query('SET SESSION autocommit = 0; START TRANSACTION;');
-    const conn = await (this._dbConnectionPool as mysql.Pool).getConnection();
+    const conn = await (this._dbConnectionPool as mysql.Pool)?.getConnection();
     if (!conn) {
       throw Error('MySql Db Connection not provided');
     }
@@ -296,7 +296,7 @@ export class MySqlUtil {
 
     if (!connection) {
       isSingleTrans = true;
-      connection = await this._dbConnectionPool.getConnection();
+      connection = await this._dbConnectionPool?.getConnection();
     }
 
     // Set isolation level of query. Can only be changed if not a transaction.
