@@ -24,7 +24,11 @@ class MySqlUtil {
      * @returns {Promise<MySqlUtil>} returns instance of MySqlUtil
      */
     static async init(setPoledInstance = false) {
-        const conn = await mysql_conn_manager_1.MySqlConnManager.getInstance().getConnection();
+        const connManager = mysql_conn_manager_1.MySqlConnManager.getInstance();
+        let conn = await mysql_conn_manager_1.MySqlConnManager.getInstance().getConnection();
+        if (!mysql_conn_manager_1.MySqlConnManager.testDirectPoolConnection(conn)) {
+            conn = await connManager.reinitializeConnection();
+        }
         const instance = new MySqlUtil(conn);
         if (setPoledInstance) {
             const singleConnectionFromPool = await instance._dbConnectionPool.getConnection();
@@ -56,6 +60,11 @@ class MySqlUtil {
         await conn.beginTransaction();
         kalmia_common_lib_1.AppLogger.db('mysql-util.ts', 'initAndStartTrans', 'DB ', 'Start transaction');
         return { sql: util, conn };
+    }
+    async checkAndReInitConnectionPool() {
+        if (!(await mysql_conn_manager_1.MySqlConnManager.testDirectPoolConnection(this._dbConnectionPool))) {
+            this._dbConnectionPool = await mysql_conn_manager_1.MySqlConnManager.getInstance().reinitializeConnection();
+        }
     }
     /**
      * End all active connections. Also close active instance of connection form the pool.
@@ -168,6 +177,7 @@ class MySqlUtil {
         if (!this._dbConnectionPool) {
             await MySqlUtil.init();
         }
+        await this.checkAndReInitConnectionPool();
         const result = await this._dbConnectionPool.query(query, this.mapValues(data));
         for (const resultSet of result[0]) {
             if (resultSet.length && resultSet[0].ErrorCode > 0) {
@@ -260,6 +270,7 @@ class MySqlUtil {
         var _a;
         const sqlParamValues = [];
         let isSingleTrans = false;
+        await this.checkAndReInitConnectionPool();
         if (!connection) {
             isSingleTrans = true;
             connection = await ((_a = this._dbConnectionPool) === null || _a === void 0 ? void 0 : _a.getConnection());
@@ -345,6 +356,7 @@ class MySqlUtil {
         if (!this._dbConnectionPool) {
             await MySqlUtil.init();
         }
+        await this.checkAndReInitConnectionPool();
         if (values) {
             // split query to array to find right order of variables
             const queryArray = SqlString.escapeId(query)
@@ -383,6 +395,7 @@ class MySqlUtil {
         kalmia_common_lib_1.AppLogger.db('mysql-util.ts', 'paramExecute', 'DB ', this.mapValues(sqlParamValues, true).join(';'));
         let result;
         // const time = process.hrtime();
+        await this.checkAndReInitConnectionPool();
         try {
             if (isolationLevel) {
                 await this._dbConnectionPool.execute(`SET TRANSACTION ISOLATION LEVEL ${isolationLevel}`, null);

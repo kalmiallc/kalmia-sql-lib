@@ -37,6 +37,7 @@ export declare class MySqlUtil {
         sql: MySqlUtil;
         conn: PoolConnection;
     }>;
+    checkAndReInitConnectionPool(): Promise<void>;
     /**
      * End all active connections. Also close active instance of connection form the pool.
      */
