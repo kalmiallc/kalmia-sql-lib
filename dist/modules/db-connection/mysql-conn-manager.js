@@ -24,6 +24,23 @@ class MySqlConnManager {
         this._connectionSyncDetails = {};
     }
     /**
+     * Test if connection pool is not closed
+     *
+     * @param mySqlConnection
+     *
+     * @returns
+     */
+    static async testDirectPoolConnection(mySqlConnection) {
+        try {
+            await mySqlConnection.execute('SELECT id, user FROM information_schema.processlist LIMIT 1;');
+            return true;
+        }
+        catch (e) {
+            kalmia_common_lib_1.AppLogger.info('mysql-conn-manager.ts', 'testDirectPoolConnection', 'Connection closed');
+            return false;
+        }
+    }
+    /**
      * Gets MySqlConnectionManager instance
      *
      * @param conn (optional) connection to set as primary
@@ -47,12 +64,12 @@ class MySqlConnManager {
     static addConnCloseListener(listener) {
         MySqlConnManager._poolConnCloseListeners.push(listener);
     }
-    static async testMySqlPoolConnection(mySqlConnection) {
+    static async testMySqlCon(mySqlConnection) {
         try {
             const conn = await mySqlConnection.getConnection();
             if (conn.connection.stream.readyState !== 'open') {
                 await conn.release();
-                throw new Error('Test pool connection unsuccessful!');
+                throw new Error('Connection created form pool is not open!');
             }
             await conn.release();
         }
@@ -79,7 +96,21 @@ class MySqlConnManager {
      * @param config (optional) connection config
      */
     async getConnection(databaseIdentifier = types_1.DbConnectionType.PRIMARY, config = {}) {
-        await this.reinitializeConnection(databaseIdentifier, config);
+        if (!this._connections[databaseIdentifier]) {
+            this._connectionDetails[databaseIdentifier] = this.populateDetails(config);
+            this._connections[databaseIdentifier] = await this.getMySqlPoolConnection(config);
+        }
+        try {
+            const isAlive = await MySqlConnManager.testDirectPoolConnection(this._connections[databaseIdentifier]);
+            if (!isAlive) {
+                await this.reinitializeConnection(databaseIdentifier, config);
+            }
+        }
+        catch (e) {
+            console.error('Error testing connection', e);
+        }
+        kalmia_common_lib_1.AppLogger.db('mysql-conn-manager.ts', 'getConnection', 'Returning pool connection from db manager for', databaseIdentifier, kalmia_common_lib_1.AppLogger.stringifyObjectForLog(Object.assign(Object.assign({}, this._connectionDetails[databaseIdentifier]), { ssl: this._connectionDetails[databaseIdentifier].ssl ? '***' : undefined })));
+        // await this.reinitializeConnection(databaseIdentifier, config);
         return this._connections[databaseIdentifier];
     }
     /** *
@@ -156,7 +187,12 @@ class MySqlConnManager {
         var _a, _b;
         if (this._connections[databaseIdentifier]) {
             kalmia_common_lib_1.AppLogger.db('mysql-conn-manager.ts', 'end', 'Ending connection mysql for', databaseIdentifier, kalmia_common_lib_1.AppLogger.stringifyObjectForLog(Object.assign(Object.assign({}, (_b = (_a = this._connections[databaseIdentifier].pool) === null || _a === void 0 ? void 0 : _a.config) === null || _b === void 0 ? void 0 : _b.connectionConfig), this._connections[databaseIdentifier].config)));
-            await this._connections[databaseIdentifier].end();
+            try {
+                await this._connections[databaseIdentifier].end();
+            }
+            catch (e) {
+                kalmia_common_lib_1.AppLogger.warn('mysql-conn-manager.ts', 'end', 'Error ending connection', e);
+            }
             this._connections[databaseIdentifier] = null;
             this._connectionDetails[databaseIdentifier] = null;
             MySqlConnManager._openConnections = [];
@@ -237,7 +273,7 @@ class MySqlConnManager {
                 password,
                 user, connectTimeout: env_1.env.MYSQL_CONNECTION_TIMEOUT, debug: env_1.env.MYSQL_DEBUG, timezone: env_1.env.MYSQL_TIMEZONE, decimalNumbers: true, ssl }));
             await MySqlConnManager.testMySqlNoPoolConnection(conn);
-            kalmia_common_lib_1.AppLogger.info('mysql-conn-manager.ts', 'getMySqlNoPoolConnection', `[DBM] Successfully created MySQL connection for ${host}:${port} | DatabaseName: ${database}`);
+            kalmia_common_lib_1.AppLogger.db('mysql-conn-manager.ts', 'getMySqlNoPoolConnection', `[DBM] Successfully created MySQL connection for ${host}:${port} | DatabaseName: ${database}`);
             MySqlConnManager._openConnections.push(conn);
             return conn;
         }
@@ -256,7 +292,7 @@ class MySqlConnManager {
                 database,
                 password,
                 user, waitForConnections: true, connectTimeout: env_1.env.MYSQL_CONNECTION_TIMEOUT, decimalNumbers: true, connectionLimit: (config === null || config === void 0 ? void 0 : config.connectionLimit) || env_1.env.MYSQL_POOL_SIZE, queueLimit: 100, timezone: env_1.env.MYSQL_TIMEZONE, ssl }));
-            await MySqlConnManager.testMySqlPoolConnection(conn);
+            await MySqlConnManager.testMySqlCon(conn);
             kalmia_common_lib_1.AppLogger.info('mysql-conn-manager.ts', 'getMySqlLocalPoolConnection', `[DBM] Successfully created MySQL pool for  ${host}:${port} | DatabaseName: ${database}`);
             // state listeners
             conn.on('acquire', function (connection) {

@@ -29,7 +29,12 @@ export class MySqlUtil {
    * @returns {Promise<MySqlUtil>} returns instance of MySqlUtil
    */
   public static async init(setPoledInstance = false): Promise<MySqlUtil> {
-    const conn = await MySqlConnManager.getInstance().getConnection();
+    const connManager = MySqlConnManager.getInstance();
+    let conn = await MySqlConnManager.getInstance().getConnection();
+    if (!MySqlConnManager.testDirectPoolConnection(conn)) {
+      conn = await connManager.reinitializeConnection();
+    }
+
     const instance = new MySqlUtil(conn);
     if (setPoledInstance) {
       const singleConnectionFromPool = await instance._dbConnectionPool.getConnection();
@@ -63,6 +68,12 @@ export class MySqlUtil {
     await conn.beginTransaction();
     AppLogger.db('mysql-util.ts', 'initAndStartTrans', 'DB ', 'Start transaction');
     return { sql: util, conn };
+  }
+
+  public async checkAndReInitConnectionPool() {
+    if (!(await MySqlConnManager.testDirectPoolConnection(this._dbConnectionPool))) {
+      this._dbConnectionPool = await MySqlConnManager.getInstance().reinitializeConnection();
+    }
   }
 
   /**
@@ -192,6 +203,7 @@ export class MySqlUtil {
     if (!this._dbConnectionPool) {
       await MySqlUtil.init();
     }
+    await this.checkAndReInitConnectionPool();
 
     const result = await this._dbConnectionPool.query(query, this.mapValues(data));
 
@@ -294,6 +306,8 @@ export class MySqlUtil {
     const sqlParamValues = [];
     let isSingleTrans = false;
 
+    await this.checkAndReInitConnectionPool();
+
     if (!connection) {
       isSingleTrans = true;
       connection = await this._dbConnectionPool?.getConnection();
@@ -387,6 +401,7 @@ export class MySqlUtil {
     if (!this._dbConnectionPool) {
       await MySqlUtil.init();
     }
+    await this.checkAndReInitConnectionPool();
 
     if (values) {
       // split query to array to find right order of variables
@@ -430,6 +445,8 @@ export class MySqlUtil {
 
     let result;
     // const time = process.hrtime();
+
+    await this.checkAndReInitConnectionPool();
     try {
       if (isolationLevel) {
         await this._dbConnectionPool.execute(`SET TRANSACTION ISOLATION LEVEL ${isolationLevel}`, null);

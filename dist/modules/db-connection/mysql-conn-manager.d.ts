@@ -12,6 +12,14 @@ export declare class MySqlConnManager {
     private _connectionSyncDetails;
     private constructor();
     /**
+     * Test if connection pool is not closed
+     *
+     * @param mySqlConnection
+     *
+     * @returns
+     */
+    static testDirectPoolConnection(mySqlConnection: mysql.Pool): Promise<boolean>;
+    /**
      * Gets MySqlConnectionManager instance
      *
      * @param conn (optional) connection to set as primary
@@ -21,7 +29,7 @@ export declare class MySqlConnManager {
     static updateEnv(newEnv: any): void;
     static addConnOpenListener(listener: (conn: mysql.PoolConnection | mysql.Connection) => void): void;
     static addConnCloseListener(listener: (conn: any) => void): void;
-    private static testMySqlPoolConnection;
+    private static testMySqlCon;
     private static testMySqlNoPoolConnection;
     /**
      * Provides database connection as pool assigned to identifier, defaulting to primary.
