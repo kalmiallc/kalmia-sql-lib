@@ -39,7 +39,7 @@ export class MySqlConnManager {
       await mySqlConnection.execute('SELECT id, user FROM information_schema.processlist LIMIT 1;');
       return true;
     } catch (e) {
-      AppLogger.info('mysql-conn-manager.ts', 'testDirectPoolConnection', 'Connection closed');
+      AppLogger.warn('mysql-conn-manager.ts', 'testDirectPoolConnection', 'Pool connection closed, it will probably be reinitialized');
       return false;
     }
   }
