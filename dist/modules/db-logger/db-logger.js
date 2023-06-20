@@ -45,6 +45,7 @@ class DbLogger {
         if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
             await DbLogger.init();
         }
+        await DbLogger.sqlInst.checkAndReInitConnectionPool();
         if (!DbLogger.workerLoggerOK) {
             await DbLogger.checkIfLogDbExists(env_1.env.DB_LOGGER_WORKER_TABLE);
         }
@@ -53,6 +54,7 @@ class DbLogger {
         if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
             await DbLogger.init();
         }
+        await DbLogger.sqlInst.checkAndReInitConnectionPool();
         if (!DbLogger.requestLoggerOK) {
             await DbLogger.checkIfLogDbExists(env_1.env.DB_LOGGER_REQUEST_TABLE);
         }
@@ -61,6 +63,7 @@ class DbLogger {
         if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
             await DbLogger.checkInstance();
         }
+        await DbLogger.sqlInst.checkAndReInitConnectionPool();
         if (!DbLogger.sqlInst.getConnectionPool()) {
             kalmia_common_lib_1.AppLogger.warn('DbLogger', 'DbLogger.ts', 'Error for logger existence check , no connection pool');
             return;
@@ -214,9 +217,7 @@ class DbLogger {
      * @param data RequestLogData
      */
     static logRequest(data) {
-        DbLogger.checkIfRequestLoggerInitialized().then(() => {
-            DbLogger.logRequestAsync(data).catch();
-        });
+        DbLogger.logRequestAsync(data).catch();
     }
     /**
      * Async version of logRRequest
