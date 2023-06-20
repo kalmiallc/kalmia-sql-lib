@@ -3,6 +3,7 @@ import { AppLogger } from 'kalmia-common-lib';
 import { env } from '../../config/env';
 import { WorkerLogStatus } from '../../config/types';
 import { MySqlUtil } from '../db-connection/mysql-util';
+import { MySqlConnManager } from '../db-connection/mysql-conn-manager';
 
 /**
  * DbLogger logger logs to DB. The proper table must be created in the DB. Check the migration script.
@@ -87,6 +88,7 @@ export class DbLogger {
     if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
       await DbLogger.init();
     }
+    await DbLogger.sqlInst.checkAndReInitConnectionPool();
     if (!DbLogger.workerLoggerOK) {
       await DbLogger.checkIfLogDbExists(env.DB_LOGGER_WORKER_TABLE);
     }
@@ -96,15 +98,18 @@ export class DbLogger {
     if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
       await DbLogger.init();
     }
+    await DbLogger.sqlInst.checkAndReInitConnectionPool();
     if (!DbLogger.requestLoggerOK) {
       await DbLogger.checkIfLogDbExists(env.DB_LOGGER_REQUEST_TABLE);
     }
+    
   }
 
   public static async checkIfLogDbExists(table): Promise<void> {
     if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
       await DbLogger.checkInstance();
     }
+    await DbLogger.sqlInst.checkAndReInitConnectionPool();
     if (!DbLogger.sqlInst.getConnectionPool()) {
       AppLogger.warn('DbLogger', 'DbLogger.ts', 'Error for logger existence check , no connection pool');
       return;
@@ -275,9 +280,7 @@ export class DbLogger {
    */
 
   public static logRequest(data: RequestLogData) {
-    DbLogger.checkIfRequestLoggerInitialized().then(() => {
       DbLogger.logRequestAsync(data).catch();
-    });
   }
 
   /**
