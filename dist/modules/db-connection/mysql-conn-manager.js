@@ -32,11 +32,11 @@ class MySqlConnManager {
      */
     static async testDirectPoolConnection(mySqlConnection) {
         try {
-            await mySqlConnection.execute('SELECT id, user FROM information_schema.processlist LIMIT 1;');
+            await mySqlConnection.execute('SELECT 1;');
             return true;
         }
         catch (e) {
-            kalmia_common_lib_1.AppLogger.info('mysql-conn-manager.ts', 'testDirectPoolConnection', 'Connection closed');
+            kalmia_common_lib_1.AppLogger.warn('mysql-conn-manager.ts', 'testDirectPoolConnection', 'Pool connection closed, it will probably be reinitialized');
             return false;
         }
     }

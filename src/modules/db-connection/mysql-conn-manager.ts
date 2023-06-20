@@ -36,7 +36,7 @@ export class MySqlConnManager {
    */
   public static async testDirectPoolConnection(mySqlConnection: mysql.Pool) {
     try {
-      await mySqlConnection.execute('SELECT id, user FROM information_schema.processlist LIMIT 1;');
+      await mySqlConnection.execute('SELECT 1;');
       return true;
     } catch (e) {
       AppLogger.warn('mysql-conn-manager.ts', 'testDirectPoolConnection', 'Pool connection closed, it will probably be reinitialized');
