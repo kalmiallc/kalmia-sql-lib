@@ -35,8 +35,13 @@ export class MySqlConnManager {
    * @returns
    */
   public static async testDirectPoolConnection(mySqlConnection: mysql.Pool) {
+    // If connection is not defined, return true, as we ship the check
+    if (!mySqlConnection || mySqlConnection === undefined || mySqlConnection === null) {
+      return true;
+    }
+
     try {
-      await mySqlConnection.execute('SELECT 1;');
+      await mySqlConnection?.execute('SELECT 1;');
       return true;
     } catch (e) {
       AppLogger.warn('mysql-conn-manager.ts', 'testDirectPoolConnection', 'Pool connection closed, it will probably be reinitialized');

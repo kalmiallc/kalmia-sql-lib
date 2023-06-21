@@ -31,8 +31,12 @@ class MySqlConnManager {
      * @returns
      */
     static async testDirectPoolConnection(mySqlConnection) {
+        // If connection is not defined, return true, as we ship the check
+        if (!mySqlConnection || mySqlConnection === undefined || mySqlConnection === null) {
+            return true;
+        }
         try {
-            await mySqlConnection.execute('SELECT 1;');
+            await (mySqlConnection === null || mySqlConnection === void 0 ? void 0 : mySqlConnection.execute('SELECT 1;'));
             return true;
         }
         catch (e) {

@@ -102,7 +102,6 @@ export class DbLogger {
     if (!DbLogger.requestLoggerOK) {
       await DbLogger.checkIfLogDbExists(env.DB_LOGGER_REQUEST_TABLE);
     }
-    
   }
 
   public static async checkIfLogDbExists(table): Promise<void> {
@@ -280,7 +279,7 @@ export class DbLogger {
    */
 
   public static logRequest(data: RequestLogData) {
-      DbLogger.logRequestAsync(data).catch();
+    DbLogger.logRequestAsync(data).catch();
   }
 
   /**
