@@ -12,12 +12,13 @@ class DbLogger {
      * Ends the connection to DB.
      */
     static async end() {
-        await DbLogger.sqlInst.end();
+        var _a;
+        await ((_a = DbLogger.sqlInst) === null || _a === void 0 ? void 0 : _a.end());
     }
     static async init() {
         try {
             if (!DbLogger.sqlInst) {
-                DbLogger.sqlInst = await mysql_util_1.MySqlUtil.init(true);
+                DbLogger.sqlInst = await mysql_util_1.MySqlUtil.init(false);
                 kalmia_common_lib_1.AppLogger.info('DbLogger', 'DbLogger.ts', 'Logger connection initialized');
             }
         }
