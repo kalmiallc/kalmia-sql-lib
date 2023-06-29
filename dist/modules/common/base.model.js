@@ -302,6 +302,7 @@ class BaseModel extends core_1.Model {
         return Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({ id: data[`${table}Id`] ? data[`${table}Id`] : null }, { status: data[`${table}Status`] ? data[`${table}Status`] : null }), { _createTime: data[`${table}CreateTime`] ? data[`${table}CreateTime`] : null }), { _createUser: data[`${table}CreateUser`] ? data[`${table}CreateUser`] : null }), { _updateTime: data[`${table}UpdateTime`] ? data[`${table}UpdateTime`] : null }), { _updateUser: data[`${table}UpdateUser`] ? data[`${table}UpdateUser`] : null });
     }
 }
+exports.BaseModel = BaseModel;
 __decorate([
     (0, core_1.prop)({
         parser: { resolver: (0, parsers_1.integerParser)() },
@@ -352,5 +353,4 @@ __decorate([
     }),
     __metadata("design:type", Number)
 ], BaseModel.prototype, "status", void 0);
-exports.BaseModel = BaseModel;
 //# sourceMappingURL=base.model.js.map
