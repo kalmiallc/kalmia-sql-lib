@@ -1,6 +1,6 @@
 {
   "name": "kalmia-sql-lib",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "SQL lib for Kalmia projects",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -43,8 +43,7 @@
     "kalmia-common-lib": "git+https://github.com/kalmiallc/kalmia-common-lib",
     "mysql2": "^2.2.5",
     "rimraf": "^5.0.0",
-    "sqlstring": "^2.3.2",
-    "ts-mysql-migrate": "^1.0.2"
+    "sqlstring": "^2.3.2"
   },
   "devDependencies": {
     "@types/jest": "^29.1.0",
@@ -63,7 +62,8 @@
     "jest": "^29.5.0",
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.1",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "ts-mysql-migrate": "^1.0.2"
   },
   "peerDependencies": {
     "@rawmodel/core": "^3.3.4",
