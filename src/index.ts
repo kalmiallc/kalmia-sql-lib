@@ -20,8 +20,6 @@ import {
   WhereQueryComparator
 } from './modules/db-connection/sql-utils';
 import { DbLogger, RequestLogData } from './modules/db-logger/db-logger';
-import { MigrationOptions, Migrations } from './modules/migrations/migrations';
-import { MigrationHelper } from './modules/test-helpers/migrations';
 import { MySqlStage } from './modules/test-helpers/mysql-stage';
 import { WorkerJob, WorkerLog } from './modules/workers/models';
 
@@ -30,8 +28,6 @@ export {
   MySqlUtil,
   BaseModel,
   ActionOptions,
-  Migrations,
-  MigrationOptions,
   WhereQueryComparator,
   SqlQueryObject,
   getQueryParams,
@@ -54,7 +50,6 @@ export {
   WorkerJob,
   WorkerLog,
   WorkerDbTables,
-  MigrationHelper,
   DbLogger,
   RequestLogData,
   WorkerLogStatus
