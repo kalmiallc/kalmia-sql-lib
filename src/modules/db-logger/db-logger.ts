@@ -52,13 +52,13 @@ export class DbLogger {
    * Ends the connection to DB.
    */
   public static async end() {
-    await DbLogger.sqlInst.end();
+    await DbLogger.sqlInst?.end();
   }
 
   public static async init() {
     try {
       if (!DbLogger.sqlInst) {
-        DbLogger.sqlInst = await MySqlUtil.init(true);
+        DbLogger.sqlInst = await MySqlUtil.init(false);
         AppLogger.info('DbLogger', 'DbLogger.ts', 'Logger connection initialized');
       }
     } catch (error) {

@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const kalmia_common_lib_1 = require("kalmia-common-lib");
 const env_1 = require("../../../config/env");
 const types_1 = require("../../../config/types");
+const mysql_conn_manager_1 = require("../../db-connection/mysql-conn-manager");
 const migrations_1 = require("../../test-helpers/migrations");
 const db_logger_1 = require("../db-logger");
 const mysql_util_1 = require("./../../db-connection/mysql-util");
@@ -20,6 +21,7 @@ describe('DB Logger tests', () => {
         const isTable = tableData[0];
         expect(isTable.length > 0).toBeTruthy();
         expect(isTable[0].TABLE_NAME).toBe(env_1.env.DB_LOGGER_TABLE);
+        await db_logger_1.DbLogger.end();
     });
     afterAll(async () => {
         await migrations_1.MigrationHelper.downgradeDatabase();
@@ -73,6 +75,48 @@ describe('DB Logger tests', () => {
         expect(data[1].origin).toBe('myOrigin');
         expect(data[1].body).toBe('myBody');
         expect(data[1].responseTime).toBe(600);
+        expect(data[0].responseTime).toBe(500);
+        expect(data[1].data).toEqual({ a: 1, b: 2 });
+    });
+    it('Log request after connection closed', async () => {
+        db_logger_1.DbLogger.logRequest({
+            method: 'GET',
+            host: 'myhost',
+            ip: '123.123.123',
+            statusCode: 200,
+            url: 'http://myhost/mypath',
+            endpoint: 'myEndpoint',
+            userAgent: 'myUserAgent',
+            origin: 'myOrigin',
+            xForwardedFor: 'myXForwardedFor',
+            body: 'myBody',
+            responseTime: 500
+        });
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        await db_logger_1.DbLogger.end();
+        await mysql_conn_manager_1.MySqlConnManager.getInstance().end();
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        db_logger_1.DbLogger.logRequest({
+            method: 'GET',
+            host: 'myhost',
+            ip: '123.123.123',
+            statusCode: 400,
+            url: 'http://myhost/mypath1',
+            endpoint: 'myEndpoint',
+            userAgent: 'myUserAgent',
+            origin: 'myOrigin',
+            xForwardedFor: 'myXForwardedFor',
+            body: 'myBody',
+            responseTime: 600,
+            data: { a: 1, b: 2 }
+        });
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const inst = await mysql_util_1.MySqlUtil.init();
+        const data = await inst.paramExecuteDirect(`SELECT * FROM ${env_1.env.DB_LOGGER_REQUEST_TABLE}`);
+        expect(data.length).toBe(2);
+        expect(data[0].method).toBe('GET');
+        expect(data[0].host).toBe('myhost');
+        expect(data[0].ip).toBe('123.123.123');
         expect(data[0].responseTime).toBe(500);
         expect(data[1].data).toEqual({ a: 1, b: 2 });
     });

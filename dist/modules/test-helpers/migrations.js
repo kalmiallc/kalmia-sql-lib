@@ -13,6 +13,7 @@ class MigrationHelper {
         MigrationHelper.scriptPathSeed = scriptPath;
     }
 }
+exports.MigrationHelper = MigrationHelper;
 _a = MigrationHelper;
 /**
  * Runs 'steps' new upgrade migrations.
@@ -106,5 +107,4 @@ MigrationHelper.clearDatabase = async () => {
 MigrationHelper.dropDatabase = async () => {
     await MigrationHelper.downgradeDatabase();
 };
-exports.MigrationHelper = MigrationHelper;
 //# sourceMappingURL=migrations.js.map
