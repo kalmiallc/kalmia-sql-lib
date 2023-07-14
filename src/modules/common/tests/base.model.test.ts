@@ -10,6 +10,37 @@ import { MySqlUtil } from './../../db-connection/mysql-util';
 
 const testTableName = 'sql_lib_user';
 
+describe('Base model encryption', () => {
+  describe('encrypt', () => {
+    it('should encrypt a value', () => {
+      const value = 'my secret value';
+      const encryptedValue = BaseModel.encrypt(value);
+      expect(encryptedValue).not.toBe(value);
+    });
+
+    it('should return null if value is null', () => {
+      const value = null;
+      const encryptedValue = BaseModel.encrypt(value);
+      expect(encryptedValue).toBeNull();
+    });
+  });
+
+  describe('decrypt', () => {
+    it('should decrypt an encrypted value', () => {
+      const value = 'my secret value';
+      const encryptedValue = BaseModel.encrypt(value);
+      const decryptedValue = BaseModel.decrypt(encryptedValue);
+      expect(decryptedValue).toBe(value);
+    });
+
+    it('should return null if input is null', () => {
+      const input = null;
+      const decryptedValue = BaseModel.decrypt(input);
+      expect(decryptedValue).toBeNull();
+    });
+  });
+});
+
 describe('Base model', () => {
   let mySqlStage: MySqlStage;
 
