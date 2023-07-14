@@ -142,11 +142,11 @@ export declare abstract class BaseModel extends Model<any> {
         _updateUser: number;
     };
     /**
-   * Encrypts given value.
-   *
-   * @param value Value to encrypt.
-   * @returns Encrypted value.
-   */
+     * Encrypts given value.
+     *
+     * @param value Value to encrypt.
+     * @returns Encrypted value.
+     */
     static encrypt(value: string): string;
     /**
      * Decrypts given input.

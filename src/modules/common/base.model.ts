@@ -6,7 +6,7 @@ import { DbModelStatus, PopulateFor, SerializeFor } from '../../config/types';
 import { MySqlConnManager } from '../db-connection/mysql-conn-manager';
 import { MySqlUtil } from '../db-connection/mysql-util';
 import { randomUUID } from 'crypto';
-import CryptoJS from 'crypto-js';
+import * as CryptoJS from 'crypto-js';
 import { env } from '../../config/env';
 
 /**
@@ -438,7 +438,7 @@ export abstract class BaseModel extends Model<any> {
     };
   }
 
-    /**
+  /**
    * Encrypts given value.
    *
    * @param value Value to encrypt.

@@ -1,6 +1,6 @@
 {
   "name": "kalmia-sql-lib",
-  "version": "1.4.6",
+  "version": "1.4.7",
   "description": "SQL lib for Kalmia projects",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -45,6 +45,7 @@
     "sqlstring": "^2.3.2"
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.1.1",
     "@types/jest": "^29.1.0",
     "@types/node": "^16.4.3",
     "@typescript-eslint/eslint-plugin": "^4.28.5",

@@ -12,7 +12,7 @@ var PopulateFor;
     PopulateFor["DB"] = "db";
     PopulateFor["ADMIN"] = "admin";
     PopulateFor["WORKER"] = "worker";
-})(PopulateFor || (exports.PopulateFor = PopulateFor = {}));
+})(PopulateFor = exports.PopulateFor || (exports.PopulateFor = {}));
 /**
  * Model serialization strategies.
  */
@@ -24,14 +24,14 @@ var SerializeFor;
     SerializeFor["UPDATE_DB"] = "update_db";
     SerializeFor["ADMIN"] = "admin";
     SerializeFor["WORKER"] = "worker";
-})(SerializeFor || (exports.SerializeFor = SerializeFor = {}));
+})(SerializeFor = exports.SerializeFor || (exports.SerializeFor = {}));
 /**
  * Database connection type.
  */
 var DbConnectionType;
 (function (DbConnectionType) {
     DbConnectionType["PRIMARY"] = "primary";
-})(DbConnectionType || (exports.DbConnectionType = DbConnectionType = {}));
+})(DbConnectionType = exports.DbConnectionType || (exports.DbConnectionType = {}));
 /**
  * Base model database statuses.
  */
@@ -40,7 +40,7 @@ var DbModelStatus;
     DbModelStatus[DbModelStatus["INACTIVE"] = 1] = "INACTIVE";
     DbModelStatus[DbModelStatus["ACTIVE"] = 5] = "ACTIVE";
     DbModelStatus[DbModelStatus["DELETED"] = 9] = "DELETED";
-})(DbModelStatus || (exports.DbModelStatus = DbModelStatus = {}));
+})(DbModelStatus = exports.DbModelStatus || (exports.DbModelStatus = {}));
 /**
  * List of possible worker database tables.
  */
@@ -48,7 +48,7 @@ var WorkerDbTables;
 (function (WorkerDbTables) {
     WorkerDbTables["WORKER_JOB"] = "workerJob";
     WorkerDbTables["WORKER_LOG"] = "workerLog";
-})(WorkerDbTables || (exports.WorkerDbTables = WorkerDbTables = {}));
+})(WorkerDbTables = exports.WorkerDbTables || (exports.WorkerDbTables = {}));
 var WorkerLogStatus;
 (function (WorkerLogStatus) {
     WorkerLogStatus["DEBUG"] = "debug";
@@ -57,12 +57,12 @@ var WorkerLogStatus;
     WorkerLogStatus["WARNING"] = "warning";
     WorkerLogStatus["SUCCESS"] = "success";
     WorkerLogStatus["ERROR"] = "error";
-})(WorkerLogStatus || (exports.WorkerLogStatus = WorkerLogStatus = {}));
+})(WorkerLogStatus = exports.WorkerLogStatus || (exports.WorkerLogStatus = {}));
 var IsolationLevel;
 (function (IsolationLevel) {
     IsolationLevel["READ_UNCOMMITTED"] = "READ UNCOMMITTED";
     IsolationLevel["READ_COMMITTED"] = "READ COMMITTED";
     IsolationLevel["REPEATABLE_READ"] = "REPEATABLE READ";
     IsolationLevel["READ_SERIALIZABLE"] = "READ SERIALIZABLE";
-})(IsolationLevel || (exports.IsolationLevel = IsolationLevel = {}));
+})(IsolationLevel = exports.IsolationLevel || (exports.IsolationLevel = {}));
 //# sourceMappingURL=types.js.map
