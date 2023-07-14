@@ -15,8 +15,8 @@ describe('MySQL coon pool', () => {
   env.MYSQL_POOL_SIZE_TEST = 5;
 
   beforeAll(async () => {
-    conn = (await MySqlConnManager.getInstance().getConnection()) as Pool;
-    sqlUtil = new MySqlUtil(conn);
+    conn = await MySqlConnManager.getInstance().getConnection();
+    sqlUtil = new MySqlUtil(conn as Pool);
     await setupDatabase();
   });
 

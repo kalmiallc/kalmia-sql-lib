@@ -141,5 +141,19 @@ export declare abstract class BaseModel extends Model<any> {
         _updateTime: Date;
         _updateUser: number;
     };
+    /**
+   * Encrypts given value.
+   *
+   * @param value Value to encrypt.
+   * @returns Encrypted value.
+   */
+    static encrypt(value: string): string;
+    /**
+     * Decrypts given input.
+     *
+     * @param input Input to decrypt.
+     * @returns Decrypted value.
+     */
+    static decrypt(input: string): string;
 }
 //# sourceMappingURL=base.model.d.ts.map

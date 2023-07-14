@@ -31,7 +31,7 @@ class MySqlStage {
     env.APP_ENV = ApplicationEnv.TEST;
     this.connManager = MySqlConnManager.getInstance();
     this.dbConn = await this.connManager.getConnection();
-    this.utils = new MySqlUtil(this.dbConn);
+    this.utils = new MySqlUtil(this.dbConn as Pool);
   }
 
   /**

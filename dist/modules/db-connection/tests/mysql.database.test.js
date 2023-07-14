@@ -10,7 +10,7 @@ describe('MySQL coon pool', () => {
     let sqlUtil;
     env_1.env.MYSQL_POOL_SIZE_TEST = 5;
     beforeAll(async () => {
-        conn = (await mysql_conn_manager_1.MySqlConnManager.getInstance().getConnection());
+        conn = await mysql_conn_manager_1.MySqlConnManager.getInstance().getConnection();
         sqlUtil = new mysql_util_1.MySqlUtil(conn);
         await (0, mysql_stage_1.setupDatabase)();
     });

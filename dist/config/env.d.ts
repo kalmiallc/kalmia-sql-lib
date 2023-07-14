@@ -32,6 +32,7 @@ export interface IMySqlEnv {
     DB_LOGGER_REQUEST_RETENTION: number;
     DB_LOGGER_WORKER_RETENTION: number;
     DB_LOGGER_RETENTION: number;
+    APP_ENCRYPTION_KEY: string;
 }
 /**
  * Load variables from .env.

@@ -5,6 +5,9 @@ import { Pool, PoolConnection } from 'mysql2/promise';
 import { DbModelStatus, PopulateFor, SerializeFor } from '../../config/types';
 import { MySqlConnManager } from '../db-connection/mysql-conn-manager';
 import { MySqlUtil } from '../db-connection/mysql-util';
+import { randomUUID } from 'crypto';
+import CryptoJS from 'crypto-js';
+import { env } from '../../config/env';
 
 /**
  * Update, delete and create actions options.
@@ -14,6 +17,14 @@ export interface ActionOptions {
   context?: {
     user?: any;
   };
+}
+
+/**
+ * Encryption data definition.
+ */
+interface EncryptionData {
+  value: string;
+  nonce: string;
 }
 
 /**
@@ -425,5 +436,39 @@ export abstract class BaseModel extends Model<any> {
       ...{ _updateTime: data[`${table}UpdateTime`] ? data[`${table}UpdateTime`] : null },
       ...{ _updateUser: data[`${table}UpdateUser`] ? data[`${table}UpdateUser`] : null }
     };
+  }
+
+    /**
+   * Encrypts given value.
+   *
+   * @param value Value to encrypt.
+   * @returns Encrypted value.
+   */
+  public static encrypt(value: string): string {
+    if (!value) {
+      return value;
+    }
+
+    const data: EncryptionData = {
+      value,
+      nonce: randomUUID()
+    };
+
+    return CryptoJS.AES.encrypt(JSON.stringify(data), env.APP_ENCRYPTION_KEY).toString();
+  }
+
+  /**
+   * Decrypts given input.
+   *
+   * @param input Input to decrypt.
+   * @returns Decrypted value.
+   */
+  public static decrypt(input: string): string {
+    if (!input) {
+      return input;
+    }
+
+    const data: EncryptionData = JSON.parse(CryptoJS.AES.decrypt(input, env.APP_ENCRYPTION_KEY).toString(CryptoJS.enc.Utf8));
+    return data?.value;
   }
 }

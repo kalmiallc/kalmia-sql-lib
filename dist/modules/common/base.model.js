@@ -17,6 +17,9 @@ const parsers_1 = require("@rawmodel/parsers");
 const types_1 = require("../../config/types");
 const mysql_conn_manager_1 = require("../db-connection/mysql-conn-manager");
 const mysql_util_1 = require("../db-connection/mysql-util");
+const crypto_1 = require("crypto");
+const crypto_js_1 = require("crypto-js");
+const env_1 = require("../../config/env");
 /**
  * Base model.
  */
@@ -300,6 +303,35 @@ class BaseModel extends core_1.Model {
      */
     parseMappedSelectColumns(table, data) {
         return Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({ id: data[`${table}Id`] ? data[`${table}Id`] : null }, { status: data[`${table}Status`] ? data[`${table}Status`] : null }), { _createTime: data[`${table}CreateTime`] ? data[`${table}CreateTime`] : null }), { _createUser: data[`${table}CreateUser`] ? data[`${table}CreateUser`] : null }), { _updateTime: data[`${table}UpdateTime`] ? data[`${table}UpdateTime`] : null }), { _updateUser: data[`${table}UpdateUser`] ? data[`${table}UpdateUser`] : null });
+    }
+    /**
+   * Encrypts given value.
+   *
+   * @param value Value to encrypt.
+   * @returns Encrypted value.
+   */
+    static encrypt(value) {
+        if (!value) {
+            return value;
+        }
+        const data = {
+            value,
+            nonce: (0, crypto_1.randomUUID)()
+        };
+        return crypto_js_1.default.AES.encrypt(JSON.stringify(data), env_1.env.APP_ENCRYPTION_KEY).toString();
+    }
+    /**
+     * Decrypts given input.
+     *
+     * @param input Input to decrypt.
+     * @returns Decrypted value.
+     */
+    static decrypt(input) {
+        if (!input) {
+            return input;
+        }
+        const data = JSON.parse(crypto_js_1.default.AES.decrypt(input, env_1.env.APP_ENCRYPTION_KEY).toString(crypto_js_1.default.enc.Utf8));
+        return data === null || data === void 0 ? void 0 : data.value;
     }
 }
 exports.BaseModel = BaseModel;

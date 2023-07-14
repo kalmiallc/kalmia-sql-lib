@@ -38,6 +38,8 @@ export interface IMySqlEnv {
   DB_LOGGER_REQUEST_RETENTION: number;
   DB_LOGGER_WORKER_RETENTION: number;
   DB_LOGGER_RETENTION: number;
+
+  APP_ENCRYPTION_KEY: string;
 }
 
 /**
@@ -154,5 +156,7 @@ export const env: IMySqlEnv & ICommonEnv = {
   DB_LOGGER_RETENTION: parseInt(process.env['DB_LOGGER_RETENTION']) || 60,
   DB_LOGGER_LOG_TO_CONSOLE: parseInt(process.env['DB_LOGGER_LOG_TO_CONSOLE']) || 1,
   DB_LOGGER_REQUEST_LOG_TO_CONSOLE: parseInt(process.env['DB_LOGGER_REQUEST_LOG_TO_CONSOLE']) || 0,
-  DB_LOGGER_WORKER_TO_CONSOLE: parseInt(process.env['DB_LOGGER_WORKER_TO_CONSOLE']) || 0
+  DB_LOGGER_WORKER_TO_CONSOLE: parseInt(process.env['DB_LOGGER_WORKER_TO_CONSOLE']) || 0,
+
+  APP_ENCRYPTION_KEY: process.env['APP_ENCRYPTION_KEY'] || 'no-key-set',
 };
