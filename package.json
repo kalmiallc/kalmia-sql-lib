@@ -1,6 +1,6 @@
 {
   "name": "kalmia-sql-lib",
-  "version": "2.0.7",
+  "version": "1.4.6",
   "description": "SQL lib for Kalmia projects",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -40,12 +40,9 @@
     "@rawmodel/validators": "^3.3.4",
     "colors": "1.4.0",
     "crypto-js": "^4.1.1",
-    "dotenv": "^16.0.3",
-    "kalmia-common-lib": "git+https://github.com/kalmiallc/kalmia-common-lib",
-    "mysql2": "^3.2.3",
-    "rimraf": "^5.0.0",
-    "sqlstring": "^2.3.2",
-    "ts-mysql-migrate": "^1.0.2"
+    "kalmia-common-lib": "git+https://github.com/kalmiallc/kalmia-common-lib#1.0.0.0",
+    "mysql2": "^2.2.5",
+    "sqlstring": "^2.3.2"
   },
   "devDependencies": {
     "@types/jest": "^29.1.0",
@@ -65,13 +62,14 @@
     "ts-jest": "^29.1.0",
     "ts-mysql-migrate": "^1.0.2",
     "ts-node": "^10.1.0",
-    "typescript": "^5.0.4"
+    "typescript": "^4.3.5",
+    "rimraf": "^3.0.2"
   },
   "peerDependencies": {
     "@rawmodel/core": "^3.3.4",
     "@rawmodel/parsers": "^3.3.4",
     "@rawmodel/validators": "^3.3.4",
-    "dotenv": "^16.0.3",
-    "mysql2": "^3.2.3"
+    "dotenv": "^10.0.0",
+    "mysql2": "^2.2.5"
   }
 }
