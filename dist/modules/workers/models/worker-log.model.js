@@ -27,7 +27,6 @@ class WorkerLog extends base_model_1.BaseModel {
         this.tableName = types_1.WorkerDbTables.WORKER_LOG;
     }
 }
-exports.WorkerLog = WorkerLog;
 __decorate([
     (0, core_1.prop)({
         parser: { resolver: (0, parsers_1.integerParser)() },
@@ -84,4 +83,5 @@ __decorate([
     }),
     __metadata("design:type", String)
 ], WorkerLog.prototype, "data", void 0);
+exports.WorkerLog = WorkerLog;
 //# sourceMappingURL=worker-log.model.js.map

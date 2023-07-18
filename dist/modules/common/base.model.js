@@ -124,12 +124,12 @@ class BaseModel extends core_1.Model {
             this._createTime = new Date();
             this._updateTime = this._createTime;
             if (isSingleTrans) {
-                await mySqlHelper.commit(options.conn);
+                await mySqlHelper.commitAndRelease(options.conn);
             }
         }
         catch (err) {
             if (isSingleTrans) {
-                await mySqlHelper.rollback(options.conn);
+                await mySqlHelper.rollbackAndRelease(options.conn);
             }
             throw new Error(err);
         }
@@ -181,12 +181,12 @@ class BaseModel extends core_1.Model {
             await mySqlHelper.paramExecute(updateQuery, serializedModel, options.conn);
             this._updateTime = new Date();
             if (isSingleTrans) {
-                await mySqlHelper.commit(options.conn);
+                await mySqlHelper.commitAndRelease(options.conn);
             }
         }
         catch (err) {
             if (isSingleTrans) {
-                await mySqlHelper.rollback(options.conn);
+                await mySqlHelper.rollbackAndRelease(options.conn);
             }
             throw new Error(err);
         }
@@ -251,12 +251,12 @@ class BaseModel extends core_1.Model {
             }, options.conn);
             this._updateTime = new Date();
             if (isSingleTrans) {
-                await mySqlHelper.commit(options.conn);
+                await mySqlHelper.commitAndRelease(options.conn);
             }
         }
         catch (err) {
             if (isSingleTrans) {
-                await mySqlHelper.rollback(options.conn);
+                await mySqlHelper.rollbackAndRelease(options.conn);
             }
             throw new Error(err);
         }
@@ -334,7 +334,6 @@ class BaseModel extends core_1.Model {
         return data === null || data === void 0 ? void 0 : data.value;
     }
 }
-exports.BaseModel = BaseModel;
 __decorate([
     (0, core_1.prop)({
         parser: { resolver: (0, parsers_1.integerParser)() },
@@ -385,4 +384,5 @@ __decorate([
     }),
     __metadata("design:type", Number)
 ], BaseModel.prototype, "status", void 0);
+exports.BaseModel = BaseModel;
 //# sourceMappingURL=base.model.js.map

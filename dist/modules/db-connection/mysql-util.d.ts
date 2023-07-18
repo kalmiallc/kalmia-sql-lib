@@ -7,7 +7,7 @@ import { IsolationLevel } from '../../config/types';
  */
 export declare class MySqlUtil {
     private _dbConnectionPool;
-    private _currentPooledConnection;
+    private _currentActiveConnection;
     constructor(dbConnection?: Pool);
     /**
      * This method will initialize connection from the connection pool. It will use connection manager and initialize primary connection as connection poll.
@@ -98,8 +98,8 @@ export declare class MySqlUtil {
      * @returns connection from the pool.
      */
     start(isolationLevel?: IsolationLevel): Promise<PoolConnection>;
-    commit(connection?: PoolConnection): Promise<void>;
-    rollback(connection?: PoolConnection): Promise<void>;
+    commitAndRelease(connection?: PoolConnection): Promise<void>;
+    rollbackAndRelease(connection?: PoolConnection): Promise<void>;
     /**
      * Translate properties to array of property values for procedure call
      *

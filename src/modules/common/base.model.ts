@@ -216,11 +216,11 @@ export abstract class BaseModel extends Model<any> {
       this._createTime = new Date();
       this._updateTime = this._createTime;
       if (isSingleTrans) {
-        await mySqlHelper.commit(options.conn);
+        await mySqlHelper.commitAndRelease(options.conn);
       }
     } catch (err) {
       if (isSingleTrans) {
-        await mySqlHelper.rollback(options.conn);
+        await mySqlHelper.rollbackAndRelease(options.conn);
       }
       throw new Error(err);
     }
@@ -280,11 +280,11 @@ export abstract class BaseModel extends Model<any> {
 
       this._updateTime = new Date();
       if (isSingleTrans) {
-        await mySqlHelper.commit(options.conn);
+        await mySqlHelper.commitAndRelease(options.conn);
       }
     } catch (err) {
       if (isSingleTrans) {
-        await mySqlHelper.rollback(options.conn);
+        await mySqlHelper.rollbackAndRelease(options.conn);
       }
       throw new Error(err);
     }
@@ -364,11 +364,11 @@ export abstract class BaseModel extends Model<any> {
 
       this._updateTime = new Date();
       if (isSingleTrans) {
-        await mySqlHelper.commit(options.conn);
+        await mySqlHelper.commitAndRelease(options.conn);
       }
     } catch (err) {
       if (isSingleTrans) {
-        await mySqlHelper.rollback(options.conn);
+        await mySqlHelper.rollbackAndRelease(options.conn);
       }
       throw new Error(err);
     }

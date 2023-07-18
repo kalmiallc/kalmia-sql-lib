@@ -11,7 +11,7 @@ import { MySqlConnManager } from './mysql-conn-manager';
  */
 export class MySqlUtil {
   private _dbConnectionPool: Pool;
-  private _currentPooledConnection: PoolConnection;
+  private _currentActiveConnection: PoolConnection;
 
   constructor(dbConnection?: Pool) {
     this._dbConnectionPool = dbConnection;
@@ -80,8 +80,8 @@ export class MySqlUtil {
    * End all active connections. Also close active instance of connection form the pool.
    */
   public async end(): Promise<void> {
-    if (this._currentPooledConnection) {
-      await this._currentPooledConnection.release();
+    if (this._currentActiveConnection) {
+      await this._currentActiveConnection.release();
     }
     await MySqlConnManager.getInstance().end();
   }
@@ -99,21 +99,21 @@ export class MySqlUtil {
    * Set active connection (pool connection)
    */
   public setActiveConnection(ac: PoolConnection) {
-    this._currentPooledConnection = ac;
+    this._currentActiveConnection = ac;
   }
 
   /**
    * Get active connection (pool connection)
    */
   public getActiveConnection() {
-    return this._currentPooledConnection;
+    return this._currentActiveConnection;
   }
 
   /**
    * Release active connection (pool connection)
    */
   public releaseActiveConnection() {
-    this._currentPooledConnection.release();
+    this._currentActiveConnection.release();
   }
 
   /**
@@ -128,10 +128,10 @@ export class MySqlUtil {
     const conn = await this.start();
     try {
       const result = await this.call(procedure, data, conn, options);
-      await this.commit(conn);
+      await this.commitAndRelease(conn);
       return result;
     } catch (err) {
-      await this.rollback(conn);
+      await this.rollbackAndRelease(conn);
       throw err;
     }
   }
@@ -146,7 +146,7 @@ export class MySqlUtil {
   public async call(
     procedure: string,
     data: any,
-    connection: PoolConnection = this._currentPooledConnection,
+    connection: PoolConnection = this._currentActiveConnection,
     options: { multiSet?: boolean } = {}
   ): Promise<any> {
     let isSingleTrans = false;
@@ -246,7 +246,7 @@ export class MySqlUtil {
     return conn;
   }
 
-  public async commit(connection: PoolConnection = this._currentPooledConnection): Promise<void> {
+  public async commitAndRelease(connection: PoolConnection = this._currentActiveConnection): Promise<void> {
     // await this.db.query('COMMIT; SET SESSION autocommit = 1;');
     if (!connection) {
       throw Error('MySql Db Connection not provided');
@@ -256,7 +256,7 @@ export class MySqlUtil {
     AppLogger.db('mysql-util.ts', 'commit', 'DB ', 'COMMIT TRANSACTION');
   }
 
-  public async rollback(connection: PoolConnection = this._currentPooledConnection): Promise<void> {
+  public async rollbackAndRelease(connection: PoolConnection = this._currentActiveConnection): Promise<void> {
     // await this.db.query('ROLLBACK; SET SESSION autocommit = 1;');
     if (!connection) {
       throw Error('MySql Db Connection not provided');
@@ -300,7 +300,7 @@ export class MySqlUtil {
   public async paramExecute(
     query: string,
     values?: unknown,
-    connection: PoolConnection = this._currentPooledConnection,
+    connection: PoolConnection = this._currentActiveConnection,
     isolationLevel?: IsolationLevel
   ): Promise<any[]> {
     const sqlParamValues = [];
