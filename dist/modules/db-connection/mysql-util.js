@@ -70,8 +70,8 @@ class MySqlUtil {
      * End all active connections. Also close active instance of connection form the pool.
      */
     async end() {
-        if (this._currentPooledConnection) {
-            await this._currentPooledConnection.release();
+        if (this._currentActiveConnection) {
+            await this._currentActiveConnection.release();
         }
         await mysql_conn_manager_1.MySqlConnManager.getInstance().end();
     }
@@ -87,19 +87,19 @@ class MySqlUtil {
      * Set active connection (pool connection)
      */
     setActiveConnection(ac) {
-        this._currentPooledConnection = ac;
+        this._currentActiveConnection = ac;
     }
     /**
      * Get active connection (pool connection)
      */
     getActiveConnection() {
-        return this._currentPooledConnection;
+        return this._currentActiveConnection;
     }
     /**
      * Release active connection (pool connection)
      */
     releaseActiveConnection() {
-        this._currentPooledConnection.release();
+        this._currentActiveConnection.release();
     }
     /**
      * Call single stored procedure inside transaction, and make commit.
@@ -113,11 +113,11 @@ class MySqlUtil {
         const conn = await this.start();
         try {
             const result = await this.call(procedure, data, conn, options);
-            await this.commit(conn);
+            await this.commitAndRelease(conn);
             return result;
         }
         catch (err) {
-            await this.rollback(conn);
+            await this.rollbackAndRelease(conn);
             throw err;
         }
     }
@@ -128,7 +128,7 @@ class MySqlUtil {
      * @param data Object with call parameters
      * @returns array of results from database
      */
-    async call(procedure, data, connection = this._currentPooledConnection, options = {}) {
+    async call(procedure, data, connection = this._currentActiveConnection, options = {}) {
         var _a;
         let isSingleTrans = false;
         if (!connection) {
@@ -217,7 +217,7 @@ class MySqlUtil {
         kalmia_common_lib_1.AppLogger.db('mysql-util.ts', 'start', 'DB ', 'BEGIN TRANSACTION');
         return conn;
     }
-    async commit(connection = this._currentPooledConnection) {
+    async commitAndRelease(connection = this._currentActiveConnection) {
         // await this.db.query('COMMIT; SET SESSION autocommit = 1;');
         if (!connection) {
             throw Error('MySql Db Connection not provided');
@@ -226,7 +226,7 @@ class MySqlUtil {
         connection.release();
         kalmia_common_lib_1.AppLogger.db('mysql-util.ts', 'commit', 'DB ', 'COMMIT TRANSACTION');
     }
-    async rollback(connection = this._currentPooledConnection) {
+    async rollbackAndRelease(connection = this._currentActiveConnection) {
         // await this.db.query('ROLLBACK; SET SESSION autocommit = 1;');
         if (!connection) {
             throw Error('MySql Db Connection not provided');
@@ -266,7 +266,7 @@ class MySqlUtil {
      * @param connection PoolConnection reference - needed if query is part of transaction
      * @param isolationLevel Database isolation level for this query. Isolation level will only affect next query, execution, the it will be reset to default.
      */
-    async paramExecute(query, values, connection = this._currentPooledConnection, isolationLevel) {
+    async paramExecute(query, values, connection = this._currentActiveConnection, isolationLevel) {
         var _a;
         const sqlParamValues = [];
         let isSingleTrans = false;
