@@ -3,7 +3,6 @@ import { AppLogger } from 'kalmia-common-lib';
 import { env } from '../../config/env';
 import { WorkerLogStatus } from '../../config/types';
 import { MySqlUtil } from '../db-connection/mysql-util';
-import { MySqlConnManager } from '../db-connection/mysql-conn-manager';
 
 /**
  * DbLogger logger logs to DB. The proper table must be created in the DB. Check the migration script.

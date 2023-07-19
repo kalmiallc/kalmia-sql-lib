@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/indent */
+/* eslint-disable @typescript-eslint/member-ordering */
 import { Model, prop } from '@rawmodel/core';
 import { dateParser, integerParser } from '@rawmodel/parsers';
 import { Pool, PoolConnection } from 'mysql2/promise';
