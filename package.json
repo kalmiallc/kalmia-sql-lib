@@ -1,6 +1,6 @@
 {
   "name": "kalmia-sql-lib",
-  "version": "2.0.9",
+  "version": "2.0.4",
   "description": "SQL lib for Kalmia projects",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -21,7 +21,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/itkalmia/kalmia-sql-lib.git"
+    "url": "git+https://github.com/kalmiallc/kalmia-sql-lib"
   },
   "keywords": [
     "sql",
@@ -40,39 +40,40 @@
     "@rawmodel/validators": "^3.3.4",
     "colors": "1.4.0",
     "crypto-js": "^4.1.1",
-    "dotenv": "^16.0.3",
+    "dotenv": "^16.3.1",
     "kalmia-common-lib": "git+https://github.com/kalmiallc/kalmia-common-lib",
     "mysql2": "^3.2.3",
     "rimraf": "^5.0.0",
-    "sqlstring": "^2.3.2",
-    "ts-mysql-migrate": "^1.0.2"
+    "sqlstring": "^2.3.2"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.1.1",
     "@types/jest": "^29.1.0",
     "@types/node": "^16.4.3",
-    "@typescript-eslint/eslint-plugin": "^4.28.5",
-    "@typescript-eslint/parser": "^4.28.5",
-    "eslint": "^7.31.0",
-    "eslint-plugin-import": "^2.23.4",
-    "eslint-plugin-jsdoc": "^46.4.3",
+    "@typescript-eslint/eslint-plugin": "^5.58.0",
+    "@typescript-eslint/parser": "^5.58.0",
+    "eslint": "^8.45.0",
+    "eslint-config-node": "^4.1.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsdoc": "^39.3.6",
     "eslint-plugin-no-async-foreach": "^0.1.1",
+    "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
-    "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-promise": "^5.1.0",
-    "eslint-plugin-security": "^1.4.0",
-    "eslint-plugin-sonarjs": "^0.9.1",
+    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-security": "^1.5.0",
+    "eslint-plugin-sonarjs": "^0.15.0",
     "jest": "^29.5.0",
     "ts-jest": "^29.1.0",
     "ts-mysql-migrate": "^1.0.2",
     "ts-node": "^10.1.0",
-    "typescript": "^5.0.4"
+    "typescript": "^4.9.5"
   },
   "peerDependencies": {
     "@rawmodel/core": "^3.3.4",
     "@rawmodel/parsers": "^3.3.4",
     "@rawmodel/validators": "^3.3.4",
-    "dotenv": "^16.0.3",
-    "mysql2": "^3.2.3"
+    "dotenv": "^16.3.1",
+    "mysql2": "^3.6.0"
   }
 }
