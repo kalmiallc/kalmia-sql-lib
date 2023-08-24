@@ -1,6 +1,6 @@
 {
   "name": "kalmia-sql-lib",
-  "version": "2.0.5",
+  "version": "2.1.0",
   "description": "SQL lib for Kalmia projects",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
