@@ -52,6 +52,7 @@ export class DbLogger {
    */
   public static async end() {
     await DbLogger.sqlInst?.end();
+    DbLogger.sqlInst = null;
   }
 
   public static async init() {
