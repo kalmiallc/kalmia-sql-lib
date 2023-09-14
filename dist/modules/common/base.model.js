@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseModel = exports.prop = void 0;
 /* eslint-disable @typescript-eslint/indent */
+/* eslint-disable @typescript-eslint/member-ordering */
 const core_1 = require("@rawmodel/core");
 Object.defineProperty(exports, "prop", { enumerable: true, get: function () { return core_1.prop; } });
 const parsers_1 = require("@rawmodel/parsers");
