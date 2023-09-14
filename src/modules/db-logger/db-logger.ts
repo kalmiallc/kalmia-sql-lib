@@ -67,6 +67,15 @@ export class DbLogger {
     }
   }
 
+  public static async reinit() {
+    try {
+      DbLogger.sqlInst = await MySqlUtil.init(false);
+      AppLogger.info('DbLogger', 'DbLogger.ts', 'Logger connection re-initialized');
+    } catch (error) {
+      AppLogger.error('DbLogger', 'DbLogger.ts', 'Error initializing db logger: ' + error);
+    }
+  }
+
   public static async checkInstance() {
     await DbLogger.checkIfDbLoggerInitialized();
     await DbLogger.checkIfWorkerLoggerInitialized();
@@ -75,10 +84,10 @@ export class DbLogger {
 
   public static async checkIfDbLoggerInitialized(): Promise<void> {
     if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
-      await DbLogger.init();
+      await DbLogger.reinit();
     }
-    if (DbLogger.sqlInst.getConnectionPool().pool._closed) {
-      await DbLogger.init();
+    if (DbLogger.sqlInst?.getConnectionPool().pool._closed) {
+      await DbLogger.reinit();
     }
     if (!DbLogger.loggerOK) {
       await DbLogger.checkIfLogDbExists(env.DB_LOGGER_TABLE);
@@ -87,9 +96,9 @@ export class DbLogger {
 
   public static async checkIfWorkerLoggerInitialized(): Promise<void> {
     if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
-      await DbLogger.init();
+      await DbLogger.reinit();
     }
-    await DbLogger.sqlInst.checkAndReInitConnectionPool();
+    await DbLogger.sqlInst?.checkAndReInitConnectionPool();
     if (!DbLogger.workerLoggerOK) {
       await DbLogger.checkIfLogDbExists(env.DB_LOGGER_WORKER_TABLE);
     }
@@ -97,9 +106,9 @@ export class DbLogger {
 
   public static async checkIfRequestLoggerInitialized(): Promise<void> {
     if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
-      await DbLogger.init();
+      await DbLogger.reinit();
     }
-    await DbLogger.sqlInst.checkAndReInitConnectionPool();
+    await DbLogger.sqlInst?.checkAndReInitConnectionPool();
     if (!DbLogger.requestLoggerOK) {
       await DbLogger.checkIfLogDbExists(env.DB_LOGGER_REQUEST_TABLE);
     }
@@ -109,12 +118,12 @@ export class DbLogger {
     if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
       await DbLogger.checkInstance();
     }
-    await DbLogger.sqlInst.checkAndReInitConnectionPool();
-    if (!DbLogger.sqlInst.getConnectionPool()) {
+    await DbLogger.sqlInst?.checkAndReInitConnectionPool();
+    if (!DbLogger.sqlInst?.getConnectionPool()) {
       AppLogger.warn('DbLogger', 'DbLogger.ts', 'Error for logger existence check , no connection pool');
       return;
     }
-    const tableData = await DbLogger.sqlInst.getConnectionPool().query(`SELECT * 
+    const tableData = await DbLogger.sqlInst?.getConnectionPool().query(`SELECT * 
                               FROM information_schema.tables
                               WHERE table_name = '${table}'
                               LIMIT 1;`);
@@ -246,7 +255,7 @@ export class DbLogger {
       if (!DbLogger.loggerOK) {
         return;
       }
-      await DbLogger.sqlInst.paramExecute(
+      await DbLogger.sqlInst?.paramExecute(
         `
       INSERT INTO ${env.DB_LOGGER_TABLE} (file, method, severity, data)
       VALUES (@fileName, @methodName, @severity, @data)
