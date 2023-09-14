@@ -44,6 +44,7 @@ export declare class DbLogger {
      */
     static end(): Promise<void>;
     static init(): Promise<void>;
+    static reinit(): Promise<void>;
     static checkInstance(): Promise<void>;
     static checkIfDbLoggerInitialized(): Promise<void>;
     static checkIfWorkerLoggerInitialized(): Promise<void>;
