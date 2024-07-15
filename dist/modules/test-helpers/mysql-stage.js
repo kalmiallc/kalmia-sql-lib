@@ -1,6 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.cleanDatabase = exports.dropDatabase = exports.setupDatabase = exports.MySqlStage = void 0;
+exports.MySqlStage = void 0;
+exports.setupDatabase = setupDatabase;
+exports.dropDatabase = dropDatabase;
+exports.cleanDatabase = cleanDatabase;
 const kalmia_common_lib_1 = require("kalmia-common-lib");
 const env_1 = require("../../config/env");
 const mysql_conn_manager_1 = require("../db-connection/mysql-conn-manager");
@@ -48,7 +51,6 @@ async function setupDatabase() {
       UNIQUE INDEX \`email_UNIQUE\` (\`email\` ASC) VISIBLE);
   `, {});
 }
-exports.setupDatabase = setupDatabase;
 async function dropDatabase() {
     const conn = (await mysql_conn_manager_1.MySqlConnManager.getInstance().getConnection());
     const mysqlLoc = new mysql_util_1.MySqlUtil(conn);
@@ -56,10 +58,8 @@ async function dropDatabase() {
     DROP TABLE IF EXISTS \`sql_lib_user\`;
   `, {});
 }
-exports.dropDatabase = dropDatabase;
 async function cleanDatabase() {
     await dropDatabase();
     await setupDatabase();
 }
-exports.cleanDatabase = cleanDatabase;
 //# sourceMappingURL=mysql-stage.js.map

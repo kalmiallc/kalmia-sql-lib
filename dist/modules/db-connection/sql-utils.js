@@ -17,7 +17,7 @@ var WhereQueryComparator;
     WhereQueryComparator[WhereQueryComparator["NOT_IN"] = 7] = "NOT_IN";
     WhereQueryComparator[WhereQueryComparator["HAS_TEXT"] = 8] = "HAS_TEXT";
     WhereQueryComparator[WhereQueryComparator["IN_TEXT"] = 9] = "IN_TEXT";
-})(WhereQueryComparator = exports.WhereQueryComparator || (exports.WhereQueryComparator = {}));
+})(WhereQueryComparator || (exports.WhereQueryComparator = WhereQueryComparator = {}));
 const getOrderField = (name, tableAlias, map = {}) => {
     if (!name) {
         name = 'id';

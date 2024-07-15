@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.downgrade = exports.upgrade = void 0;
+exports.upgrade = upgrade;
+exports.downgrade = downgrade;
 const env_1 = require("../../config/env");
 async function upgrade(queryFn) {
     await queryFn(`
@@ -16,11 +17,9 @@ async function upgrade(queryFn) {
       PRIMARY KEY (\`id\`));
     `);
 }
-exports.upgrade = upgrade;
 async function downgrade(queryFn) {
     await queryFn(`
     DROP TABLE IF EXISTS \`${env_1.env.DB_LOGGER_WORKER_TABLE}\`;
   `);
 }
-exports.downgrade = downgrade;
 //# sourceMappingURL=2-worker-log.js.map

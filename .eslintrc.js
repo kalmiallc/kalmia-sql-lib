@@ -85,7 +85,7 @@ module.exports = {
         },
       },
     ],
-    '@typescript-eslint/member-ordering': 'error',
+    '@typescript-eslint/member-ordering': 'warn',
     '@typescript-eslint/naming-convention': [
       'error',
       {
@@ -149,7 +149,6 @@ module.exports = {
     'import/no-deprecated': 'warn',
     'jsdoc/check-alignment': 'error',
     'jsdoc/check-indentation': 'error',
-    'jsdoc/newline-after-description': 'error',
     'jsdoc/no-types': 'off',
     'max-classes-per-file': ['error', 1],
     'max-len': [

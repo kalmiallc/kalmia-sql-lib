@@ -158,5 +158,5 @@ export const env: IMySqlEnv & ICommonEnv = {
   DB_LOGGER_REQUEST_LOG_TO_CONSOLE: parseInt(process.env['DB_LOGGER_REQUEST_LOG_TO_CONSOLE']) || 0,
   DB_LOGGER_WORKER_TO_CONSOLE: parseInt(process.env['DB_LOGGER_WORKER_TO_CONSOLE']) || 0,
 
-  APP_ENCRYPTION_KEY: process.env['APP_ENCRYPTION_KEY'] || 'no-key-set',
+  APP_ENCRYPTION_KEY: process.env['APP_ENCRYPTION_KEY'] || 'no-key-set'
 };

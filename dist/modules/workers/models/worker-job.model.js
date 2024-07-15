@@ -72,6 +72,7 @@ class WorkerJob extends base_model_1.BaseModel {
         await this.update();
     }
 }
+exports.WorkerJob = WorkerJob;
 __decorate([
     (0, core_1.prop)({
         parser: { resolver: (0, parsers_1.stringParser)() },
@@ -190,5 +191,4 @@ __decorate([
     }),
     __metadata("design:type", Date)
 ], WorkerJob.prototype, "lastFailed", void 0);
-exports.WorkerJob = WorkerJob;
 //# sourceMappingURL=worker-job.model.js.map
