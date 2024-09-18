@@ -197,15 +197,16 @@ class BaseModel extends core_1.Model {
      * fields that are marked as serializable for populate DB.
      *
      * @param id Model's database ID.
+     * @param options Select options.
      */
-    async populateById(id) {
+    async populateById(id, options = {}) {
         if (!id) {
             return this.reset();
         }
         const data = await new mysql_util_1.MySqlUtil(await this.db()).paramExecute(`
       SELECT * FROM ${this.tableName}
       WHERE id = @id
-    `, { id });
+    `, { id }, options === null || options === void 0 ? void 0 : options.conn);
         if (data && data.length) {
             return this.populate(data[0], types_1.PopulateFor.DB);
         }

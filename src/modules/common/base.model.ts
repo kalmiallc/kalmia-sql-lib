@@ -297,8 +297,9 @@ export abstract class BaseModel extends Model<any> {
    * fields that are marked as serializable for populate DB.
    *
    * @param id Model's database ID.
+   * @param options Select options.
    */
-  public async populateById(id: any): Promise<this> {
+  public async populateById(id: any, options: ActionOptions = {}): Promise<this> {
     if (!id) {
       return this.reset();
     }
@@ -308,7 +309,8 @@ export abstract class BaseModel extends Model<any> {
       SELECT * FROM ${this.tableName}
       WHERE id = @id
     `,
-      { id }
+      { id },
+      options?.conn
     );
 
     if (data && data.length) {

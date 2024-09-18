@@ -103,8 +103,9 @@ export declare abstract class BaseModel extends Model<any> {
      * fields that are marked as serializable for populate DB.
      *
      * @param id Model's database ID.
+     * @param options Select options.
      */
-    populateById(id: any): Promise<this>;
+    populateById(id: any, options?: ActionOptions): Promise<this>;
     /**
      * Marks model as deleted in the database - soft delete.
      *
