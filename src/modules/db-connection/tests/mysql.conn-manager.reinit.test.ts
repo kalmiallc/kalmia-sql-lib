@@ -3,10 +3,10 @@ const mockCreatePool = jest.fn();
 
 // A simple helper to build a mocked pool
 function buildMockPool(label: string) {
-  const listeners: Record<string, ((...args: any[]) => void)[]> = { acquire: [], connection: [], release: [], enqueue: [] };
+  const listeners: Record<string, Function[]> = { acquire: [], connection: [], release: [], enqueue: [] };
   return {
     label,
-    on: jest.fn((event: string, cb: (...args: any[]) => void) => {
+    on: jest.fn((event: string, cb: Function) => {
       (listeners[event] = listeners[event] || []).push(cb);
     }),
     end: jest.fn(async () => {}),

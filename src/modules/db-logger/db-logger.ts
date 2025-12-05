@@ -46,23 +46,6 @@ export class DbLogger {
   private static workerLoggerOK = false;
   private static requestLoggerOK = false;
   private static _initPromise: Promise<void> | null = null;
-  // Ensures sql instance and underlying pool are initialized and alive.
-  // Returns true when a pool is available.
-  private static async ensureSqlAndPool(): Promise<boolean> {
-    if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
-      await DbLogger.reinit();
-    }
-    try {
-      await DbLogger.sqlInst?.checkAndReInitConnectionPool();
-    } catch (e) {
-      AppLogger.warn('DbLogger', 'DbLogger.ts', 'ensureSqlAndPool: pool check failed: ' + e);
-    }
-    const hasPool = !!DbLogger.sqlInst?.getConnectionPool?.();
-    if (!hasPool) {
-      AppLogger.warn('DbLogger', 'DbLogger.ts', 'ensureSqlAndPool: no connection pool');
-    }
-    return hasPool;
-  }
 
   private constructor() {}
 
@@ -103,58 +86,48 @@ export class DbLogger {
   }
 
   public static async checkInstance() {
-    const ok = await DbLogger.ensureSqlAndPool();
-    if (!ok) {
-      return;
-    }
-    const tasks: Promise<void>[] = [];
-    if (!DbLogger.loggerOK) {
-      tasks.push(DbLogger.checkIfLogDbExists(env.DB_LOGGER_TABLE));
-    }
-    if (!DbLogger.workerLoggerOK) {
-      tasks.push(DbLogger.checkIfLogDbExists(env.DB_LOGGER_WORKER_TABLE));
-    }
-    if (!DbLogger.requestLoggerOK) {
-      tasks.push(DbLogger.checkIfLogDbExists(env.DB_LOGGER_REQUEST_TABLE));
-    }
-    if (tasks.length) {
-      await Promise.allSettled(tasks);
-    }
+    await DbLogger.checkIfDbLoggerInitialized();
+    await DbLogger.checkIfWorkerLoggerInitialized();
+    await DbLogger.checkIfRequestLoggerInitialized();
   }
 
   public static async checkIfDbLoggerInitialized(): Promise<void> {
-    const ok = await DbLogger.ensureSqlAndPool();
-    if (!ok) {
-      return;
+    if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
+      await DbLogger.reinit();
     }
+    // Ensure pool is alive; do not poke private pool internals
+    await DbLogger.sqlInst.checkAndReInitConnectionPool();
     if (!DbLogger.loggerOK) {
       await DbLogger.checkIfLogDbExists(env.DB_LOGGER_TABLE);
     }
   }
 
   public static async checkIfWorkerLoggerInitialized(): Promise<void> {
-    const ok = await DbLogger.ensureSqlAndPool();
-    if (!ok) {
-      return;
+    if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
+      await DbLogger.reinit();
     }
+    await DbLogger.sqlInst?.checkAndReInitConnectionPool();
     if (!DbLogger.workerLoggerOK) {
       await DbLogger.checkIfLogDbExists(env.DB_LOGGER_WORKER_TABLE);
     }
   }
 
   public static async checkIfRequestLoggerInitialized(): Promise<void> {
-    const ok = await DbLogger.ensureSqlAndPool();
-    if (!ok) {
-      return;
+    if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
+      await DbLogger.reinit();
     }
+    await DbLogger.sqlInst?.checkAndReInitConnectionPool();
     if (!DbLogger.requestLoggerOK) {
       await DbLogger.checkIfLogDbExists(env.DB_LOGGER_REQUEST_TABLE);
     }
   }
 
   public static async checkIfLogDbExists(table): Promise<void> {
-    const ok = await DbLogger.ensureSqlAndPool();
-    if (!ok) {
+    if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
+      await DbLogger.checkInstance();
+    }
+    await DbLogger.sqlInst?.checkAndReInitConnectionPool();
+    if (!DbLogger.sqlInst?.getConnectionPool()) {
       AppLogger.warn('DbLogger', 'DbLogger.ts', 'Error for logger existence check , no connection pool');
       return;
     }

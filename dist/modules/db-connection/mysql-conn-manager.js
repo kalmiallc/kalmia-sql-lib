@@ -25,6 +25,7 @@ class MySqlConnManager {
     _connectionsSync = {};
     _connectionDetails = {};
     _connectionSyncDetails = {};
+    _reinitPromises = {};
     constructor() { }
     /**
      * Test if connection pool is not closed
@@ -130,13 +131,32 @@ class MySqlConnManager {
      * @param config (optional) connection config
      */
     async reinitializeConnection(databaseIdentifier = types_1.DbConnectionType.PRIMARY, config = {}) {
-        this._connectionDetails[databaseIdentifier] = this.populateDetails(config);
-        this._connections[databaseIdentifier] = await this.getMySqlPoolConnection(config);
-        kalmia_common_lib_1.AppLogger.db('mysql-conn-manager.ts', 'getConnection', 'Connection reinitialized', databaseIdentifier, kalmia_common_lib_1.AppLogger.stringifyObjectForLog({
-            ...this._connectionDetails[databaseIdentifier],
-            ssl: this._connectionDetails[databaseIdentifier].ssl ? '***' : undefined
-        }));
-        return this._connections[databaseIdentifier];
+        // Debounce concurrent reinitializations per identifier
+        if (this._reinitPromises[databaseIdentifier]) {
+            return this._reinitPromises[databaseIdentifier];
+        }
+        this._reinitPromises[databaseIdentifier] = (async () => {
+            const oldConn = this._connections[databaseIdentifier];
+            // Attempt to gracefully end the old pool before creating a new one to avoid leaking connections
+            if (oldConn && typeof oldConn.end === 'function') {
+                try {
+                    await oldConn.end();
+                }
+                catch (e) {
+                    kalmia_common_lib_1.AppLogger.warn('mysql-conn-manager.ts', 'reinitializeConnection', 'Error ending old pool during reinit', e);
+                }
+            }
+            this._connectionDetails[databaseIdentifier] = this.populateDetails(config);
+            this._connections[databaseIdentifier] = await this.getMySqlPoolConnection(config);
+            kalmia_common_lib_1.AppLogger.db('mysql-conn-manager.ts', 'getConnection', 'Connection reinitialized', databaseIdentifier, kalmia_common_lib_1.AppLogger.stringifyObjectForLog({
+                ...this._connectionDetails[databaseIdentifier],
+                ssl: this._connectionDetails[databaseIdentifier].ssl ? '***' : undefined
+            }));
+            return this._connections[databaseIdentifier];
+        })().finally(() => {
+            this._reinitPromises[databaseIdentifier] = null;
+        });
+        return this._reinitPromises[databaseIdentifier];
     }
     /**
      * Provides direct database connection (no pool) assigned to identifier, defaulting to primary.

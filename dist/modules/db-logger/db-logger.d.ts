@@ -39,7 +39,6 @@ export declare class DbLogger {
     private static workerLoggerOK;
     private static requestLoggerOK;
     private static _initPromise;
-    private static ensureSqlAndPool;
     private constructor();
     /**
      * Ends the connection to DB.
