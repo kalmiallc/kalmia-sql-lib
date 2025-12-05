@@ -25,6 +25,30 @@ const env_1 = require("../../config/env");
  */
 class BaseModel extends core_1.Model {
     /**
+     * Base model's id property definition.
+     */
+    id;
+    /**
+     * Time of creation.
+     */
+    _createTime;
+    /**
+     * ID of the user that created the model.
+     */
+    _createUser;
+    /**
+     * Time of the last update.
+     */
+    _updateTime;
+    /**
+     * ID of the user that updated the model.
+     */
+    _updateUser;
+    /**
+     * Base model's status property definition
+     */
+    status;
+    /**
      * Class constructor.
      *
      * @param data Input data.
@@ -81,11 +105,10 @@ class BaseModel extends core_1.Model {
      * @returns this
      */
     async create(options = {}) {
-        var _a, _b;
-        if (!(options === null || options === void 0 ? void 0 : options.context)) {
+        if (!options?.context) {
             options.context = this.getContext();
         }
-        if ((_b = (_a = options === null || options === void 0 ? void 0 : options.context) === null || _a === void 0 ? void 0 : _a.user) === null || _b === void 0 ? void 0 : _b.id) {
+        if (options?.context?.user?.id) {
             this._createUser = options.context.user.id;
             this._updateUser = this._createUser;
         }
@@ -143,11 +166,10 @@ class BaseModel extends core_1.Model {
      * @returns this
      */
     async update(options = {}) {
-        var _a, _b;
-        if (!(options === null || options === void 0 ? void 0 : options.context)) {
+        if (!options?.context) {
             options.context = this.getContext();
         }
-        if ((_b = (_a = options === null || options === void 0 ? void 0 : options.context) === null || _a === void 0 ? void 0 : _a.user) === null || _b === void 0 ? void 0 : _b.id) {
+        if (options?.context?.user?.id) {
             this._updateUser = options.context.user.id;
         }
         const serializedModel = this.serialize(types_1.SerializeFor.UPDATE_DB);
@@ -206,7 +228,7 @@ class BaseModel extends core_1.Model {
         const data = await new mysql_util_1.MySqlUtil(await this.db()).paramExecute(`
       SELECT * FROM ${this.tableName}
       WHERE id = @id
-    `, { id }, options === null || options === void 0 ? void 0 : options.conn);
+    `, { id }, options?.conn);
         if (data && data.length) {
             return this.populate(data[0], types_1.PopulateFor.DB);
         }
@@ -221,11 +243,10 @@ class BaseModel extends core_1.Model {
      * @returns this
      */
     async delete(options = {}) {
-        var _a, _b;
-        if (!(options === null || options === void 0 ? void 0 : options.context)) {
+        if (!options?.context) {
             options.context = this.getContext();
         }
-        if ((_b = (_a = options === null || options === void 0 ? void 0 : options.context) === null || _a === void 0 ? void 0 : _a.user) === null || _b === void 0 ? void 0 : _b.id) {
+        if (options?.context?.user?.id) {
             this._updateUser = options.context.user.id;
         }
         let isSingleTrans = false;
@@ -303,7 +324,14 @@ class BaseModel extends core_1.Model {
      * @returns Parsed default selected columns.
      */
     parseMappedSelectColumns(table, data) {
-        return Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({ id: data[`${table}Id`] ? data[`${table}Id`] : null }, { status: data[`${table}Status`] ? data[`${table}Status`] : null }), { _createTime: data[`${table}CreateTime`] ? data[`${table}CreateTime`] : null }), { _createUser: data[`${table}CreateUser`] ? data[`${table}CreateUser`] : null }), { _updateTime: data[`${table}UpdateTime`] ? data[`${table}UpdateTime`] : null }), { _updateUser: data[`${table}UpdateUser`] ? data[`${table}UpdateUser`] : null });
+        return {
+            ...{ id: data[`${table}Id`] ? data[`${table}Id`] : null },
+            ...{ status: data[`${table}Status`] ? data[`${table}Status`] : null },
+            ...{ _createTime: data[`${table}CreateTime`] ? data[`${table}CreateTime`] : null },
+            ...{ _createUser: data[`${table}CreateUser`] ? data[`${table}CreateUser`] : null },
+            ...{ _updateTime: data[`${table}UpdateTime`] ? data[`${table}UpdateTime`] : null },
+            ...{ _updateUser: data[`${table}UpdateUser`] ? data[`${table}UpdateUser`] : null }
+        };
     }
     /**
      * Encrypts given value.
@@ -332,7 +360,7 @@ class BaseModel extends core_1.Model {
             return input;
         }
         const data = JSON.parse(CryptoJS.AES.decrypt(input, env_1.env.APP_ENCRYPTION_KEY).toString(CryptoJS.enc.Utf8));
-        return data === null || data === void 0 ? void 0 : data.value;
+        return data?.value;
     }
 }
 exports.BaseModel = BaseModel;

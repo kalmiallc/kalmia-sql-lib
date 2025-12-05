@@ -9,6 +9,8 @@ const mysql_conn_manager_1 = require("./mysql-conn-manager");
  * Methods with direct -- use direct connection pooling, no need to get instances from the connection pool.
  */
 class MySqlUtil {
+    _dbConnectionPool;
+    _currentActiveConnection;
     constructor(dbConnection) {
         this._dbConnectionPool = dbConnection;
         return this;
@@ -129,11 +131,10 @@ class MySqlUtil {
      * @returns array of results from database
      */
     async call(procedure, data, connection = this._currentActiveConnection, options = {}) {
-        var _a;
         let isSingleTrans = false;
         if (!connection) {
             isSingleTrans = true;
-            connection = await ((_a = this._dbConnectionPool) === null || _a === void 0 ? void 0 : _a.getConnection());
+            connection = await this._dbConnectionPool?.getConnection();
         }
         if (!connection) {
             throw Error('MySql Db Connection not provided');
@@ -204,9 +205,8 @@ class MySqlUtil {
      * @returns connection from the pool.
      */
     async start(isolationLevel) {
-        var _a;
         // await this.db.query('SET SESSION autocommit = 0; START TRANSACTION;');
-        const conn = await ((_a = this._dbConnectionPool) === null || _a === void 0 ? void 0 : _a.getConnection());
+        const conn = await this._dbConnectionPool?.getConnection();
         if (!conn) {
             throw Error('MySql Db Connection not provided');
         }
@@ -267,13 +267,12 @@ class MySqlUtil {
      * @param isolationLevel Database isolation level for this query. Isolation level will only affect next query, execution, the it will be reset to default.
      */
     async paramExecute(query, values, connection = this._currentActiveConnection, isolationLevel) {
-        var _a;
         const sqlParamValues = [];
         let isSingleTrans = false;
         await this.checkAndReInitConnectionPool();
         if (!connection) {
             isSingleTrans = true;
-            connection = await ((_a = this._dbConnectionPool) === null || _a === void 0 ? void 0 : _a.getConnection());
+            connection = await this._dbConnectionPool?.getConnection();
         }
         // Set isolation level of query. Can only be changed if not a transaction.
         if (isolationLevel) {

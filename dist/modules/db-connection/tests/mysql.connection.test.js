@@ -27,8 +27,8 @@ describe('MySQL coon pool automatic', () => {
         @email,
         @id
       )`, {
-            email: `${Math.floor(Math.random() * 10000)}@example.com`,
-            id: Math.floor(Math.random() * 1000000)
+            email: `${Math.floor(Math.random() * 10_000)}@example.com`,
+            id: Math.floor(Math.random() * 1_000_000)
         });
         const count = await sqlUtil.paramExecuteDirect("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;");
         expect(count.length).toBe(1);
@@ -67,8 +67,8 @@ describe('MySQL coon pool automatic', () => {
         @email,
         @id
       )`, {
-            email: `${Math.floor(Math.random() * 10000)}@example.com`,
-            id: Math.floor(Math.random() * 1000000)
+            email: `${Math.floor(Math.random() * 10_000)}@example.com`,
+            id: Math.floor(Math.random() * 1_000_000)
         });
         const count = await secondUtil.paramExecuteDirect("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;");
         await mysql_conn_manager_1.MySqlConnManager.getInstance().end('secondary');
@@ -87,8 +87,8 @@ describe('MySQL coon pool automatic', () => {
         @email,
         @id
       )`, {
-            email: `${Math.floor(Math.random() * 10000)}@example.com`,
-            id: Math.floor(Math.random() * 1000000)
+            email: `${Math.floor(Math.random() * 10_000)}@example.com`,
+            id: Math.floor(Math.random() * 1_000_000)
         });
     }
 });
@@ -122,8 +122,8 @@ describe('MySQL no pool', () => {
         email,
         id
       ) VALUES (
-        "${Math.floor(Math.random() * 10000)}@example.com",
-        "${Math.floor(Math.random() * 1000000)}"
+        "${Math.floor(Math.random() * 10_000)}@example.com",
+        "${Math.floor(Math.random() * 1_000_000)}"
       )`);
         const count = await conn.execute("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;");
         expect(count.length).toBe(2);
@@ -152,7 +152,7 @@ describe('MySql use init function', () => {
         await util.paramExecute(`INSERT INTO \`sql_lib_user\` (
         email,
         id
-      ) VALUES (@email, @id)`, { email: Math.floor(Math.random() * 10000) + '@example.com', id: Math.floor(Math.random() * 1000000) });
+      ) VALUES (@email, @id)`, { email: Math.floor(Math.random() * 10_000) + '@example.com', id: Math.floor(Math.random() * 1_000_000) });
         const count = await util.paramExecute("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;");
         expect(count.length).toBe(1);
     });
@@ -185,7 +185,7 @@ describe('MySql use initAndStartTrans', () => {
         await utilInt.sql.paramExecute(`INSERT INTO \`sql_lib_user\` (
         email,
         id
-      ) VALUES (@email, @id)`, { email: Math.floor(Math.random() * 10000) + '@example.com', id: Math.floor(Math.random() * 1000000) });
+      ) VALUES (@email, @id)`, { email: Math.floor(Math.random() * 10_000) + '@example.com', id: Math.floor(Math.random() * 1_000_000) });
         const count = await utilInt.sql.paramExecute("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;");
         expect(count.length).toBe(1);
     });
@@ -222,7 +222,7 @@ describe('MySql use init connection from pool with the transaction, and use pass
         await util.paramExecute(`INSERT INTO \`sql_lib_user\` (
         email,
         id
-      ) VALUES (@email, @id)`, { email: Math.floor(Math.random() * 10000) + '@example.com', id: Math.floor(Math.random() * 1000000) }, conn);
+      ) VALUES (@email, @id)`, { email: Math.floor(Math.random() * 10_000) + '@example.com', id: Math.floor(Math.random() * 1_000_000) }, conn);
         await conn.rollback();
         const count = await util.paramExecute("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;");
         expect(count[0].COUNT).toBe(0);
@@ -234,7 +234,7 @@ describe('MySql use init connection from pool with the transaction, and use pass
         await util.paramExecute(`INSERT INTO \`sql_lib_user\` (
         email,
         id
-      ) VALUES (@email, @id)`, { email: Math.floor(Math.random() * 10000) + '@example.com', id: Math.floor(Math.random() * 1000000) }, conn);
+      ) VALUES (@email, @id)`, { email: Math.floor(Math.random() * 10_000) + '@example.com', id: Math.floor(Math.random() * 1_000_000) }, conn);
         await conn.commit();
         const count = await util.paramExecute("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;");
         expect(count[0].COUNT).toBe(1);
@@ -285,7 +285,7 @@ describe('MySql use init connection from pool with the transaction, and use dire
         await util.paramExecute(`INSERT INTO \`sql_lib_user\` (
         email,
         id
-      ) VALUES (@email, @id)`, { email: Math.floor(Math.random() * 10000) + '@example.com', id: Math.floor(Math.random() * 1000000) });
+      ) VALUES (@email, @id)`, { email: Math.floor(Math.random() * 10_000) + '@example.com', id: Math.floor(Math.random() * 1_000_000) });
         await util.getActiveConnection().rollback();
         const count = await util.paramExecute("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;");
         expect(count[0].COUNT).toBe(0);
@@ -297,7 +297,7 @@ describe('MySql use init connection from pool with the transaction, and use dire
         await util.paramExecute(`INSERT INTO \`sql_lib_user\` (
         email,
         id
-      ) VALUES (@email, @id)`, { email: Math.floor(Math.random() * 10000) + '@example.com', id: Math.floor(Math.random() * 1000000) });
+      ) VALUES (@email, @id)`, { email: Math.floor(Math.random() * 10_000) + '@example.com', id: Math.floor(Math.random() * 1_000_000) });
         await util.getActiveConnection().commit();
         const count = await util.paramExecute("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;");
         expect(count[0].COUNT).toBe(1);

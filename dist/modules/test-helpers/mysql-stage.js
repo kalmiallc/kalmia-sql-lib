@@ -12,6 +12,10 @@ const mysql_util_1 = require("../db-connection/mysql-util");
  * Testing MySQL stage class.
  */
 class MySqlStage {
+    static instance;
+    connManager;
+    dbConn;
+    utils;
     constructor() { }
     static async getInstance() {
         if (!MySqlStage.instance) {

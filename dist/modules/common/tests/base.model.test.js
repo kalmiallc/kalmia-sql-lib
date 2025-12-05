@@ -238,10 +238,11 @@ async function setupDatabase() {
   `, {});
 }
 class TestUser extends base_model_1.BaseModel {
-    constructor() {
-        super(...arguments);
-        this.tableName = testTableName;
-    }
+    tableName = testTableName;
+    /**
+     * email
+     */
+    email;
 }
 __decorate([
     (0, core_1.prop)({

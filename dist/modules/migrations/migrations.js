@@ -9,6 +9,8 @@ const mysql_conn_manager_1 = require("../db-connection/mysql-conn-manager");
  * @link https://github.com/tinemlakar/ts-mysql-migrate
  */
 class Migrations {
+    dbMigration;
+    migrationToolConnectionPool;
     /**
      * Initialized migration options. This should be called first
      *
