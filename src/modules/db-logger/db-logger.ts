@@ -45,6 +45,24 @@ export class DbLogger {
   private static loggerOK = false;
   private static workerLoggerOK = false;
   private static requestLoggerOK = false;
+  private static _initPromise: Promise<void> | null = null;
+  // Ensures sql instance and underlying pool are initialized and alive.
+  // Returns true when a pool is available.
+  private static async ensureSqlAndPool(): Promise<boolean> {
+    if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
+      await DbLogger.reinit();
+    }
+    try {
+      await DbLogger.sqlInst?.checkAndReInitConnectionPool();
+    } catch (e) {
+      AppLogger.warn('DbLogger', 'DbLogger.ts', 'ensureSqlAndPool: pool check failed: ' + e);
+    }
+    const hasPool = !!DbLogger.sqlInst?.getConnectionPool?.();
+    if (!hasPool) {
+      AppLogger.warn('DbLogger', 'DbLogger.ts', 'ensureSqlAndPool: no connection pool');
+    }
+    return hasPool;
+  }
 
   private constructor() {}
 
@@ -58,10 +76,18 @@ export class DbLogger {
 
   public static async init() {
     try {
-      if (!DbLogger.sqlInst) {
-        DbLogger.sqlInst = await MySqlUtil.init(false);
-        AppLogger.info('DbLogger', 'DbLogger.ts', 'Logger connection initialized');
+      if (DbLogger.sqlInst) {
+        return;
       }
+      if (!DbLogger._initPromise) {
+        DbLogger._initPromise = (async () => {
+          DbLogger.sqlInst = await MySqlUtil.init(false);
+          AppLogger.info('DbLogger', 'DbLogger.ts', 'Logger connection initialized');
+        })().finally(() => {
+          DbLogger._initPromise = null;
+        });
+      }
+      await DbLogger._initPromise;
     } catch (error) {
       AppLogger.error('DbLogger', 'DbLogger.ts', 'Error initializing db logger: ' + error);
     }
@@ -77,17 +103,29 @@ export class DbLogger {
   }
 
   public static async checkInstance() {
-    await DbLogger.checkIfDbLoggerInitialized();
-    await DbLogger.checkIfWorkerLoggerInitialized();
-    await DbLogger.checkIfRequestLoggerInitialized();
+    const ok = await DbLogger.ensureSqlAndPool();
+    if (!ok) {
+      return;
+    }
+    const tasks: Promise<void>[] = [];
+    if (!DbLogger.loggerOK) {
+      tasks.push(DbLogger.checkIfLogDbExists(env.DB_LOGGER_TABLE));
+    }
+    if (!DbLogger.workerLoggerOK) {
+      tasks.push(DbLogger.checkIfLogDbExists(env.DB_LOGGER_WORKER_TABLE));
+    }
+    if (!DbLogger.requestLoggerOK) {
+      tasks.push(DbLogger.checkIfLogDbExists(env.DB_LOGGER_REQUEST_TABLE));
+    }
+    if (tasks.length) {
+      await Promise.allSettled(tasks);
+    }
   }
 
   public static async checkIfDbLoggerInitialized(): Promise<void> {
-    if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
-      await DbLogger.reinit();
-    }
-    if (DbLogger.sqlInst?.getConnectionPool().pool._closed) {
-      await DbLogger.reinit();
+    const ok = await DbLogger.ensureSqlAndPool();
+    if (!ok) {
+      return;
     }
     if (!DbLogger.loggerOK) {
       await DbLogger.checkIfLogDbExists(env.DB_LOGGER_TABLE);
@@ -95,38 +133,35 @@ export class DbLogger {
   }
 
   public static async checkIfWorkerLoggerInitialized(): Promise<void> {
-    if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
-      await DbLogger.reinit();
+    const ok = await DbLogger.ensureSqlAndPool();
+    if (!ok) {
+      return;
     }
-    await DbLogger.sqlInst?.checkAndReInitConnectionPool();
     if (!DbLogger.workerLoggerOK) {
       await DbLogger.checkIfLogDbExists(env.DB_LOGGER_WORKER_TABLE);
     }
   }
 
   public static async checkIfRequestLoggerInitialized(): Promise<void> {
-    if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
-      await DbLogger.reinit();
+    const ok = await DbLogger.ensureSqlAndPool();
+    if (!ok) {
+      return;
     }
-    await DbLogger.sqlInst?.checkAndReInitConnectionPool();
     if (!DbLogger.requestLoggerOK) {
       await DbLogger.checkIfLogDbExists(env.DB_LOGGER_REQUEST_TABLE);
     }
   }
 
   public static async checkIfLogDbExists(table): Promise<void> {
-    if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
-      await DbLogger.checkInstance();
-    }
-    await DbLogger.sqlInst?.checkAndReInitConnectionPool();
-    if (!DbLogger.sqlInst?.getConnectionPool()) {
+    const ok = await DbLogger.ensureSqlAndPool();
+    if (!ok) {
       AppLogger.warn('DbLogger', 'DbLogger.ts', 'Error for logger existence check , no connection pool');
       return;
     }
-    const tableData = await DbLogger.sqlInst?.getConnectionPool().query(`SELECT * 
-                              FROM information_schema.tables
-                              WHERE table_name = '${table}'
-                              LIMIT 1;`);
+    const tableData = await DbLogger.sqlInst?.getConnectionPool().query(`SELECT *
+                                                                         FROM information_schema.tables
+                                                                         WHERE table_name = '${table}'
+                                                                             LIMIT 1;`);
     const isTable = tableData[0] as any;
     if (isTable.length > 0 && isTable[0].TABLE_NAME === table) {
       switch (table) {
@@ -257,9 +292,9 @@ export class DbLogger {
       }
       await DbLogger.sqlInst?.paramExecute(
         `
-      INSERT INTO ${env.DB_LOGGER_TABLE} (file, method, severity, data)
-      VALUES (@fileName, @methodName, @severity, @data)
-    `,
+            INSERT INTO ${env.DB_LOGGER_TABLE} (file, method, severity, data)
+            VALUES (@fileName, @methodName, @severity, @data)
+        `,
         { fileName, methodName, severity, data }
       );
     } catch (error) {
@@ -316,9 +351,9 @@ export class DbLogger {
 
       await DbLogger.sqlInst.paramExecute(
         `
-      INSERT INTO ${env.DB_LOGGER_REQUEST_TABLE} (host, ip, statusCode, method, url, endpoint, userAgent, origin, xForwardedFor, body, responseTime, data)
-      VALUES (@host, @ip, @statusCode, @method, @url, @endpoint, @userAgent, @origin, @xForwardedFor, @body, @responseTime, @data)
-    `,
+            INSERT INTO ${env.DB_LOGGER_REQUEST_TABLE} (host, ip, statusCode, method, url, endpoint, userAgent, origin, xForwardedFor, body, responseTime, data)
+            VALUES (@host, @ip, @statusCode, @method, @url, @endpoint, @userAgent, @origin, @xForwardedFor, @body, @responseTime, @data)
+        `,
         {
           host: inputData.host || '',
           ip: inputData.ip || '',
@@ -364,9 +399,9 @@ export class DbLogger {
 
       await DbLogger.sqlInst.paramExecute(
         `
-	      INSERT INTO ${env.DB_LOGGER_WORKER_TABLE} (status, worker, message, data, error, uuid)
-	      VALUES (@status, @worker, @message, @data, @error, @uuid)
-	    `,
+            INSERT INTO ${env.DB_LOGGER_WORKER_TABLE} (status, worker, message, data, error, uuid)
+            VALUES (@status, @worker, @message, @data, @error, @uuid)
+        `,
         { status, worker, message, data, error, uuid: uuid || '' }
       );
     } catch (error) {

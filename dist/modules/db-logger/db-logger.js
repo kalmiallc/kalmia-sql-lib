@@ -7,6 +7,25 @@ const env_1 = require("../../config/env");
 const types_1 = require("../../config/types");
 const mysql_util_1 = require("../db-connection/mysql-util");
 class DbLogger {
+    // Ensures sql instance and underlying pool are initialized and alive.
+    // Returns true when a pool is available.
+    static async ensureSqlAndPool() {
+        var _a, _b, _c;
+        if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
+            await DbLogger.reinit();
+        }
+        try {
+            await ((_a = DbLogger.sqlInst) === null || _a === void 0 ? void 0 : _a.checkAndReInitConnectionPool());
+        }
+        catch (e) {
+            kalmia_common_lib_1.AppLogger.warn('DbLogger', 'DbLogger.ts', 'ensureSqlAndPool: pool check failed: ' + e);
+        }
+        const hasPool = !!((_c = (_b = DbLogger.sqlInst) === null || _b === void 0 ? void 0 : _b.getConnectionPool) === null || _c === void 0 ? void 0 : _c.call(_b));
+        if (!hasPool) {
+            kalmia_common_lib_1.AppLogger.warn('DbLogger', 'DbLogger.ts', 'ensureSqlAndPool: no connection pool');
+        }
+        return hasPool;
+    }
     constructor() { }
     /**
      * Ends the connection to DB.
@@ -18,10 +37,18 @@ class DbLogger {
     }
     static async init() {
         try {
-            if (!DbLogger.sqlInst) {
-                DbLogger.sqlInst = await mysql_util_1.MySqlUtil.init(false);
-                kalmia_common_lib_1.AppLogger.info('DbLogger', 'DbLogger.ts', 'Logger connection initialized');
+            if (DbLogger.sqlInst) {
+                return;
             }
+            if (!DbLogger._initPromise) {
+                DbLogger._initPromise = (async () => {
+                    DbLogger.sqlInst = await mysql_util_1.MySqlUtil.init(false);
+                    kalmia_common_lib_1.AppLogger.info('DbLogger', 'DbLogger.ts', 'Logger connection initialized');
+                })().finally(() => {
+                    DbLogger._initPromise = null;
+                });
+            }
+            await DbLogger._initPromise;
         }
         catch (error) {
             kalmia_common_lib_1.AppLogger.error('DbLogger', 'DbLogger.ts', 'Error initializing db logger: ' + error);
@@ -37,56 +64,62 @@ class DbLogger {
         }
     }
     static async checkInstance() {
-        await DbLogger.checkIfDbLoggerInitialized();
-        await DbLogger.checkIfWorkerLoggerInitialized();
-        await DbLogger.checkIfRequestLoggerInitialized();
+        const ok = await DbLogger.ensureSqlAndPool();
+        if (!ok) {
+            return;
+        }
+        const tasks = [];
+        if (!DbLogger.loggerOK) {
+            tasks.push(DbLogger.checkIfLogDbExists(env_1.env.DB_LOGGER_TABLE));
+        }
+        if (!DbLogger.workerLoggerOK) {
+            tasks.push(DbLogger.checkIfLogDbExists(env_1.env.DB_LOGGER_WORKER_TABLE));
+        }
+        if (!DbLogger.requestLoggerOK) {
+            tasks.push(DbLogger.checkIfLogDbExists(env_1.env.DB_LOGGER_REQUEST_TABLE));
+        }
+        if (tasks.length) {
+            await Promise.allSettled(tasks);
+        }
     }
     static async checkIfDbLoggerInitialized() {
-        var _a;
-        if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
-            await DbLogger.reinit();
-        }
-        if ((_a = DbLogger.sqlInst) === null || _a === void 0 ? void 0 : _a.getConnectionPool().pool._closed) {
-            await DbLogger.reinit();
+        const ok = await DbLogger.ensureSqlAndPool();
+        if (!ok) {
+            return;
         }
         if (!DbLogger.loggerOK) {
             await DbLogger.checkIfLogDbExists(env_1.env.DB_LOGGER_TABLE);
         }
     }
     static async checkIfWorkerLoggerInitialized() {
-        var _a;
-        if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
-            await DbLogger.reinit();
+        const ok = await DbLogger.ensureSqlAndPool();
+        if (!ok) {
+            return;
         }
-        await ((_a = DbLogger.sqlInst) === null || _a === void 0 ? void 0 : _a.checkAndReInitConnectionPool());
         if (!DbLogger.workerLoggerOK) {
             await DbLogger.checkIfLogDbExists(env_1.env.DB_LOGGER_WORKER_TABLE);
         }
     }
     static async checkIfRequestLoggerInitialized() {
-        var _a;
-        if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
-            await DbLogger.reinit();
+        const ok = await DbLogger.ensureSqlAndPool();
+        if (!ok) {
+            return;
         }
-        await ((_a = DbLogger.sqlInst) === null || _a === void 0 ? void 0 : _a.checkAndReInitConnectionPool());
         if (!DbLogger.requestLoggerOK) {
             await DbLogger.checkIfLogDbExists(env_1.env.DB_LOGGER_REQUEST_TABLE);
         }
     }
     static async checkIfLogDbExists(table) {
-        var _a, _b, _c;
-        if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
-            await DbLogger.checkInstance();
-        }
-        await ((_a = DbLogger.sqlInst) === null || _a === void 0 ? void 0 : _a.checkAndReInitConnectionPool());
-        if (!((_b = DbLogger.sqlInst) === null || _b === void 0 ? void 0 : _b.getConnectionPool())) {
+        var _a;
+        const ok = await DbLogger.ensureSqlAndPool();
+        if (!ok) {
             kalmia_common_lib_1.AppLogger.warn('DbLogger', 'DbLogger.ts', 'Error for logger existence check , no connection pool');
             return;
         }
-        const tableData = await ((_c = DbLogger.sqlInst) === null || _c === void 0 ? void 0 : _c.getConnectionPool().query(`SELECT * 
-                              FROM information_schema.tables
-                              WHERE table_name = '${table}'
-                              LIMIT 1;`));
+        const tableData = await ((_a = DbLogger.sqlInst) === null || _a === void 0 ? void 0 : _a.getConnectionPool().query(`SELECT *
+                                                                         FROM information_schema.tables
+                                                                         WHERE table_name = '${table}'
+                                                                             LIMIT 1;`));
         const isTable = tableData[0];
         if (isTable.length > 0 && isTable[0].TABLE_NAME === table) {
             switch (table) {
@@ -205,9 +238,9 @@ class DbLogger {
                 return;
             }
             await ((_a = DbLogger.sqlInst) === null || _a === void 0 ? void 0 : _a.paramExecute(`
-      INSERT INTO ${env_1.env.DB_LOGGER_TABLE} (file, method, severity, data)
-      VALUES (@fileName, @methodName, @severity, @data)
-    `, { fileName, methodName, severity, data }));
+            INSERT INTO ${env_1.env.DB_LOGGER_TABLE} (file, method, severity, data)
+            VALUES (@fileName, @methodName, @severity, @data)
+        `, { fileName, methodName, severity, data }));
         }
         catch (error) {
             kalmia_common_lib_1.AppLogger.error('DbLogger', 'DbLogger.ts', 'Error writing to DB log: ', error);
@@ -256,9 +289,9 @@ class DbLogger {
                 inputData.data = {};
             }
             await DbLogger.sqlInst.paramExecute(`
-      INSERT INTO ${env_1.env.DB_LOGGER_REQUEST_TABLE} (host, ip, statusCode, method, url, endpoint, userAgent, origin, xForwardedFor, body, responseTime, data)
-      VALUES (@host, @ip, @statusCode, @method, @url, @endpoint, @userAgent, @origin, @xForwardedFor, @body, @responseTime, @data)
-    `, {
+            INSERT INTO ${env_1.env.DB_LOGGER_REQUEST_TABLE} (host, ip, statusCode, method, url, endpoint, userAgent, origin, xForwardedFor, body, responseTime, data)
+            VALUES (@host, @ip, @statusCode, @method, @url, @endpoint, @userAgent, @origin, @xForwardedFor, @body, @responseTime, @data)
+        `, {
                 host: inputData.host || '',
                 ip: inputData.ip || '',
                 statusCode: inputData.statusCode || 0,
@@ -298,9 +331,9 @@ class DbLogger {
                 data = { data };
             }
             await DbLogger.sqlInst.paramExecute(`
-	      INSERT INTO ${env_1.env.DB_LOGGER_WORKER_TABLE} (status, worker, message, data, error, uuid)
-	      VALUES (@status, @worker, @message, @data, @error, @uuid)
-	    `, { status, worker, message, data, error, uuid: uuid || '' });
+            INSERT INTO ${env_1.env.DB_LOGGER_WORKER_TABLE} (status, worker, message, data, error, uuid)
+            VALUES (@status, @worker, @message, @data, @error, @uuid)
+        `, { status, worker, message, data, error, uuid: uuid || '' });
         }
         catch (error) {
             kalmia_common_lib_1.AppLogger.error('DbLogger', 'DbLogger.ts', 'Error writing worker log to DB: ', error);
@@ -311,4 +344,5 @@ exports.DbLogger = DbLogger;
 DbLogger.loggerOK = false;
 DbLogger.workerLoggerOK = false;
 DbLogger.requestLoggerOK = false;
+DbLogger._initPromise = null;
 //# sourceMappingURL=db-logger.js.map
