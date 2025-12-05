@@ -45,7 +45,6 @@ export class DbLogger {
   private static loggerOK = false;
   private static workerLoggerOK = false;
   private static requestLoggerOK = false;
-  private static _initPromise: Promise<void> | null = null;
 
   private constructor() {}
 
@@ -59,18 +58,10 @@ export class DbLogger {
 
   public static async init() {
     try {
-      if (DbLogger.sqlInst) {
-        return;
+      if (!DbLogger.sqlInst) {
+        DbLogger.sqlInst = await MySqlUtil.init(false);
+        AppLogger.info('DbLogger', 'DbLogger.ts', 'Logger connection initialized');
       }
-      if (!DbLogger._initPromise) {
-        DbLogger._initPromise = (async () => {
-          DbLogger.sqlInst = await MySqlUtil.init(false);
-          AppLogger.info('DbLogger', 'DbLogger.ts', 'Logger connection initialized');
-        })().finally(() => {
-          DbLogger._initPromise = null;
-        });
-      }
-      await DbLogger._initPromise;
     } catch (error) {
       AppLogger.error('DbLogger', 'DbLogger.ts', 'Error initializing db logger: ' + error);
     }
@@ -95,8 +86,9 @@ export class DbLogger {
     if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
       await DbLogger.reinit();
     }
-    // Ensure pool is alive; do not poke private pool internals
-    await DbLogger.sqlInst.checkAndReInitConnectionPool();
+    if (DbLogger.sqlInst?.getConnectionPool().pool._closed) {
+      await DbLogger.reinit();
+    }
     if (!DbLogger.loggerOK) {
       await DbLogger.checkIfLogDbExists(env.DB_LOGGER_TABLE);
     }

@@ -10,7 +10,6 @@ export declare class MySqlConnManager {
     private _connectionsSync;
     private _connectionDetails;
     private _connectionSyncDetails;
-    private _reinitPromises;
     private constructor();
     /**
      * Test if connection pool is not closed

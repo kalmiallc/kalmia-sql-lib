@@ -21,66 +21,13 @@ const mysql_util_1 = require("../../db-connection/mysql-util");
  * Worker job model.
  */
 class WorkerJob extends base_model_1.BaseModel {
-    /**
-     * Worker jobs table.
-     */
-    tableName = types_1.WorkerDbTables.WORKER_JOB;
-    /**
-     * Unique name of the worker.
-     */
-    name;
-    /**
-     * Channel.
-     */
-    channel;
-    /**
-     * Interval at which the worker is scheduled - CRON syntax.
-     */
-    interval;
-    /**
-     * Worker job last run date - set at the beginning of execution.
-     */
-    lastRun;
-    /**
-     * Date at which the worker will be run - set at creation or at next interval.
-     */
-    nextRun;
-    /**
-     * Value for worker job timeout.
-     */
-    timeout;
-    /**
-     * Input for the worker.
-     */
-    input;
-    /**
-     * Number of retries worker has made.
-     */
-    retries;
-    /**
-     * Any additional parameters which can be parsed in worker class constructor.
-     */
-    parameters;
-    /**
-     * Property which defines if job should be removed after successful run.
-     */
-    autoRemove;
-    /**
-     * Amount of time worker took for completing planned portion of job.
-     */
-    lastDuration;
-    /**
-     * Last logged error.
-     */
-    lastError;
-    /**
-     * Date of last successful run - set at the end of execution.
-     */
-    lastCompleted;
-    /**
-     * Date of the last recorded error.
-     */
-    lastFailed;
+    constructor() {
+        super(...arguments);
+        /**
+         * Worker jobs table.
+         */
+        this.tableName = types_1.WorkerDbTables.WORKER_JOB;
+    }
     /**
      * Gets pending jobs.
      *
@@ -112,9 +59,7 @@ class WorkerJob extends base_model_1.BaseModel {
             this.parameters = {};
         }
         this.parameters.channel = this.channel;
-        return {
-            ...this.serialize(types_1.SerializeFor.WORKER)
-        };
+        return Object.assign({}, this.serialize(types_1.SerializeFor.WORKER));
     }
     /**
      * Updates the worker's definition.

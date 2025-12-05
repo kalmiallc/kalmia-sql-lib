@@ -33,19 +33,6 @@ describe('DB Logger tests', () => {
         await inst.getConnectionPool().query(`DELETE FROM ${env_1.env.DB_LOGGER_WORKER_TABLE}`);
         await new Promise((resolve) => setTimeout(resolve, 1000));
     });
-    it('Concurrent init only initializes once (singleflight)', async () => {
-        // Ensure a clean start
-        await db_logger_1.DbLogger.end();
-        await mysql_conn_manager_1.MySqlConnManager.getInstance().end();
-        const initSpy = jest.spyOn(mysql_util_1.MySqlUtil, 'init');
-        // Fire multiple concurrent inits
-        await Promise.all(Array.from({ length: 10 }, () => db_logger_1.DbLogger.init()));
-        // MySqlUtil.init should be called only once due to _initPromise singleflight
-        expect(initSpy).toHaveBeenCalled();
-        const callCount = initSpy.mock.calls.length;
-        expect(callCount).toBe(1);
-        initSpy.mockRestore();
-    });
     it('Log request', async () => {
         db_logger_1.DbLogger.logRequest({
             method: 'GET',

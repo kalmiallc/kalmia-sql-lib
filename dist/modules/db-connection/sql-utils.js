@@ -77,10 +77,7 @@ const getQueryParams = (defaultParameters, tableAlias, fieldMap, urlQuery) => {
     delete urlQuery.orderBy;
     delete urlQuery.desc;
     return {
-        params: {
-            ...defaultParameters,
-            ...urlQuery
-        },
+        params: Object.assign(Object.assign({}, defaultParameters), urlQuery),
         filters: {
             limit,
             offset,

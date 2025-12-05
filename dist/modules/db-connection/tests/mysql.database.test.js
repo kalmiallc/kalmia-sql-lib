@@ -26,8 +26,8 @@ describe('MySQL coon pool', () => {
         @email,
         @id
       )`, {
-            email: `${Math.floor(Math.random() * 10_000)}@example.com`,
-            id: Math.floor(Math.random() * 1_000_000)
+            email: `${Math.floor(Math.random() * 10000)}@example.com`,
+            id: Math.floor(Math.random() * 1000000)
         });
         const count = await sqlUtil.paramExecute("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;");
         expect(count.length).toBe(1);
@@ -38,6 +38,7 @@ describe('MySQL coon pool', () => {
         ]));
     });
     it('Should be able to insert array and query it', async () => {
+        var _a, _b, _c, _d;
         await sqlUtil.paramExecute(`INSERT INTO \`sql_lib_user\` (
         email,
         id,
@@ -50,20 +51,20 @@ describe('MySQL coon pool', () => {
         @set_field
       )`, {
             email: `kalmia_test@example.com`,
-            id: Math.floor(Math.random() * 1_000_000),
+            id: Math.floor(Math.random() * 1000000),
             json_field: [{ value: 4 }, { value: 6 }, { value: 10 }],
             set_field: [4, 6, 10]
         });
         const response = await sqlUtil.paramExecute("SELECT * FROM `sql_lib_user` WHERE email = 'kalmia_test@example.com';");
         expect(response.length).toBe(1);
-        expect(response[0]?.json_field.reduce((partialSum, object) => partialSum + object.value, 0)).toBe(20);
-        expect(response[0]?.json_field).toEqual(expect.arrayContaining([
+        expect((_a = response[0]) === null || _a === void 0 ? void 0 : _a.json_field.reduce((partialSum, object) => partialSum + object.value, 0)).toBe(20);
+        expect((_b = response[0]) === null || _b === void 0 ? void 0 : _b.json_field).toEqual(expect.arrayContaining([
             expect.objectContaining({
                 value: 4
             })
         ]));
-        expect(response[0]?.set_field.split(',').reduce((partialSum, value) => partialSum + Number(value), 0)).toBe(20);
-        expect(response[0]?.set_field.split(',')).toEqual(expect.arrayContaining(['4', '6', '10']));
+        expect((_c = response[0]) === null || _c === void 0 ? void 0 : _c.set_field.split(',').reduce((partialSum, value) => partialSum + Number(value), 0)).toBe(20);
+        expect((_d = response[0]) === null || _d === void 0 ? void 0 : _d.set_field.split(',')).toEqual(expect.arrayContaining(['4', '6', '10']));
     });
     it('Query should fail', async () => {
         await insertObject();
@@ -96,8 +97,8 @@ describe('MySQL coon pool', () => {
         @email,
         @id
       )`, {
-            email: `${Math.floor(Math.random() * 10_000)}@example.com`,
-            id: Math.floor(Math.random() * 1_000_000)
+            email: `${Math.floor(Math.random() * 10000)}@example.com`,
+            id: Math.floor(Math.random() * 1000000)
         });
         const count = await secondUtil.paramExecute("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;");
         await mysql_conn_manager_1.MySqlConnManager.getInstance().end('secondary');
@@ -116,8 +117,8 @@ describe('MySQL coon pool', () => {
         @email,
         @id
       )`, {
-            email: `${Math.floor(Math.random() * 10_000)}@example.com`,
-            id: Math.floor(Math.random() * 1_000_000)
+            email: `${Math.floor(Math.random() * 10000)}@example.com`,
+            id: Math.floor(Math.random() * 1000000)
         });
     }
 });
@@ -141,8 +142,8 @@ describe('MySQL coon pool automatic', () => {
         @email,
         @id
       )`, {
-            email: `${Math.floor(Math.random() * 10_000)}@example.com`,
-            id: Math.floor(Math.random() * 1_000_000)
+            email: `${Math.floor(Math.random() * 10000)}@example.com`,
+            id: Math.floor(Math.random() * 1000000)
         });
         const count = await sqlUtil.paramExecuteDirect("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;");
         expect(count.length).toBe(1);
@@ -173,8 +174,8 @@ describe('MySQL coon pool automatic', () => {
         @email,
         @id
       )`, {
-            email: `${Math.floor(Math.random() * 10_000)}@example.com`,
-            id: Math.floor(Math.random() * 1_000_000)
+            email: `${Math.floor(Math.random() * 10000)}@example.com`,
+            id: Math.floor(Math.random() * 1000000)
         });
         const count = await secondUtil.paramExecuteDirect("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;");
         await mysql_conn_manager_1.MySqlConnManager.getInstance().end('secondary');
@@ -193,8 +194,8 @@ describe('MySQL coon pool automatic', () => {
         @email,
         @id
       )`, {
-            email: `${Math.floor(Math.random() * 10_000)}@example.com`,
-            id: Math.floor(Math.random() * 1_000_000)
+            email: `${Math.floor(Math.random() * 10000)}@example.com`,
+            id: Math.floor(Math.random() * 1000000)
         });
     }
 });
@@ -222,8 +223,8 @@ describe('MySQL no pool', () => {
         email,
         id
       ) VALUES (
-        "${Math.floor(Math.random() * 10_000)}@example.com",
-        "${Math.floor(Math.random() * 1_000_000)}"
+        "${Math.floor(Math.random() * 10000)}@example.com",
+        "${Math.floor(Math.random() * 1000000)}"
       )`);
         const count = await conn.execute("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;");
         expect(count.length).toBe(2);
@@ -249,8 +250,8 @@ describe('Isolation level', () => {
         @email,
         @id
       )`, {
-            email: `${Math.floor(Math.random() * 10_000)}@example.com`,
-            id: Math.floor(Math.random() * 1_000_000)
+            email: `${Math.floor(Math.random() * 10000)}@example.com`,
+            id: Math.floor(Math.random() * 1000000)
         });
         const count = await sqlUtil.paramExecuteDirect("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;", null, types_1.IsolationLevel.READ_UNCOMMITTED);
         expect(count.length).toBe(1);
@@ -265,7 +266,7 @@ describe('Isolation level', () => {
         await sqlUtil.paramExecute(`INSERT INTO \`sql_lib_user\` (
         email,
         id
-      ) VALUES (@email, @id)`, { email: Math.floor(Math.random() * 10_000) + '@example.com', id: Math.floor(Math.random() * 1_000_000) }, connection);
+      ) VALUES (@email, @id)`, { email: Math.floor(Math.random() * 10000) + '@example.com', id: Math.floor(Math.random() * 1000000) }, connection);
         const countStartDefaultIsolationLevel = await sqlUtil.paramExecute("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;");
         expect(countStartDefaultIsolationLevel[0].COUNT).toBe(1);
         const countStartUncommitedIsolationLevel = await sqlUtil.paramExecute("SELECT COUNT(*) AS 'COUNT' FROM `sql_lib_user`;", null, null, types_1.IsolationLevel.READ_UNCOMMITTED);
@@ -279,7 +280,7 @@ describe('Isolation level', () => {
         await expect(sqlUtil.paramExecute(`INSERT INTO \`sql_lib_user\` (
         email,
         id
-      ) VALUES (@email, @id)`, { email: Math.floor(Math.random() * 10_000) + '@example.com', id: Math.floor(Math.random() * 1_000_000) }, connection, types_1.IsolationLevel.READ_COMMITTED)).rejects.toThrowError();
+      ) VALUES (@email, @id)`, { email: Math.floor(Math.random() * 10000) + '@example.com', id: Math.floor(Math.random() * 1000000) }, connection, types_1.IsolationLevel.READ_COMMITTED)).rejects.toThrowError();
     });
 });
 //# sourceMappingURL=mysql.database.test.js.map

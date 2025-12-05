@@ -19,38 +19,13 @@ const base_model_1 = require("../../common/base.model");
  * Worker log model.
  */
 class WorkerLog extends base_model_1.BaseModel {
-    /**
-     * Worker logs table.
-     */
-    tableName = types_1.WorkerDbTables.WORKER_LOG;
-    /**
-     * Worker ID.
-     */
-    workerId;
-    /**
-     * Worker name.
-     */
-    workerName;
-    /**
-     * Worker type.
-     */
-    workerType;
-    /**
-     * Worker log level.
-     */
-    level;
-    /**
-     * Worker log message.
-     */
-    message;
-    /**
-     * Worker log source function.
-     */
-    sourceFunction;
-    /**
-     * Worker log additional data in JSON format.
-     */
-    data;
+    constructor() {
+        super(...arguments);
+        /**
+         * Worker logs table.
+         */
+        this.tableName = types_1.WorkerDbTables.WORKER_LOG;
+    }
 }
 exports.WorkerLog = WorkerLog;
 __decorate([

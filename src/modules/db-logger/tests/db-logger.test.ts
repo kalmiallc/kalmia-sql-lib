@@ -35,24 +35,6 @@ describe('DB Logger tests', () => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
   });
 
-  it('Concurrent init only initializes once (singleflight)', async () => {
-    // Ensure a clean start
-    await DbLogger.end();
-    await MySqlConnManager.getInstance().end();
-
-    const initSpy = jest.spyOn(MySqlUtil as any, 'init');
-
-    // Fire multiple concurrent inits
-    await Promise.all(Array.from({ length: 10 }, () => DbLogger.init()));
-
-    // MySqlUtil.init should be called only once due to _initPromise singleflight
-    expect(initSpy).toHaveBeenCalled();
-    const callCount = (initSpy as jest.SpyInstance).mock.calls.length;
-    expect(callCount).toBe(1);
-
-    initSpy.mockRestore();
-  });
-
   it('Log request', async () => {
     DbLogger.logRequest({
       method: 'GET',
