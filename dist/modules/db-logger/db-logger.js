@@ -12,6 +12,24 @@ class DbLogger {
     static workerLoggerOK = false;
     static requestLoggerOK = false;
     static _initPromise = null;
+    // Ensures sql instance and underlying pool are initialized and alive.
+    // Returns true when a pool is available.
+    static async ensureSqlAndPool() {
+        if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
+            await DbLogger.reinit();
+        }
+        try {
+            await DbLogger.sqlInst?.checkAndReInitConnectionPool();
+        }
+        catch (e) {
+            kalmia_common_lib_1.AppLogger.warn('DbLogger', 'DbLogger.ts', 'ensureSqlAndPool: pool check failed: ' + e);
+        }
+        const hasPool = !!DbLogger.sqlInst?.getConnectionPool?.();
+        if (!hasPool) {
+            kalmia_common_lib_1.AppLogger.warn('DbLogger', 'DbLogger.ts', 'ensureSqlAndPool: no connection pool');
+        }
+        return hasPool;
+    }
     constructor() { }
     /**
      * Ends the connection to DB.
@@ -49,44 +67,54 @@ class DbLogger {
         }
     }
     static async checkInstance() {
-        await DbLogger.checkIfDbLoggerInitialized();
-        await DbLogger.checkIfWorkerLoggerInitialized();
-        await DbLogger.checkIfRequestLoggerInitialized();
+        const ok = await DbLogger.ensureSqlAndPool();
+        if (!ok) {
+            return;
+        }
+        const tasks = [];
+        if (!DbLogger.loggerOK) {
+            tasks.push(DbLogger.checkIfLogDbExists(env_1.env.DB_LOGGER_TABLE));
+        }
+        if (!DbLogger.workerLoggerOK) {
+            tasks.push(DbLogger.checkIfLogDbExists(env_1.env.DB_LOGGER_WORKER_TABLE));
+        }
+        if (!DbLogger.requestLoggerOK) {
+            tasks.push(DbLogger.checkIfLogDbExists(env_1.env.DB_LOGGER_REQUEST_TABLE));
+        }
+        if (tasks.length) {
+            await Promise.allSettled(tasks);
+        }
     }
     static async checkIfDbLoggerInitialized() {
-        if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
-            await DbLogger.reinit();
+        const ok = await DbLogger.ensureSqlAndPool();
+        if (!ok) {
+            return;
         }
-        // Ensure pool is alive; do not poke private pool internals
-        await DbLogger.sqlInst.checkAndReInitConnectionPool();
         if (!DbLogger.loggerOK) {
             await DbLogger.checkIfLogDbExists(env_1.env.DB_LOGGER_TABLE);
         }
     }
     static async checkIfWorkerLoggerInitialized() {
-        if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
-            await DbLogger.reinit();
+        const ok = await DbLogger.ensureSqlAndPool();
+        if (!ok) {
+            return;
         }
-        await DbLogger.sqlInst?.checkAndReInitConnectionPool();
         if (!DbLogger.workerLoggerOK) {
             await DbLogger.checkIfLogDbExists(env_1.env.DB_LOGGER_WORKER_TABLE);
         }
     }
     static async checkIfRequestLoggerInitialized() {
-        if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
-            await DbLogger.reinit();
+        const ok = await DbLogger.ensureSqlAndPool();
+        if (!ok) {
+            return;
         }
-        await DbLogger.sqlInst?.checkAndReInitConnectionPool();
         if (!DbLogger.requestLoggerOK) {
             await DbLogger.checkIfLogDbExists(env_1.env.DB_LOGGER_REQUEST_TABLE);
         }
     }
     static async checkIfLogDbExists(table) {
-        if (DbLogger.sqlInst === undefined || DbLogger.sqlInst === null) {
-            await DbLogger.checkInstance();
-        }
-        await DbLogger.sqlInst?.checkAndReInitConnectionPool();
-        if (!DbLogger.sqlInst?.getConnectionPool()) {
+        const ok = await DbLogger.ensureSqlAndPool();
+        if (!ok) {
             kalmia_common_lib_1.AppLogger.warn('DbLogger', 'DbLogger.ts', 'Error for logger existence check , no connection pool');
             return;
         }

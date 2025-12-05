@@ -24,7 +24,6 @@ export class MySqlConnManager {
   private _connectionsSync: { [identifier: string]: mysqlSync.Pool | mysqlSync.Connection } = {};
   private _connectionDetails: { [identifier: string]: IConnectionDetails } = {};
   private _connectionSyncDetails: { [identifier: string]: IConnectionDetails } = {};
-  private _reinitPromises: { [identifier: string]: Promise<mysql.Pool> } = {};
 
   private constructor() {}
 
@@ -150,40 +149,19 @@ export class MySqlConnManager {
     databaseIdentifier: string = DbConnectionType.PRIMARY,
     config: mysql.ConnectionOptions = {}
   ): Promise<mysql.Pool> {
-    // Debounce concurrent reinitializations per identifier
-    if (this._reinitPromises[databaseIdentifier]) {
-      return this._reinitPromises[databaseIdentifier];
-    }
-
-    this._reinitPromises[databaseIdentifier] = (async () => {
-      const oldConn = this._connections[databaseIdentifier] as any;
-      // Attempt to gracefully end the old pool before creating a new one to avoid leaking connections
-      if (oldConn && typeof oldConn.end === 'function') {
-        try {
-          await oldConn.end();
-        } catch (e) {
-          AppLogger.warn('mysql-conn-manager.ts', 'reinitializeConnection', 'Error ending old pool during reinit', e);
-        }
-      }
-
-      this._connectionDetails[databaseIdentifier] = this.populateDetails(config);
-      this._connections[databaseIdentifier] = await this.getMySqlPoolConnection(config);
-      AppLogger.db(
-        'mysql-conn-manager.ts',
-        'getConnection',
-        'Connection reinitialized',
-        databaseIdentifier,
-        AppLogger.stringifyObjectForLog({
-          ...this._connectionDetails[databaseIdentifier],
-          ssl: this._connectionDetails[databaseIdentifier].ssl ? '***' : undefined
-        })
-      );
-      return this._connections[databaseIdentifier] as mysql.Pool;
-    })().finally(() => {
-      this._reinitPromises[databaseIdentifier] = null;
-    });
-
-    return this._reinitPromises[databaseIdentifier];
+    this._connectionDetails[databaseIdentifier] = this.populateDetails(config);
+    this._connections[databaseIdentifier] = await this.getMySqlPoolConnection(config);
+    AppLogger.db(
+      'mysql-conn-manager.ts',
+      'getConnection',
+      'Connection reinitialized',
+      databaseIdentifier,
+      AppLogger.stringifyObjectForLog({
+        ...this._connectionDetails[databaseIdentifier],
+        ssl: this._connectionDetails[databaseIdentifier].ssl ? '***' : undefined
+      })
+    );
+    return this._connections[databaseIdentifier] as mysql.Pool;
   }
 
   /**
